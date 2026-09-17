@@ -1,12 +1,21 @@
-[![Rails CI](https://github.com/shakacode/comfortable-media-surfer/actions/workflows/rubyonrails.yml/badge.svg)](https://github.com/shakacode/comfortable-media-surfer/actions/workflows/rubyonrails.yml)
-[![Coverage Status](https://coveralls.io/repos/github/shakacode/comfortable-media-surfer/badge.svg?branch=master)](https://coveralls.io/github/shakacode/comfortable-media-surfer?branch=master)
-[![Gem Version](https://img.shields.io/gem/v/comfortable_media_surfer.svg?style=flat)](http://rubygems.org/gems/comfortable_media_surfer)
-[![Gem Downloads](https://img.shields.io/gem/dt/comfortable_media_surfer.svg?style=flat)](http://rubygems.org/gems/comfortable_media_surfer)
-[![GitHub Release Date - Published_At](https://img.shields.io/github/release-date/shakacode/comfortable-media-surfer?label=last%20release&color=seagreen)](https://github.com/shakacode/comfortable-media-surfer/releases)
+[![Rails CI](https://github.com/avonderluft/comfortable-media-surfer/actions/workflows/rubyonrails.yml/badge.svg)](https://github.com/avonderluft/comfortable-media-surfer/actions/workflows/rubyonrails.yml)
+[![Gem Version](https://img.shields.io/gem/v/comfy_middle_seat.svg?style=flat)](https://rubygems.org/gems/comfy_middle_seat)
+[![Gem Downloads](https://img.shields.io/gem/dt/comfy_middle_seat.svg?style=flat)](https://rubygems.org/gems/comfy_middle_seat)
+[![GitHub Release Date - Published_At](https://img.shields.io/github/release-date/avonderluft/comfortable-media-surfer?label=last%20release&color=seagreen)](https://github.com/avonderluft/comfortable-media-surfer/releases)
 
-# ComfortableMediaSurfer
+# Comfy Middle Seat
 
-ComfortableMediaSurfer is a powerful Ruby 7.2+ CMS (Content Management System) Engine, picking up where [ComfortableMexicanSofa](https://github.com/comfy/comfortable-mexican-sofa) left off.
+Comfy Middle Seat is a Rails CMS (Content Management System) engine, published as `comfy_middle_seat`. It keeps the Comfortable Media Surfer implementation and pays homage to the original Comfortable Mexican Sofa—with the same C.M.S. initials and a new place to sit.
+
+The `ComfortableMediaSurfer` Ruby namespace, configuration, and internal paths remain unchanged. Only the gem's public name changes; there is no need to rename existing Surfer initializers or database tables.
+
+## Project History
+
+- **[Comfortable Mexican Sofa](https://github.com/comfy/comfortable-mexican-sofa)**, created by Oleg Khabarov, is the original Rails CMS on which this project is built.
+- **[Comfortable Media Surfer](https://github.com/shakacode/comfortable-media-surfer)** revived Sofa under ShakaCode, continuing its development for modern Rails applications.
+- **Comfy Middle Seat** is a fork of Comfortable Media Surfer, published under a new gem name while retaining its implementation and API.
+
+See the [CHANGELOG](CHANGELOG.md) for the inherited development history, and the original [Sofa releases](https://github.com/comfy/comfortable-mexican-sofa/releases) and [Surfer releases](https://github.com/shakacode/comfortable-media-surfer/releases) for earlier releases.
 
 ## Features
 
@@ -34,7 +43,7 @@ On Ruby 3.2+, 4.x, Rails 7.2+, 8.x
 Add gem definition to your Gemfile:
 
 ```ruby
-gem "comfortable_media_surfer", "~> 3.1.0"
+gem "comfy_middle_seat", "~> 3.1.0"
 ```
 
 Then from the Rails project's root run:
@@ -53,20 +62,24 @@ comfy_route :cms_admin, path: "/admin"
 comfy_route :cms, path: "/"
 ```
 
-## Converting from ComfortableMexicanSofa or Occams
+## Converting from Comfortable Media Surfer, Comfortable Mexican Sofa, or Occams
 
-### From Sofa to Surfer
+### From Surfer to Middle Seat
+
+Replace `comfortable_media_surfer` in your Gemfile with `comfy_middle_seat` and run `bundle install`. Do not include both gems. Existing `ComfortableMediaSurfer` configuration and database tables remain unchanged.
+
+### From Sofa to Middle Seat
 
 The database structure is the same.  Your Sofa project will also need to be upgraded to >= Rails 7.x  
 Then you should simply be able to update your Gemfile thus, and run bundle
 
 ```ruby
-gem 'comfortable_media_surfer', '~> 3.1.0'
+gem 'comfy_middle_seat', '~> 3.1.0'
 ```
 
-### From Occams to Surfer
+### From Occams to Middle Seat
 
-Again the project must be >= Rails 7.x.  Since the schema is different, executing this SQL should get you set for Surfer
+Again the project must be >= Rails 7.x.  Since the schema is different, executing this SQL should get you set for Middle Seat
 
 ```sql
 ALTER TABLE occams_cms_categories RENAME TO comfy_cms_categories;
@@ -94,7 +107,7 @@ UPDATE active_storage_attachments SET record_type = 'Comfy::Cms::File' WHERE rec
 
 After finishing installation you should be able to navigate to http://localhost:3000/admin
 
-Default username and password is 'user' and 'pass'. You probably want to change it right away. Admin credentials (among other things) can be found and changed in the cms initializer: [/config/initializers/comfortable_media_surfer.rb](https://github.com/shakacode/comfortable-media-surfer/blob/master/config/initializers/comfortable_media_surfer.rb)
+Default username and password is 'user' and 'pass'. You probably want to change it right away. Admin credentials (among other things) can be found and changed in your app's CMS initializer: `config/initializers/comfortable_media_surfer.rb`. The initializer retains its Surfer name for compatibility.
 
 Before creating pages and populating them with content we need to create a Site. Site defines a hostname, content path and its language.
 
@@ -113,8 +126,7 @@ Once you have a layout, you may start creating pages and populating content. It'
 
 ## Documentation
 
-For more information on how to use this CMS please refer to the [Wiki](https://github.com/shakacode/comfortable-media-surfer/wiki). Section that might be of interest is the entry
-on [Content Tags](https://github.com/shakacode/comfortable-media-surfer/wiki/Docs:-Content-Tags).
+The [Comfortable Media Surfer Wiki](https://github.com/shakacode/comfortable-media-surfer/wiki) remains the upstream reference for the inherited CMS features, including [Content Tags](https://github.com/shakacode/comfortable-media-surfer/wiki/Docs:-Content-Tags). The feature links above also point to that wiki. When following its installation instructions, use the `comfy_middle_seat` gem; Ruby examples using `ComfortableMediaSurfer` retain that namespace.
 
 ## Add-ons
 
@@ -123,13 +135,10 @@ If you want to add a Blog functionality to your app take a look at
 
 ![Admin Area Preview](doc/preview.jpg)
 
-#### Old Versions of ComfortableMexicanSofa
-
-[CHANGELOG](//github.com/comfy/comfortable-mexican-sofa/releases) is documented in ComfortableMexicanSofa Github releases.
 
 #### Contributing
 
-ComfortableMediaSurfer can run like any Rails application in development. It's as easy to work on as any other Rails app. For more detail see [CONTRIBUTING](CONTRIBUTING.md)
+Comfy Middle Seat can run like any Rails application in development. It's as easy to work on as any other Rails app. For more detail see [CONTRIBUTING](CONTRIBUTING.md). The inherited development instructions may still refer to Comfortable Media Surfer.
 
 #### Testing
 
@@ -139,8 +148,9 @@ ComfortableMediaSurfer can run like any Rails application in development. It's a
 
 #### Acknowledgements
 
-- to [Oleg Khabarov](https://github.com/GBH), the creator of [ComfortableMexicanSofa](https://github.com/comfy/comfortable-mexican-sofa)
-- to [Roman Almeida](https://github.com/nasmorn) for contributing OEM License for [Redactor Text Editor](http://imperavi.com/redactor)
+- To [Oleg Khabarov](https://github.com/GBH) and the contributors to [Comfortable Mexican Sofa](https://github.com/comfy/comfortable-mexican-sofa), the original CMS.
+- To [ShakaCode](https://github.com/shakacode) and the contributors to [Comfortable Media Surfer](https://github.com/shakacode/comfortable-media-surfer), whose revival this fork builds on.
+- To [Roman Almeida](https://github.com/nasmorn) for contributing OEM License for [Redactor Text Editor](http://imperavi.com/redactor).
 
 ---
 

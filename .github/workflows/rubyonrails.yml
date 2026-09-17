@@ -40,8 +40,8 @@ jobs:
           ruby-version: ${{ matrix.ruby-version }}
           bundler-cache: true
 
-      - name: Update surfer gem
-        run: bundle update comfortable_media_surfer
+      - name: Update CMS gem
+        run: bundle update comfy_middle_seat
 
       - name: Compile assets
         run: bin/bundle exec rails comfy:compile_assets

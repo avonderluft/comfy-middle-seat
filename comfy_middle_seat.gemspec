@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ['wonder@hey.com']
   spec.homepage      = 'https://github.com/avonderluft/comfortable-media-surfer'
   spec.summary       = 'Rails 7.2+ CMS Engine'
-  spec.description   = 'ComfortableMediaSurfer is a powerful Rails 7.2+ CMS Engine'
+  spec.description   = 'Comfy Middle Seat is a Rails 7.2+ CMS Engine forked from ComfortableMediaSurfer'
   spec.license       = 'MIT'
 
   spec.post_install_message = 'Please run rake comfy:compile_assets to compile assets.'

@@ -32,7 +32,8 @@ module ComfortableMediaSurfer
       # not contain `.rb` files, or that should not be reloaded or eager loaded.
       # Common ones are `templates`, `generators`, or `middleware`, for example.
       config.add_autoload_paths_to_load_path = false
-      config.autoload_lib(ignore: %w[generators])
+      # These gem entrypoints are explicitly required and retain the ComfortableMediaSurfer namespace.
+      config.autoload_lib(ignore: %w[generators comfy_middle_seat.rb comfy_middle_seat])
     end
 
     # Making sure we don't load our dev routes as part of the engine

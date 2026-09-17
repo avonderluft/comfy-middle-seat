@@ -142,9 +142,23 @@ Comfy Middle Seat can run like any Rails application in development. It's as eas
 
 #### Testing
 
-- `bin/rails db:migrate RAILS_ENV=test`
-- `rake db:test:prepare`
-- `rake test`
+After `bundle install`, install the JavaScript dependencies, compile the admin assets, and prepare the test database:
+
+```sh
+npm ci
+npm run build
+npm run build:css
+RAILS_ENV=test bundle exec rails db:migrate
+RAILS_ENV=test bundle exec rake test
+```
+
+The main suite prepares isolated databases for its parallel workers. Set `RAILS_ENV=test` explicitly so test preparation does not depend on your development database. Compiled assets are required by tests that render admin pages; rebuild them after changing JavaScript or stylesheets.
+
+Run the browser/system tests separately (requires Chrome or Chromium):
+
+```sh
+RAILS_ENV=test SKIP_COV=true bundle exec rake test:system
+```
 
 #### Acknowledgements
 

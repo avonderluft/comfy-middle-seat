@@ -1,7 +1,7 @@
-[![Rails CI](https://github.com/avonderluft/comfortable-media-surfer/actions/workflows/rubyonrails.yml/badge.svg)](https://github.com/avonderluft/comfortable-media-surfer/actions/workflows/rubyonrails.yml)
+[![Rails CI](https://github.com/avonderluft/comfy-middle-seat/actions/workflows/rubyonrails.yml/badge.svg)](https://github.com/avonderluft/comfy-middle-seat/actions/workflows/rubyonrails.yml)
 [![Gem Version](https://img.shields.io/gem/v/comfy_middle_seat.svg?style=flat)](https://rubygems.org/gems/comfy_middle_seat)
 [![Gem Downloads](https://img.shields.io/gem/dt/comfy_middle_seat.svg?style=flat)](https://rubygems.org/gems/comfy_middle_seat)
-[![GitHub Release Date - Published_At](https://img.shields.io/github/release-date/avonderluft/comfortable-media-surfer?label=last%20release&color=seagreen)](https://github.com/avonderluft/comfortable-media-surfer/releases)
+[![GitHub Release Date - Published_At](https://img.shields.io/github/release-date/avonderluft/comfy-middle-seat?label=last%20release&color=seagreen)](https://github.com/avonderluft/comfy-middle-seat/releases)
 
 # Comfy Middle Seat
 

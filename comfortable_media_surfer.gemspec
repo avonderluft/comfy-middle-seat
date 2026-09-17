@@ -4,13 +4,13 @@ $LOAD_PATH.unshift File.expand_path('lib', __dir__)
 require 'comfortable_media_surfer/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'comfortable_media_surfer'
+  spec.name          = 'comfy_middle_seat'
   spec.version       = ComfortableMediaSurfer::VERSION
-  spec.authors       = ['Oleg Khabarov', 'Andrew vonderLuft', 'ShakaCode']
-  spec.email         = ['justin@shakacode.com']
-  spec.homepage      = 'https://github.com/shakacode/comfortable-media-surfer'
-  spec.summary       = 'Rails 7.0+ CMS Engine'
-  spec.description   = 'ComfortableMediaSurfer is a powerful Rails 7.0+ CMS Engine'
+  spec.authors       = ['Oleg Khabarov', 'Andrew vonderLuft']
+  spec.email         = ['wonder@hey.com']
+  spec.homepage      = 'https://github.com/avonderluft/comfortable-media-surfer'
+  spec.summary       = 'Rails 7.2+ CMS Engine'
+  spec.description   = 'ComfortableMediaSurfer is a powerful Rails 7.2+ CMS Engine'
   spec.license       = 'MIT'
 
   spec.post_install_message = 'Please run rake comfy:compile_assets to compile assets.'

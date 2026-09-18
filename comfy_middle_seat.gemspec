@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.version       = ComfortableMediaSurfer::VERSION
   spec.authors       = ['Oleg Khabarov', 'Andrew vonderLuft']
   spec.email         = ['wonder@hey.com']
-  spec.homepage      = 'https://github.com/avonderluft/comfortable-media-surfer'
+  spec.homepage      = 'https://github.com/avonderluft/comfy-middle-seat'
   spec.summary       = 'Rails 7.2+ CMS Engine'
   spec.description   = 'Comfy Middle Seat is a Rails 7.2+ CMS Engine forked from ComfortableMediaSurfer'
   spec.license       = 'MIT'

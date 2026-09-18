@@ -1,6 +1,8 @@
 [![Rails CI](https://github.com/avonderluft/comfortable-media-surfer/actions/workflows/rubyonrails.yml/badge.svg)](https://github.com/avonderluft/comfortable-media-surfer/actions/workflows/rubyonrails.yml) [![Test Coverage](https://img.shields.io/coverallsCoverage/github/avonderluft/comfy-middle-seat?branch=master&cacheSeconds=300)](https://coveralls.io/github/avonderluft/comfy-middle-seat?branch=master) [![Gem Version](https://img.shields.io/gem/v/comfy_middle_seat.svg?style=flat)](https://rubygems.org/gems/comfy_middle_seat) [![Gem Downloads](https://img.shields.io/gem/dt/comfy_middle_seat.svg?style=flat)](https://rubygems.org/gems/comfy_middle_seat) [![GitHub Release Date - Published_At](https://img.shields.io/github/release-date/avonderluft/comfy-middle-seat?label=last%20release&color=seagreen)](https://github.com/avonderluft/comfortable-media-surfer/releases)
 
-# Comfy Middle Seat
+# ComfyMiddleSeat
+
+It all depends on who is on your left and right.
 
 Comfy Middle Seat is a Rails CMS (Content Management System) engine, published as gem `comfy_middle_seat`. It retains the Comfortable Media Surfer implementation and pays homage to the original Comfortable Mexican Sofa—with the same C.M.S. initials and a new place to sit.
 

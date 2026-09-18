@@ -45,6 +45,10 @@ jobs:
       - name: Compile assets
         run: bin/bundle exec rails comfy:compile_assets
 
+      - name: Verify Coveralls token is configured
+        run: |
+          ruby -e 'abort "COVERALLS_REPO_TOKEN is missing" if ENV.fetch("COVERALLS_REPO_TOKEN", "").strip.empty?'
+
       - name: Run tests, report coverage
         run: |
           bin/bundle exec rails db:drop

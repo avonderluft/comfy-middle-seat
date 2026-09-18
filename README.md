@@ -10,7 +10,7 @@ The `ComfortableMediaSurfer` Ruby namespace, configuration, and internal paths r
 
 - **[Comfortable Mexican Sofa](https://github.com/comfy/comfortable-mexican-sofa)**, created by Oleg Khabarov, is the original Rails CMS on which this project is built.  Oleg deserves the lion's share of kudos.
 - **[Occams](https://github.com/avonderluft/occams)** was an attempted revival of Sofa. Andrew vonderLuft was a contributor to [RadiantCMS](https://github.com/radiant/radiant) back in the day, but that project became inactive. He found Sofa and liked it even better than Radiant, but sadly it too became inactive. Hence Occams.
-- **[Comfortable Media Surfer](https://github.com/shakacode/comfortable-media-surfer)** revived Sofa under the sponsor ship of ShakaCode, continuing its development for modern Rails applications.
+- **[Comfortable Media Surfer](https://github.com/shakacode/comfortable-media-surfer)** revived Sofa under the sponsorship of ShakaCode, continuing its development for modern Rails applications.
 - **Comfy Middle Seat** is a fork of Comfortable Media Surfer, published with a new gem name while retaining the Surfer implementation and API.
 
 See the [CHANGELOG](CHANGELOG.md) for the inherited development history, and the original [Sofa releases](https://github.com/comfy/comfortable-mexican-sofa/releases) and [Surfer releases](https://github.com/shakacode/comfortable-media-surfer/releases) for earlier releases.

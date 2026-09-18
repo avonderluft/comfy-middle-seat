@@ -152,5 +152,4 @@ Comfy Middle Seat can run like any Rails application in development. It's as eas
 
 ---
 
-Copyright 2010-2019 Oleg Khabarov, 2024-2026 ShakaCode LLC, 2026 Andrew vonderLuft
-Released under the [MIT license](LICENSE)
+Copyright 2010-2019 Oleg Khabarov, 2024-2026 ShakaCode LLC, 2026 Andrew vonderLuft.  Released under the [MIT license](LICENSE)

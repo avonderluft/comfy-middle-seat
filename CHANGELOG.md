@@ -6,11 +6,46 @@ All notable changes to this project's source code will be documented in this fil
 
 Please follow the recommendations outlined at [keepachangelog.com](https://keepachangelog.com). Please use the existing headings and styling as a guide, and add a link for the version diff at the bottom of the file. Also, please update the `Unreleased` link to compare it to the latest release version.
 
-For all changes prior to the inception of this project, see the [Release History](https://github.com/comfy/comfortable-mexican-sofa/releases) of ComfortableMexicanSofa.
+This changelog follows the project's lineage: **Comfortable Mexican Sofa → Comfortable Media Surfer → Comfy Middle Seat**. Version **3.2.0** is the first release published as `comfy_middle_seat`. The entries for **3.0.0–3.1.7** below are inherited from `comfortable_media_surfer` and retain their upstream links. For earlier history, see the [Comfortable Mexican Sofa releases](https://github.com/comfy/comfortable-mexican-sofa/releases).
 
-## Versions
+## Comfy Middle Seat
 
 ## [Unreleased]
+
+### Fixed
+
+- Fix CI eager loading after the gem rename by excluding the explicitly required `comfy_middle_seat` entrypoint and version directory from Zeitwerk autoloading. Add a regression test that also checks eager loading outside CI.
+
+## [v3.2.0] - 2026-09-17
+
+**First Comfy Middle Seat release.** Forked from [Comfortable Media Surfer](https://github.com/shakacode/comfortable-media-surfer), itself a revival of [Comfortable Mexican Sofa](https://github.com/comfy/comfortable-mexican-sofa). The new name keeps the C.M.S. initials and pays homage to the original.
+
+### Changed
+
+- Publish the gem as `comfy_middle_seat` and rename the gemspec to `comfy_middle_seat.gemspec`.
+- Preserve the `ComfortableMediaSurfer` Ruby namespace, configuration, routes, and database tables. Existing Surfer applications do not need a namespace or schema migration for the rename.
+- Move the version definition to `lib/comfy_middle_seat/version.rb` for release tooling, retaining a compatibility loader at the old path.
+- Run the main test suite in six isolated processes by default, with merged coverage and a separate `test:serial` task for Coveralls.
+- Update CI coverage to Rails 7.2, 8.0, and 8.1, with a separate browser/system test job.
+
+### Added
+
+- Add `lib/comfy_middle_seat.rb` so Bundler loads the existing implementation automatically under the new gem name.
+- Add controls to publish and unpublish child pages from the admin interface.
+
+### Fixed
+
+- Strengthen site isolation for admin parameters, cross-site associations, asset lookup, reordering, categories, and fragment ownership.
+- Fix file modal cleanup and reinitialization, and expose jQuery for Bootstrap integration.
+- Remove the unsupported `:escape` option before JSON parsing while preserving other parser options.
+
+### Upgrading from Surfer
+
+Replace `comfortable_media_surfer` with `comfy_middle_seat` in your Gemfile and run `bundle install`. Do not include both gems. Keep existing `ComfortableMediaSurfer` configuration and initializer names.
+
+## Comfortable Media Surfer — inherited releases
+
+The releases below belong to `comfortable_media_surfer`, not `comfy_middle_seat`. Their original notes and upstream comparison links are preserved.
 
 ## [v3.1.7] - 2026-02-20
 
@@ -135,7 +170,8 @@ First release of `comfortable_media_surfer`. This new gem is a revival of [Comfo
 
 - Rebranded **ComfortableMexicanSofa** as **ComfortableMediaSurfer** in order to publish new gem (database table names and schema have not changed).
 
-[Unreleased]: https://github.com/shakacode/comfortable-media-surfer/compare/v3.1.7...master
+[Unreleased]: https://github.com/avonderluft/comfy-middle-seat/compare/v3.2.0...master
+[v3.2.0]: https://github.com/avonderluft/comfy-middle-seat/compare/eeb5d590f47b5d6bb70191fb81c781540753fa97...v3.2.0
 [v3.1.7]: https://github.com/shakacode/comfortable-media-surfer/compare/v3.1.6...v3.1.7
 [v3.1.6]: https://github.com/shakacode/comfortable-media-surfer/compare/v3.1.5...v3.1.6
 [v3.1.5]: https://github.com/shakacode/comfortable-media-surfer/compare/v3.1.4...v3.1.5

@@ -2,15 +2,16 @@
 
 # Comfy Middle Seat
 
-Comfy Middle Seat is a Rails CMS (Content Management System) engine, published as `comfy_middle_seat`. It keeps the Comfortable Media Surfer implementation and pays homage to the original Comfortable Mexican Sofa—with the same C.M.S. initials and a new place to sit.
+Comfy Middle Seat is a Rails CMS (Content Management System) engine, published as gem `comfy_middle_seat`. It retains the Comfortable Media Surfer implementation and pays homage to the original Comfortable Mexican Sofa—with the same C.M.S. initials and a new place to sit.
 
 The `ComfortableMediaSurfer` Ruby namespace, configuration, and internal paths remain unchanged. Only the gem's public name changes; there is no need to rename existing Surfer initializers or database tables.
 
 ## Project History
 
-- **[Comfortable Mexican Sofa](https://github.com/comfy/comfortable-mexican-sofa)**, created by Oleg Khabarov, is the original Rails CMS on which this project is built.
-- **[Comfortable Media Surfer](https://github.com/shakacode/comfortable-media-surfer)** revived Sofa under ShakaCode, continuing its development for modern Rails applications.
-- **Comfy Middle Seat** is a fork of Comfortable Media Surfer, published under a new gem name while retaining its implementation and API.
+- **[Comfortable Mexican Sofa](https://github.com/comfy/comfortable-mexican-sofa)**, created by Oleg Khabarov, is the original Rails CMS on which this project is built.  Oleg deserves the lion's share of kudos.
+- **[Occams](https://github.com/avonderluft/occams)** was an attempted revival of Sofa. Andrew vonderLuft was a contributor to [RadiantCMS](https://github.com/radiant/radiant) back in the day, but that project became inactive. He found Sofa and liked it even better than Radiant, but sadly it too became inactive. Hence Occams.
+- **[Comfortable Media Surfer](https://github.com/shakacode/comfortable-media-surfer)** revived Sofa under the sponsor ship of ShakaCode, continuing its development for modern Rails applications.
+- **Comfy Middle Seat** is a fork of Comfortable Media Surfer, published with a new gem name while retaining the Surfer implementation and API.
 
 See the [CHANGELOG](CHANGELOG.md) for the inherited development history, and the original [Sofa releases](https://github.com/comfy/comfortable-mexican-sofa/releases) and [Surfer releases](https://github.com/shakacode/comfortable-media-surfer/releases) for earlier releases.
 
@@ -19,10 +20,10 @@ See the [CHANGELOG](CHANGELOG.md) for the inherited development history, and the
 - Simple drop-in integration with Rails 7.2+ apps with minimal configuration
 * The CMS keeps clear from the rest of your application
 * Powerful page templating capability using [Content Tags](https://github.com/shakacode/comfortable-media-surfer/wiki/Docs:-Content-Tags)
-* [Multiple Sites](https://github.com/shakacode/comfortable-media-surfer/wiki/Docs:-Sites) from a single installation
+* [Multiple Sites](https://github.com/shakacode/comfortable-media-surfer/wiki/Sites) from a single installation
 * Multi-Language Support (i18n) (ca, cs, da, de, en, es, fi, fr, gr, hr, it, ja, nb, nl, pl, pt-BR, ru, sv, tr, uk, zh-CN, zh-TW) and page localization.
-* [CMS Seeds](https://github.com/shakacode/comfortable-media-surfer/wiki/Docs:-CMS-Seeds) for initial content population
-* [Revision History](https://github.com/shakacode/comfortable-media-surfer/wiki/Docs:-Revisions) to revert changes
+* [CMS Seeds](https://github.com/shakacode/comfortable-media-surfer/wiki/CMS-Seeds) for initial content population
+* [Revision History](https://github.com/shakacode/comfortable-media-surfer/wiki/Revisions) to revert changes
 * [Extendable Admin Area](https://github.com/shakacode/comfortable-media-surfer/wiki/HowTo:-Reusing-Admin-Area) built with [Bootstrap 4](http://getbootstrap.com) (responsive design). Using [CodeMirror](http://codemirror.net) for HTML and Markdown highlighing and [Redactor](http://imperavi.com/redactor) as the WYSIWYG editor.
 
 ## Dependencies
@@ -40,7 +41,7 @@ On Ruby 3.2+, 4.x, Rails 7.2+, 8.x
 Add gem definition to your Gemfile:
 
 ```ruby
-gem "comfy_middle_seat", "~> 3.1.0"
+gem "comfy_middle_seat", "~> 3.2.0"
 ```
 
 Then from the Rails project's root run:
@@ -67,7 +68,7 @@ Replace `comfortable_media_surfer` in your Gemfile with `comfy_middle_seat` and 
 
 ### From Sofa to Middle Seat
 
-The database structure is the same.  Your Sofa project will also need to be upgraded to >= Rails 7.x  
+The database structure is the same.  Your Sofa project will also need to be upgraded to >= Rails 7.2  
 Then you should simply be able to update your Gemfile thus, and run bundle
 
 ```ruby
@@ -76,7 +77,7 @@ gem 'comfy_middle_seat', '~> 3.2.0'
 
 ### From Occams to Middle Seat
 
-Again the project must be >= Rails 7.x.  Since the schema is different, executing this SQL should get you set for Middle Seat
+Again the project must be >= Rails 7.2.  Since the schema is different, executing this SQL should get you set for Middle Seat
 
 ```sql
 ALTER TABLE occams_cms_categories RENAME TO comfy_cms_categories;
@@ -151,5 +152,5 @@ Comfy Middle Seat can run like any Rails application in development. It's as eas
 
 ---
 
-Copyright 2010-2019 Oleg Khabarov, 2024-2026 ShakaCode LLC
+Copyright 2010-2019 Oleg Khabarov, 2024-2026 ShakaCode LLC, 2026 Andrew vonderLuft
 Released under the [MIT license](LICENSE)

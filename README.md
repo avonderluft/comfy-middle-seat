@@ -1,7 +1,4 @@
-[![Rails CI](https://github.com/avonderluft/comfy-middle-seat/actions/workflows/rubyonrails.yml/badge.svg)](https://github.com/avonderluft/comfy-middle-seat/actions/workflows/rubyonrails.yml)
-[![Gem Version](https://img.shields.io/gem/v/comfy_middle_seat.svg?style=flat)](https://rubygems.org/gems/comfy_middle_seat)
-[![Gem Downloads](https://img.shields.io/gem/dt/comfy_middle_seat.svg?style=flat)](https://rubygems.org/gems/comfy_middle_seat)
-[![GitHub Release Date - Published_At](https://img.shields.io/github/release-date/avonderluft/comfy-middle-seat?label=last%20release&color=seagreen)](https://github.com/avonderluft/comfy-middle-seat/releases)
+[![Rails CI](https://github.com/avonderluft/comfortable-media-surfer/actions/workflows/rubyonrails.yml/badge.svg)](https://github.com/avonderluft/comfortable-media-surfer/actions/workflows/rubyonrails.yml) [![Test Coverage](https://img.shields.io/coverallsCoverage/github/avonderluft/comfy-middle-seat?branch=master&cacheSeconds=300)](https://coveralls.io/github/avonderluft/comfy-middle-seat?branch=master) [![Gem Version](https://img.shields.io/gem/v/comfy_middle_seat.svg?style=flat)](https://rubygems.org/gems/comfy_middle_seat) [![Gem Downloads](https://img.shields.io/gem/dt/comfy_middle_seat.svg?style=flat)](https://rubygems.org/gems/comfy_middle_seat) [![GitHub Release Date - Published_At](https://img.shields.io/github/release-date/avonderluft/comfy-middle-seat?label=last%20release&color=seagreen)](https://github.com/avonderluft/comfortable-media-surfer/releases)
 
 # Comfy Middle Seat
 
@@ -74,7 +71,7 @@ The database structure is the same.  Your Sofa project will also need to be upgr
 Then you should simply be able to update your Gemfile thus, and run bundle
 
 ```ruby
-gem 'comfy_middle_seat', '~> 3.1.0'
+gem 'comfy_middle_seat', '~> 3.2.0'
 ```
 
 ### From Occams to Middle Seat
@@ -142,23 +139,9 @@ Comfy Middle Seat can run like any Rails application in development. It's as eas
 
 #### Testing
 
-After `bundle install`, install the JavaScript dependencies, compile the admin assets, and prepare the test database:
-
-```sh
-npm ci
-npm run build
-npm run build:css
-RAILS_ENV=test bundle exec rails db:migrate
-RAILS_ENV=test bundle exec rake test
-```
-
-The main suite prepares isolated databases for its parallel workers. Set `RAILS_ENV=test` explicitly so test preparation does not depend on your development database. Compiled assets are required by tests that render admin pages; rebuild them after changing JavaScript or stylesheets.
-
-Run the browser/system tests separately (requires Chrome or Chromium):
-
-```sh
-RAILS_ENV=test SKIP_COV=true bundle exec rake test:system
-```
+- `bin/rails db:migrate RAILS_ENV=test`
+- `rake db:test:prepare`
+- `rake test`
 
 #### Acknowledgements
 
@@ -168,5 +151,5 @@ RAILS_ENV=test SKIP_COV=true bundle exec rake test:system
 
 ---
 
-Copyright 2010-2019 Oleg Khabarov, 2024-2026 ShakaCode LLC, 2026 Andrew vonderLuft
+Copyright 2010-2019 Oleg Khabarov, 2024-2026 ShakaCode LLC
 Released under the [MIT license](LICENSE)

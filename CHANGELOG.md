@@ -12,9 +12,18 @@ This changelog follows the project's lineage: **Comfortable Mexican Sofa → Com
 
 ## [Unreleased]
 
+## [v3.2.1] - 2026-09-17
+
 ### Fixed
 
 - Fix CI eager loading after the gem rename by excluding the explicitly required `comfy_middle_seat` entrypoint and version directory from Zeitwerk autoloading. Add a regression test that also checks eager loading outside CI.
+
+### Changed
+
+- Update the admin footer branding and repository link to Comfy Middle Seat while retaining `ComfortableMediaSurfer::VERSION`.
+- Check that `COVERALLS_REPO_TOKEN` is configured before running the coverage job, with a clear error when it is missing.
+- Document asset compilation and explicit test database setup, along with commands for running the main and browser/system test suites.
+- Update README badges and release documentation, preserving the distinction between Seat releases and inherited Surfer history.
 
 ## [v3.2.0] - 2026-09-17
 
@@ -170,7 +179,8 @@ First release of `comfortable_media_surfer`. This new gem is a revival of [Comfo
 
 - Rebranded **ComfortableMexicanSofa** as **ComfortableMediaSurfer** in order to publish new gem (database table names and schema have not changed).
 
-[Unreleased]: https://github.com/avonderluft/comfy-middle-seat/compare/v3.2.0...master
+[Unreleased]: https://github.com/avonderluft/comfy-middle-seat/compare/v3.2.1...master
+[v3.2.1]: https://github.com/avonderluft/comfy-middle-seat/compare/v3.2.0...v3.2.1
 [v3.2.0]: https://github.com/avonderluft/comfy-middle-seat/compare/eeb5d590f47b5d6bb70191fb81c781540753fa97...v3.2.0
 [v3.1.7]: https://github.com/shakacode/comfortable-media-surfer/compare/v3.1.6...v3.1.7
 [v3.1.6]: https://github.com/shakacode/comfortable-media-surfer/compare/v3.1.5...v3.1.6

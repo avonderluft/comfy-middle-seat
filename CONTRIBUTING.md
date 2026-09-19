@@ -1,10 +1,10 @@
 # Contributing
 
-Contribute your code to ComfortableMediaSurfer in 5 easy steps:
+Contribute to [Comfy Middle Seat](https://github.com/avonderluft/comfy-middle-seat) in five steps:
 
 ### 1. Fork it
 
-Fork the project. Optionally, create a branch you want to work on.
+Fork the [current repository](https://github.com/avonderluft/comfy-middle-seat). Optionally, create a branch for your work.
 
 ### 2. Get it running locally
 
@@ -25,9 +25,12 @@ Fork the project. Optionally, create a branch you want to work on.
 
 ### 3. Hack away
 
-- Create a few small pull requests instead of a humoungous one. I can merge small stuff faster.
-- When adding new code just make sure it follows the same style as the existing code.
-- Avoid adding 3rd party dependencies if you can.
+- Use the current `ComfyMiddleSeat` Ruby namespace and `comfy_middle_seat` internal paths. New configuration examples and generated initializers belong in `config/initializers/comfy_middle_seat.rb`; do not reintroduce `ComfortableMediaSurfer` as a current API.
+- Keep the existing `comfy_cms_*` database tables and schema stable. The namespace and internal-path decoupling does not require a database migration.
+- Historical release notes, acknowledgements, and upstream links may intentionally retain the Comfortable Media Surfer name.
+- Create a few small pull requests instead of one huge pull request. Smaller changes can be reviewed and merged faster.
+- When adding new code, make sure it follows the same style as the existing code.
+- Avoid adding third-party dependencies if you can.
 - Tests please, but nothing complicated. UnitTest / Fixtures all the way. Make sure all tests pass.
 - Run `bundle exec rubocop` and fix any issues raised.
 

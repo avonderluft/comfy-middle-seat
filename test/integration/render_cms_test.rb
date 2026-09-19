@@ -161,7 +161,7 @@ class RenderCmsIntergrationTest < ActionDispatch::IntegrationTest
   def test_explicit_cms_page_failure
     page = comfy_cms_pages(:child)
     page.update(slug: 'invalid')
-    assert_raises ComfortableMediaSurfer::MissingPage do
+    assert_raises ComfyMiddleSeat::MissingPage do
       get '/render-page?type=page_explicit'
     end
   end
@@ -176,7 +176,7 @@ class RenderCmsIntergrationTest < ActionDispatch::IntegrationTest
   end
 
   def test_explicit_with_site_failure
-    assert_raises ComfortableMediaSurfer::MissingSite do
+    assert_raises ComfyMiddleSeat::MissingSite do
       get '/render-page?type=page_explicit_with_site'
     end
   end
@@ -245,7 +245,7 @@ class RenderCmsIntergrationTest < ActionDispatch::IntegrationTest
   end
 
   def test_cms_layout_failure
-    assert_raises ComfortableMediaSurfer::MissingLayout do
+    assert_raises ComfyMiddleSeat::MissingLayout do
       get '/render-layout?type=layout_invalid'
     end
   end
@@ -260,7 +260,7 @@ class RenderCmsIntergrationTest < ActionDispatch::IntegrationTest
   end
 
   def test_cms_layout_defaults_with_site_failure
-    assert_raises ComfortableMediaSurfer::MissingSite do
+    assert_raises ComfyMiddleSeat::MissingSite do
       get '/render-layout?type=layout_defaults_with_site'
     end
   end

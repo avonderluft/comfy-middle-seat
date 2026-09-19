@@ -8,7 +8,7 @@ class ContentTagsFragmentTest < ActiveSupport::TestCase
   end
 
   def test_init
-    tag = ComfortableMediaSurfer::Content::Tags::Fragment.new(context: @page, params: ['content'])
+    tag = ComfyMiddleSeat::Content::Tags::Fragment.new(context: @page, params: ['content'])
     assert_equal @page,     tag.context
     assert_equal 'content', tag.identifier
     assert_equal true,      tag.renderable
@@ -16,7 +16,7 @@ class ContentTagsFragmentTest < ActiveSupport::TestCase
   end
 
   def test_init_with_params
-    tag = ComfortableMediaSurfer::Content::Tags::Fragment.new(
+    tag = ComfyMiddleSeat::Content::Tags::Fragment.new(
       context: @page,
       params: ['content', { 'render' => 'false', 'namespace' => 'test' }]
     )
@@ -26,26 +26,26 @@ class ContentTagsFragmentTest < ActiveSupport::TestCase
 
   def test_init_without_identifier
     message = 'Missing identifier for fragment tag: {{cms:markdown}}'
-    error = assert_raises ComfortableMediaSurfer::Content::Tag::Error do
-      ComfortableMediaSurfer::Content::Tags::Fragment.new(context: @page, source: '{{cms:markdown}}')
+    error = assert_raises ComfyMiddleSeat::Content::Tag::Error do
+      ComfyMiddleSeat::Content::Tags::Fragment.new(context: @page, source: '{{cms:markdown}}')
     end
     assert_equal message, error.message
   end
 
   def test_fragment
-    tag = ComfortableMediaSurfer::Content::Tags::Fragment.new(context: @page, params: ['content'])
+    tag = ComfyMiddleSeat::Content::Tags::Fragment.new(context: @page, params: ['content'])
     assert_equal comfy_cms_fragments(:default), tag.fragment
   end
 
   def test_fragment_new_record
-    tag = ComfortableMediaSurfer::Content::Tags::Fragment.new(context: @page, params: ['new'])
+    tag = ComfyMiddleSeat::Content::Tags::Fragment.new(context: @page, params: ['new'])
     fragment = tag.fragment
     assert fragment.is_a?(Comfy::Cms::Fragment)
     assert fragment.new_record?
   end
 
   def test_content
-    tag = ComfortableMediaSurfer::Content::Tags::Fragment.new(context: @page, params: ['content'])
+    tag = ComfyMiddleSeat::Content::Tags::Fragment.new(context: @page, params: ['content'])
     assert_equal 'content', tag.content
     error = assert_raises RuntimeError do
       tag.form_field
@@ -54,17 +54,17 @@ class ContentTagsFragmentTest < ActiveSupport::TestCase
   end
 
   def test_content_new_record
-    tag = ComfortableMediaSurfer::Content::Tags::Fragment.new(context: @page, params: ['new'])
+    tag = ComfyMiddleSeat::Content::Tags::Fragment.new(context: @page, params: ['new'])
     assert_nil tag.content
   end
 
   def test_render
-    tag = ComfortableMediaSurfer::Content::Tags::Fragment.new(context: @page, params: ['content'])
+    tag = ComfyMiddleSeat::Content::Tags::Fragment.new(context: @page, params: ['content'])
     assert_equal 'content', tag.render
   end
 
   def test_render_when_not_renderable
-    tag = ComfortableMediaSurfer::Content::Tags::Fragment.new(
+    tag = ComfyMiddleSeat::Content::Tags::Fragment.new(
       context: @page,
       params: ['content', { 'render' => 'false' }]
     )

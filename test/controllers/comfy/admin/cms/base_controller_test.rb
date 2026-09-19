@@ -10,7 +10,7 @@ class Comfy::Admin::Cms::BaseControllerTest < ActionDispatch::IntegrationTest
   end
 
   def test_get_jump_with_redirect_setting
-    ComfortableMediaSurfer.config.admin_route_redirect = '/cms-admin/sites'
+    ComfyMiddleSeat.config.admin_route_redirect = '/cms-admin/sites'
     r :get, comfy_admin_cms_path
     assert_response :redirect
     assert_redirected_to '/cms-admin/sites'

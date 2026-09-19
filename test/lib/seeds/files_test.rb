@@ -12,7 +12,7 @@ class SeedsFilesTest < ActiveSupport::TestCase
     Comfy::Cms::File.delete_all
 
     assert_difference -> { Comfy::Cms::File.count } do
-      ComfortableMediaSurfer::Seeds::File::Importer.new('sample-site', 'default-site').import!
+      ComfyMiddleSeat::Seeds::File::Importer.new('sample-site', 'default-site').import!
     end
 
     assert file = Comfy::Cms::File.last
@@ -34,7 +34,7 @@ class SeedsFilesTest < ActiveSupport::TestCase
     assert_equal 'default description', file.description
 
     assert_no_difference -> { Comfy::Cms::File.count } do
-      ComfortableMediaSurfer::Seeds::File::Importer.new('sample-site', 'default-site').import!
+      ComfyMiddleSeat::Seeds::File::Importer.new('sample-site', 'default-site').import!
       file.reload
       assert_equal 'default.jpg',           file.attachment.filename.to_s
       assert_equal 'Seed File',             file.label
@@ -44,13 +44,13 @@ class SeedsFilesTest < ActiveSupport::TestCase
 
   def test_update_ignore
     file = comfy_cms_files(:default)
-    file_path = File.join(ComfortableMediaSurfer.config.seeds_path, 'sample-site', 'files', 'default.jpg')
-    attr_path = File.join(ComfortableMediaSurfer.config.seeds_path, 'sample-site', 'files', '_default.jpg.yml')
+    file_path = File.join(ComfyMiddleSeat.config.seeds_path, 'sample-site', 'files', 'default.jpg')
+    attr_path = File.join(ComfyMiddleSeat.config.seeds_path, 'sample-site', 'files', '_default.jpg.yml')
 
     assert file.updated_at >= File.mtime(file_path)
     assert file.updated_at >= File.mtime(attr_path)
 
-    ComfortableMediaSurfer::Seeds::File::Importer.new('sample-site', 'default-site').import!
+    ComfyMiddleSeat::Seeds::File::Importer.new('sample-site', 'default-site').import!
     file.reload
     assert_equal 'default.jpg',         file.attachment.filename.to_s
     assert_equal 'default file',        file.label
@@ -62,7 +62,7 @@ class SeedsFilesTest < ActiveSupport::TestCase
     active_storage_blobs(:default).update_column(:filename, 'old')
 
     assert_no_difference -> { Comfy::Cms::File.count } do
-      ComfortableMediaSurfer::Seeds::File::Importer.new('sample-site', 'default-site').import!
+      ComfyMiddleSeat::Seeds::File::Importer.new('sample-site', 'default-site').import!
       assert file = Comfy::Cms::File.last
       assert_equal 'default.jpg',           file.attachment.filename.to_s
       assert_equal 'Seed File',             file.label
@@ -73,7 +73,7 @@ class SeedsFilesTest < ActiveSupport::TestCase
   end
 
   def test_export
-    host_path = File.join(ComfortableMediaSurfer.config.seeds_path, 'test-site')
+    host_path = File.join(ComfyMiddleSeat.config.seeds_path, 'test-site')
     attr_path = File.join(host_path, 'files/_default.jpg.yml')
     file_path = File.join(host_path, 'files/default.jpg')
 
@@ -82,7 +82,7 @@ class SeedsFilesTest < ActiveSupport::TestCase
       File.read(File.join(Rails.root, 'db/cms_seeds/sample-site/files/default.jpg'))
     )
 
-    ComfortableMediaSurfer::Seeds::File::Exporter.new('default-site', 'test-site').export!
+    ComfyMiddleSeat::Seeds::File::Exporter.new('default-site', 'test-site').export!
 
     assert File.exist?(attr_path)
     assert File.exist?(file_path)
@@ -99,7 +99,7 @@ class SeedsFilesTest < ActiveSupport::TestCase
     Comfy::Cms::File.delete_all
     initial_file_descriptors = count_open_file_descriptors
 
-    ComfortableMediaSurfer::Seeds::File::Importer.new('sample-site', 'default-site').import!
+    ComfyMiddleSeat::Seeds::File::Importer.new('sample-site', 'default-site').import!
     final_file_descriptors = count_open_file_descriptors
 
     assert_operator initial_file_descriptors, :>=, final_file_descriptors,

@@ -50,7 +50,7 @@ class Comfy::Cms::ContentControllerTest < ActionDispatch::IntegrationTest
   end
 
   def test_show_as_json_with_options
-    ComfortableMediaSurfer.config.page_to_json_options = {
+    ComfyMiddleSeat.config.page_to_json_options = {
       include: { fragments: { only: :identifier } },
       except: [:position]
     }
@@ -70,7 +70,7 @@ class Comfy::Cms::ContentControllerTest < ActionDispatch::IntegrationTest
   end
 
   def test_show_as_json_with_translation
-    ComfortableMediaSurfer.config.page_to_json_options = {
+    ComfyMiddleSeat.config.page_to_json_options = {
       methods: [:content],
       include: { fragments: { only: :content } }
     }
@@ -208,7 +208,7 @@ class Comfy::Cms::ContentControllerTest < ActionDispatch::IntegrationTest
   end
 
   def test_show_with_erb_disabled
-    assert_equal false, ComfortableMediaSurfer.config.allow_erb
+    assert_equal false, ComfyMiddleSeat.config.allow_erb
 
     @site.pages.create!(
       label: 'erb',
@@ -227,7 +227,7 @@ class Comfy::Cms::ContentControllerTest < ActionDispatch::IntegrationTest
   end
 
   def test_show_with_irb_enabled
-    ComfortableMediaSurfer.config.allow_erb = true
+    ComfyMiddleSeat.config.allow_erb = true
 
     @site.pages.create!(
       label: 'erb',

@@ -13,7 +13,7 @@ class ContentTagsBreadcrumbsTest < ActiveSupport::TestCase
   end
 
   def test_init
-    tag = ComfortableMediaSurfer::Content::Tags::Breadcrumbs.new(
+    tag = ComfyMiddleSeat::Content::Tags::Breadcrumbs.new(
       context: @gr_gr_child,
       params: []
     )
@@ -21,7 +21,7 @@ class ContentTagsBreadcrumbsTest < ActiveSupport::TestCase
   end
 
   def test_init_with_style
-    tag = ComfortableMediaSurfer::Content::Tags::Breadcrumbs.new(
+    tag = ComfyMiddleSeat::Content::Tags::Breadcrumbs.new(
       context: @gr_gr_child,
       params: [{ 'style' => 'font-weight: bold' }]
     )
@@ -29,7 +29,7 @@ class ContentTagsBreadcrumbsTest < ActiveSupport::TestCase
   end
 
   def test_render
-    tag = ComfortableMediaSurfer::Content::Tags::Breadcrumbs.new(
+    tag = ComfyMiddleSeat::Content::Tags::Breadcrumbs.new(
       context: @gr_gr_child,
       params: [{ 'style' => 'font-weight: bold' }]
     )

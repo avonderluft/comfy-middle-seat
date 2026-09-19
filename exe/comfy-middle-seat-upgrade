@@ -1,0 +1,34 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require 'optparse'
+
+$LOAD_PATH.unshift File.expand_path('../lib', __dir__)
+require 'comfy_middle_seat/initializer_upgrader'
+
+options = { root: Dir.pwd, dry_run: false }
+parser = OptionParser.new do |opts|
+  opts.banner = 'Usage: comfy-middle-seat-upgrade [options]'
+
+  opts.on('--root PATH', 'Rails application root (defaults to the current directory)') do |path|
+    options[:root] = path
+  end
+
+  opts.on('--dry-run', 'Describe changes without modifying files') do
+    options[:dry_run] = true
+  end
+
+  opts.on('-h', '--help', 'Show this help') do
+    puts opts
+    exit
+  end
+end
+
+begin
+  parser.parse!
+  ComfyMiddleSeat::InitializerUpgrader.new(root: options[:root]).call(dry_run: options[:dry_run])
+rescue OptionParser::ParseError, ComfyMiddleSeat::InitializerUpgrader::Error => e
+  warn "Error: #{e.message}"
+  warn parser
+  exit 1
+end

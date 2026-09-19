@@ -16,7 +16,7 @@ class ContentTagsChildrenTest < ActiveSupport::TestCase
   end
 
   def test_init
-    tag = ComfortableMediaSurfer::Content::Tags::Children.new(
+    tag = ComfyMiddleSeat::Content::Tags::Children.new(
       context: @parent,
       params: []
     )
@@ -24,7 +24,7 @@ class ContentTagsChildrenTest < ActiveSupport::TestCase
   end
 
   def test_init_with_style
-    tag = ComfortableMediaSurfer::Content::Tags::Children.new(
+    tag = ComfyMiddleSeat::Content::Tags::Children.new(
       context: @parent,
       params: [{ 'style' => 'font-weight: bold' }]
     )
@@ -32,7 +32,7 @@ class ContentTagsChildrenTest < ActiveSupport::TestCase
   end
 
   def test_render
-    tag = ComfortableMediaSurfer::Content::Tags::Children.new(
+    tag = ComfyMiddleSeat::Content::Tags::Children.new(
       context: @parent,
       params: [{ 'style' => 'font-weight: bold' }]
     )
@@ -48,7 +48,7 @@ class ContentTagsChildrenTest < ActiveSupport::TestCase
   end
 
   def test_render_with_exclusions
-    tag = ComfortableMediaSurfer::Content::Tags::Children.new(
+    tag = ComfyMiddleSeat::Content::Tags::Children.new(
       context: @parent,
       params: [{ 'exclude' => 'child2,child3' }]
     )
@@ -60,7 +60,7 @@ class ContentTagsChildrenTest < ActiveSupport::TestCase
   end
 
   def test_render_with_no_kids
-    tag = ComfortableMediaSurfer::Content::Tags::Children.new(
+    tag = ComfyMiddleSeat::Content::Tags::Children.new(
       context: @child4,
       params: []
     )

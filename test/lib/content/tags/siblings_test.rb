@@ -15,7 +15,7 @@ class ContentTagsSiblingsTest < ActiveSupport::TestCase
   end
 
   def test_init
-    tag = ComfortableMediaSurfer::Content::Tags::Siblings.new(
+    tag = ComfyMiddleSeat::Content::Tags::Siblings.new(
       context: @third,
       params: []
     )
@@ -23,7 +23,7 @@ class ContentTagsSiblingsTest < ActiveSupport::TestCase
   end
 
   def test_init_with_style
-    tag = ComfortableMediaSurfer::Content::Tags::Siblings.new(
+    tag = ComfyMiddleSeat::Content::Tags::Siblings.new(
       context: @third,
       params: [{ 'style' => 'font-weight: bold' }]
     )
@@ -31,7 +31,7 @@ class ContentTagsSiblingsTest < ActiveSupport::TestCase
   end
 
   def test_render
-    tag = ComfortableMediaSurfer::Content::Tags::Siblings.new(
+    tag = ComfyMiddleSeat::Content::Tags::Siblings.new(
       context: @third,
       params: [{ 'style' => 'font-weight: bold' }]
     )
@@ -42,7 +42,7 @@ class ContentTagsSiblingsTest < ActiveSupport::TestCase
   end
 
   def test_render_with_no_siblings
-    tag = ComfortableMediaSurfer::Content::Tags::Siblings.new(
+    tag = ComfyMiddleSeat::Content::Tags::Siblings.new(
       context: @page,
       params: []
     )
@@ -50,7 +50,7 @@ class ContentTagsSiblingsTest < ActiveSupport::TestCase
   end
 
   def test_render_with_exclusions
-    tag = ComfortableMediaSurfer::Content::Tags::Siblings.new(
+    tag = ComfyMiddleSeat::Content::Tags::Siblings.new(
       context: @third,
       params: [{ 'exclude' => 'second,fourth' }]
     )
@@ -60,7 +60,7 @@ class ContentTagsSiblingsTest < ActiveSupport::TestCase
   end
 
   def test_render_with_current_page_excluded
-    tag = ComfortableMediaSurfer::Content::Tags::Siblings.new(
+    tag = ComfyMiddleSeat::Content::Tags::Siblings.new(
       context: @second,
       params: [{ 'exclude' => 'second,fourth' }]
     )

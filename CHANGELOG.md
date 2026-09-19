@@ -12,6 +12,13 @@ This changelog follows the project's lineage: **Comfortable Mexican Sofa → Com
 
 ## [Unreleased]
 
+### Changed
+
+- Complete the implementation namespace and internal-path decoupling from Comfortable Media Surfer: current Ruby APIs now use `ComfyMiddleSeat`, library files live under `comfy_middle_seat`, and generated configuration belongs at `config/initializers/comfy_middle_seat.rb`.
+- Require applications upgrading from `comfortable_media_surfer` to rename the initializer and replace Ruby configuration or integration references from `ComfortableMediaSurfer` to `ComfyMiddleSeat`. The existing `comfy_cms_*` database tables, schema, and stored data remain unchanged, so no database migration is required.
+- Add the standalone `comfy-middle-seat-upgrade` executable to safely preview and convert a legacy initializer without booting Rails, preserving the original as a backup and refusing ambiguous or destructive changes.
+- Preserve Comfortable Media Surfer names and URLs where they describe project history, acknowledgements, inherited release notes, or upstream resources rather than the current API.
+
 ## [v3.2.1] - 2026-09-17
 
 ### Fixed
@@ -20,7 +27,7 @@ This changelog follows the project's lineage: **Comfortable Mexican Sofa → Com
 
 ### Changed
 
-- Update the admin footer branding and repository link to Comfy Middle Seat while retaining `ComfortableMediaSurfer::VERSION`.
+- At the time of this release, update the admin footer branding and repository link to Comfy Middle Seat while retaining the then-current `ComfortableMediaSurfer::VERSION` compatibility constant.
 - Check that `COVERALLS_REPO_TOKEN` is configured before running the coverage job, with a clear error when it is missing.
 - Document asset compilation and explicit test database setup, along with commands for running the main and browser/system test suites.
 - Update README badges and release documentation, preserving the distinction between Seat releases and inherited Surfer history.
@@ -32,7 +39,7 @@ This changelog follows the project's lineage: **Comfortable Mexican Sofa → Com
 ### Changed
 
 - Publish the gem as `comfy_middle_seat` and rename the gemspec to `comfy_middle_seat.gemspec`.
-- Preserve the `ComfortableMediaSurfer` Ruby namespace, configuration, routes, and database tables. Existing Surfer applications do not need a namespace or schema migration for the rename.
+- At the time of v3.2.0, preserve the `ComfortableMediaSurfer` Ruby namespace and configuration while retaining the existing routes and database tables. The Unreleased namespace decoupling supersedes the Ruby compatibility behavior; the database compatibility remains unchanged.
 - Move the version definition to `lib/comfy_middle_seat/version.rb` for release tooling, retaining a compatibility loader at the old path.
 - Run the main test suite in six isolated processes by default, with merged coverage and a separate `test:serial` task for Coveralls.
 - Update CI coverage to Rails 7.2, 8.0, and 8.1, with a separate browser/system test job.
@@ -48,9 +55,9 @@ This changelog follows the project's lineage: **Comfortable Mexican Sofa → Com
 - Fix file modal cleanup and reinitialization, and expose jQuery for Bootstrap integration.
 - Remove the unsupported `:escape` option before JSON parsing while preserving other parser options.
 
-### Upgrading from Surfer
+### Historical v3.2.0 upgrade behavior
 
-Replace `comfortable_media_surfer` with `comfy_middle_seat` in your Gemfile and run `bundle install`. Do not include both gems. Keep existing `ComfortableMediaSurfer` configuration and initializer names.
+For v3.2.0, users replaced `comfortable_media_surfer` with `comfy_middle_seat` in the Gemfile while keeping the former Ruby namespace and initializer name. That release-specific compatibility guidance is preserved for history but is superseded by the Unreleased change: current upgrades must rename the initializer to `config/initializers/comfy_middle_seat.rb` and replace `ComfortableMediaSurfer` Ruby references with `ComfyMiddleSeat`. Neither stage changes the database schema.
 
 ## Comfortable Media Surfer — inherited releases
 

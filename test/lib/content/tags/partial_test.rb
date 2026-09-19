@@ -4,7 +4,7 @@ require_relative '../../../test_helper'
 
 class ContentTagsPartialTest < ActiveSupport::TestCase
   def test_init
-    tag = ComfortableMediaSurfer::Content::Tags::Partial.new(
+    tag = ComfyMiddleSeat::Content::Tags::Partial.new(
       context: @page,
       params: ['path/to/partial']
     )
@@ -13,7 +13,7 @@ class ContentTagsPartialTest < ActiveSupport::TestCase
   end
 
   def test_init_with_locals
-    tag = ComfortableMediaSurfer::Content::Tags::Partial.new(
+    tag = ComfyMiddleSeat::Content::Tags::Partial.new(
       context: @page,
       params: ['path/to/partial', { 'key' => 'val' }]
     )
@@ -23,8 +23,8 @@ class ContentTagsPartialTest < ActiveSupport::TestCase
 
   def test_init_without_path
     message = 'Missing path for partial tag'
-    error = assert_raises ComfortableMediaSurfer::Content::Tag::Error do
-      ComfortableMediaSurfer::Content::Tags::Partial.new(
+    error = assert_raises ComfyMiddleSeat::Content::Tag::Error do
+      ComfyMiddleSeat::Content::Tags::Partial.new(
         context: @page,
         params: [{ 'key' => 'val' }]
       )
@@ -33,7 +33,7 @@ class ContentTagsPartialTest < ActiveSupport::TestCase
   end
 
   def test_content
-    tag = ComfortableMediaSurfer::Content::Tags::Partial.new(
+    tag = ComfyMiddleSeat::Content::Tags::Partial.new(
       context: @page,
       params: ['path/to/partial', { 'key' => 'val' }]
     )
@@ -41,7 +41,7 @@ class ContentTagsPartialTest < ActiveSupport::TestCase
   end
 
   def test_render
-    tag = ComfortableMediaSurfer::Content::Tags::Partial.new(
+    tag = ComfyMiddleSeat::Content::Tags::Partial.new(
       context: @page,
       params: ['path/to/partial', { 'key' => 'val' }]
     )
@@ -49,15 +49,15 @@ class ContentTagsPartialTest < ActiveSupport::TestCase
   end
 
   def test_render_with_whitelist
-    ComfortableMediaSurfer.config.allowed_partials = ['safe/path']
+    ComfyMiddleSeat.config.allowed_partials = ['safe/path']
 
-    tag = ComfortableMediaSurfer::Content::Tags::Partial.new(
+    tag = ComfyMiddleSeat::Content::Tags::Partial.new(
       context: @page,
       params: ['path/to/partial']
     )
     assert_equal '', tag.render
 
-    tag = ComfortableMediaSurfer::Content::Tags::Partial.new(
+    tag = ComfyMiddleSeat::Content::Tags::Partial.new(
       context: @page,
       params: ['safe/path']
     )
@@ -65,7 +65,7 @@ class ContentTagsPartialTest < ActiveSupport::TestCase
   end
 
   def test_render_with_erb_injection
-    tag = ComfortableMediaSurfer::Content::Tags::Partial.new(
+    tag = ComfyMiddleSeat::Content::Tags::Partial.new(
       context: @page,
       params: ["foo\#{:bar}", { 'key' => "va\#{:l}ue" }]
     )

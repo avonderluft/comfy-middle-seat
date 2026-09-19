@@ -12,12 +12,12 @@ namespace :comfy do
       puts "Importing CMS Seed data from Folder [#{from}] to Site [#{to}] ..."
 
       # changing so that logger is going straight to screen
-      logger = ComfortableMediaSurfer.logger
-      ComfortableMediaSurfer.logger = Logger.new($stdout)
+      logger = ComfyMiddleSeat.logger
+      ComfyMiddleSeat.logger = Logger.new($stdout)
 
-      ComfortableMediaSurfer::Seeds::Importer.new(from, to).import!(classes)
+      ComfyMiddleSeat::Seeds::Importer.new(from, to).import!(classes)
 
-      ComfortableMediaSurfer.logger = logger
+      ComfyMiddleSeat.logger = logger
     end
 
     desc 'Export database data into CMS Seed files (from: site identifier, to: folder name, classes: class name[s])'
@@ -29,12 +29,12 @@ namespace :comfy do
       puts "Exporting CMS data from Site [#{from}] to Folder [#{to}] ..."
 
       # changing so that logger is going straight to screen
-      logger = ComfortableMediaSurfer.logger
-      ComfortableMediaSurfer.logger = Logger.new($stdout)
+      logger = ComfyMiddleSeat.logger
+      ComfyMiddleSeat.logger = Logger.new($stdout)
 
-      ComfortableMediaSurfer::Seeds::Exporter.new(from, to).export!(classes)
+      ComfyMiddleSeat::Seeds::Exporter.new(from, to).export!(classes)
 
-      ComfortableMediaSurfer.logger = logger
+      ComfyMiddleSeat.logger = logger
     end
   end
 end

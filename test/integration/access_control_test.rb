@@ -10,8 +10,8 @@ class AccessControlTest < ActionDispatch::IntegrationTest
       end
     end
 
-    # faking ComfortableMediaSurfer.config.admin_auth = 'AccessControlTest::TestAuthentication'
-    # faking ComfortableMediaSurfer.config.public_auth = 'AccessControlTest::TestAuthentication'
+    # faking ComfyMiddleSeat.config.admin_auth = 'AccessControlTest::TestAuthentication'
+    # faking ComfyMiddleSeat.config.public_auth = 'AccessControlTest::TestAuthentication'
     class SitesController   < Comfy::Admin::Cms::SitesController; include Authenticate; end
     class ContentController < Comfy::Cms::ContentController;      include Authenticate; end
   end
@@ -24,8 +24,8 @@ class AccessControlTest < ActionDispatch::IntegrationTest
       end
     end
 
-    # faking ComfortableMediaSurfer.config.admin_authorization = 'AccessControlTest::TestAuthorization'
-    # faking ComfortableMediaSurfer.config.public_authorization = 'AccessControlTest::TestAuthorization'
+    # faking ComfyMiddleSeat.config.admin_authorization = 'AccessControlTest::TestAuthorization'
+    # faking ComfyMiddleSeat.config.public_authorization = 'AccessControlTest::TestAuthorization'
     class SitesController         < Comfy::Admin::Cms::SitesController;             include Authorize; end
     class LayoutsController       < Comfy::Admin::Cms::LayoutsController;           include Authorize; end
     class PagesController         < Comfy::Admin::Cms::PagesController;             include Authorize; end
@@ -39,8 +39,8 @@ class AccessControlTest < ActionDispatch::IntegrationTest
 
   # -- Tests -------------------------------------------------------------------
   def test_admin_authentication_default
-    assert_equal 'ComfortableMediaSurfer::AccessControl::AdminAuthentication',
-                 ComfortableMediaSurfer.config.admin_auth
+    assert_equal 'ComfyMiddleSeat::AccessControl::AdminAuthentication',
+                 ComfyMiddleSeat.config.admin_auth
 
     get comfy_admin_cms_sites_path
     assert_response :unauthorized
@@ -62,10 +62,10 @@ class AccessControlTest < ActionDispatch::IntegrationTest
   end
 
   def test_admin_authorization_default
-    assert_equal 'ComfortableMediaSurfer::AccessControl::AdminAuthorization',
-                 ComfortableMediaSurfer.config.admin_authorization
+    assert_equal 'ComfyMiddleSeat::AccessControl::AdminAuthorization',
+                 ComfyMiddleSeat.config.admin_authorization
 
-    Comfy::Admin::Cms::BaseController.include ComfortableMediaSurfer::AccessControl::AdminAuthorization
+    Comfy::Admin::Cms::BaseController.include ComfyMiddleSeat::AccessControl::AdminAuthorization
     r :get, "/admin/sites/#{comfy_cms_sites(:default).to_param}/edit"
     assert_response :success, response.body
   end
@@ -130,16 +130,16 @@ class AccessControlTest < ActionDispatch::IntegrationTest
   end
 
   def test_public_authentication_default
-    assert_equal 'ComfortableMediaSurfer::AccessControl::PublicAuthentication',
-                 ComfortableMediaSurfer.config.public_auth
+    assert_equal 'ComfyMiddleSeat::AccessControl::PublicAuthentication',
+                 ComfyMiddleSeat.config.public_auth
 
     get '/'
     assert_response :success, response.body
   end
 
   def test_public_authorization_default
-    assert_equal 'ComfortableMediaSurfer::AccessControl::PublicAuthorization',
-                 ComfortableMediaSurfer.config.public_authorization
+    assert_equal 'ComfyMiddleSeat::AccessControl::PublicAuthorization',
+                 ComfyMiddleSeat.config.public_authorization
 
     get '/'
     assert_response :success, response.body

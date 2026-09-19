@@ -101,7 +101,7 @@ class SitesIntegrationTest < ActionDispatch::IntegrationTest
   end
 
   def test_get_admin_with_forced_locale
-    ComfortableMediaSurfer.config.admin_locale = :en
+    ComfyMiddleSeat.config.admin_locale = :en
 
     comfy_cms_sites(:default).update_columns(locale: 'fr')
     r :get, comfy_admin_cms_site_pages_path(comfy_cms_sites(:default))

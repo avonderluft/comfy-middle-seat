@@ -20,7 +20,7 @@ class SeedsIntergrationTest < ActionDispatch::IntegrationTest
   end
 
   def test_seeds_enabled
-    ComfortableMediaSurfer.config.enable_seeds = true
+    ComfyMiddleSeat.config.enable_seeds = true
     Comfy::Cms::Layout.destroy_all
     Comfy::Cms::Page.destroy_all
     Comfy::Cms::Snippet.destroy_all
@@ -57,7 +57,7 @@ class SeedsIntergrationTest < ActionDispatch::IntegrationTest
   end
 
   def test_fixtures_enabled_in_admin
-    ComfortableMediaSurfer.config.enable_seeds = true
+    ComfyMiddleSeat.config.enable_seeds = true
     Comfy::Cms::Layout.destroy_all
     Comfy::Cms::Page.destroy_all
     Comfy::Cms::Snippet.destroy_all

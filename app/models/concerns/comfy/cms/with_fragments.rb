@@ -77,7 +77,7 @@ module Comfy::Cms::WithFragments
   # duplicate tags on the layout. That's wierd (but still works).
   def fragment_nodes
     nodes
-      .grep(ComfortableMediaSurfer::Content::Tags::Fragment)
+      .grep(ComfyMiddleSeat::Content::Tags::Fragment)
       .uniq(&:identifier)
   end
 
@@ -111,7 +111,7 @@ module Comfy::Cms::WithFragments
 protected
 
   def renderer
-    ComfortableMediaSurfer::Content::Renderer.new(self)
+    ComfyMiddleSeat::Content::Renderer.new(self)
   end
 
   def nodes

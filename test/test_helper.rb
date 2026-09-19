@@ -22,9 +22,9 @@ unless ENV['SKIP_COV']
   SimpleCov.start 'rails' do
     add_filter 'lib/tasks'
     add_filter 'lib/generators'
-    add_filter 'lib/comfortable_media_surfer/engine'
-    add_filter 'lib/comfortable_media_surfer/routing' # TODO: add comprehensive tests for routes
-    add_filter 'lib/comfortable_media_surfer/version'
+    add_filter 'lib/comfy_middle_seat/engine'
+    add_filter 'lib/comfy_middle_seat/routing' # TODO: add comprehensive tests for routes
+    add_filter 'lib/comfy_middle_seat/version'
   end
 end
 
@@ -69,12 +69,12 @@ class ActiveSupport::TestCase
 
   # resetting default configuration
   def reset_config
-    ComfortableMediaSurfer.configure do |config|
-      config.cms_title            = 'ComfortableMediaSurfer CMS Engine'
-      config.admin_auth           = 'ComfortableMediaSurfer::AccessControl::AdminAuthentication'
-      config.admin_authorization  = 'ComfortableMediaSurfer::AccessControl::AdminAuthorization'
-      config.public_auth          = 'ComfortableMediaSurfer::AccessControl::PublicAuthentication'
-      config.public_authorization = 'ComfortableMediaSurfer::AccessControl::PublicAuthorization'
+    ComfyMiddleSeat.configure do |config|
+      config.cms_title            = 'ComfyMiddleSeat CMS Engine'
+      config.admin_auth           = 'ComfyMiddleSeat::AccessControl::AdminAuthentication'
+      config.admin_authorization  = 'ComfyMiddleSeat::AccessControl::AdminAuthorization'
+      config.public_auth          = 'ComfyMiddleSeat::AccessControl::PublicAuthentication'
+      config.public_authorization = 'ComfyMiddleSeat::AccessControl::PublicAuthorization'
       config.admin_route_redirect = ''
       config.enable_seeds         = false
       config.seeds_path           = TEST_SEEDS_PATH
@@ -94,8 +94,8 @@ class ActiveSupport::TestCase
       config.public_cms_path      = nil
       config.page_to_json_options = { methods: [:content], except: [:content_cache] }
     end
-    ComfortableMediaSurfer::AccessControl::AdminAuthentication.username = 'user'
-    ComfortableMediaSurfer::AccessControl::AdminAuthentication.password = 'pass'
+    ComfyMiddleSeat::AccessControl::AdminAuthentication.username = 'user'
+    ComfyMiddleSeat::AccessControl::AdminAuthentication.password = 'pass'
   end
 
   def reset_locale
@@ -133,8 +133,8 @@ class ActionDispatch::IntegrationTest
   def r(method, path, options = {})
     headers = options[:headers] || {}
     headers['HTTP_AUTHORIZATION'] = ActionController::HttpAuthentication::Basic.encode_credentials(
-      ComfortableMediaSurfer::AccessControl::AdminAuthentication.username,
-      ComfortableMediaSurfer::AccessControl::AdminAuthentication.password
+      ComfyMiddleSeat::AccessControl::AdminAuthentication.username,
+      ComfyMiddleSeat::AccessControl::AdminAuthentication.password
     )
     options[:headers] = headers
     # send(:get, path, options)
@@ -142,9 +142,9 @@ class ActionDispatch::IntegrationTest
   end
 
   def with_routing
-    yield ComfortableMediaSurfer::Application.routes
+    yield ComfyMiddleSeat::Application.routes
   ensure
-    ComfortableMediaSurfer::Application.routes_reloader.reload!
+    ComfyMiddleSeat::Application.routes_reloader.reload!
   end
 end
 
@@ -256,8 +256,8 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   # Visiting path and passing in BasicAuth credentials at the same time
   # I have no idea how to set headers here.
   def visit_p(path)
-    username = ComfortableMediaSurfer::AccessControl::AdminAuthentication.username
-    password = ComfortableMediaSurfer::AccessControl::AdminAuthentication.password
+    username = ComfyMiddleSeat::AccessControl::AdminAuthentication.username
+    password = ComfyMiddleSeat::AccessControl::AdminAuthentication.password
     visit("http://#{username}:#{password}@#{Capybara.server_host}:#{Capybara.server_port}#{path}")
   end
 end

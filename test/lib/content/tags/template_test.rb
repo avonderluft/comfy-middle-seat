@@ -4,7 +4,7 @@ require_relative '../../../test_helper'
 
 class ContentTagsTemplateTest < ActiveSupport::TestCase
   def test_init
-    tag = ComfortableMediaSurfer::Content::Tags::Template.new(
+    tag = ComfyMiddleSeat::Content::Tags::Template.new(
       context: @page,
       params: ['path/to/template']
     )
@@ -13,14 +13,14 @@ class ContentTagsTemplateTest < ActiveSupport::TestCase
 
   def test_init_without_path
     message = 'Missing template path for template tag'
-    error = assert_raises ComfortableMediaSurfer::Content::Tag::Error do
-      ComfortableMediaSurfer::Content::Tags::Template.new(context: @page)
+    error = assert_raises ComfyMiddleSeat::Content::Tag::Error do
+      ComfyMiddleSeat::Content::Tags::Template.new(context: @page)
     end
     assert_equal message, error.message
   end
 
   def test_content
-    tag = ComfortableMediaSurfer::Content::Tags::Template.new(
+    tag = ComfyMiddleSeat::Content::Tags::Template.new(
       context: @page,
       params: ['path/to/template']
     )
@@ -29,7 +29,7 @@ class ContentTagsTemplateTest < ActiveSupport::TestCase
   end
 
   def test_render
-    tag = ComfortableMediaSurfer::Content::Tags::Template.new(
+    tag = ComfyMiddleSeat::Content::Tags::Template.new(
       context: @page,
       params: ['path/to/template']
     )
@@ -37,14 +37,14 @@ class ContentTagsTemplateTest < ActiveSupport::TestCase
   end
 
   def test_render_with_whitelist
-    ComfortableMediaSurfer.config.allowed_templates = ['allowed/path']
-    tag = ComfortableMediaSurfer::Content::Tags::Template.new(
+    ComfyMiddleSeat.config.allowed_templates = ['allowed/path']
+    tag = ComfyMiddleSeat::Content::Tags::Template.new(
       context: @page,
       params: ['allowed/path']
     )
     assert_equal '<%= render template: "allowed/path" %>', tag.render
 
-    tag = ComfortableMediaSurfer::Content::Tags::Template.new(
+    tag = ComfyMiddleSeat::Content::Tags::Template.new(
       context: @page,
       params: ['not_allowed/path']
     )
@@ -52,7 +52,7 @@ class ContentTagsTemplateTest < ActiveSupport::TestCase
   end
 
   def test_render_with_erb_injection
-    tag = ComfortableMediaSurfer::Content::Tags::Template.new(
+    tag = ComfyMiddleSeat::Content::Tags::Template.new(
       context: @page,
       params: ["va\#{:l}ue"]
     )

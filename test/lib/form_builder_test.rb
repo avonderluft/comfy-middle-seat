@@ -6,11 +6,11 @@ class FormBuilderTest < ActionView::TestCase
   make_my_diffs_pretty!
   setup do
     @page = comfy_cms_pages(:default)
-    @builder = ComfortableMediaSurfer::FormBuilder.new(:page, @page, self, bootstrap: { layout: 'horizontal' })
+    @builder = ComfyMiddleSeat::FormBuilder.new(:page, @page, self, bootstrap: { layout: 'horizontal' })
   end
 
   def test_fragment_field_for_text
-    tag = ComfortableMediaSurfer::Content::Tags::Text.new(context: @page, params: ['test'])
+    tag = ComfyMiddleSeat::Content::Tags::Text.new(context: @page, params: ['test'])
     actual = @builder.fragment_field(tag, 123)
     expected = if RAILS_EDGE
                  <<~HTML
@@ -39,7 +39,7 @@ class FormBuilderTest < ActionView::TestCase
   end
 
   def test_fragment_field_for_text_non_renderable
-    tag = ComfortableMediaSurfer::Content::Tags::Text.new(context: @page, params: ['test', { 'render' => 'false' }])
+    tag = ComfyMiddleSeat::Content::Tags::Text.new(context: @page, params: ['test', { 'render' => 'false' }])
     actual = @builder.fragment_field(tag, 123)
     expected = if RAILS_EDGE
                  <<~HTML
@@ -68,7 +68,7 @@ class FormBuilderTest < ActionView::TestCase
   end
 
   def test_fragment_field_for_text_with_content
-    tag = ComfortableMediaSurfer::Content::Tags::Text.new(context: @page, params: ['content'])
+    tag = ComfyMiddleSeat::Content::Tags::Text.new(context: @page, params: ['content'])
     actual = @builder.fragment_field(tag, 123)
     expected = if RAILS_EDGE
                  <<~HTML
@@ -97,7 +97,7 @@ class FormBuilderTest < ActionView::TestCase
   end
 
   def test_fragment_field_for_checkbox
-    tag = ComfortableMediaSurfer::Content::Tags::Checkbox.new(context: @page, params: ['test'])
+    tag = ComfyMiddleSeat::Content::Tags::Checkbox.new(context: @page, params: ['test'])
     actual = @builder.fragment_field(tag, 123)
     expected = if RAILS_EDGE
                  <<~HTML
@@ -132,7 +132,7 @@ class FormBuilderTest < ActionView::TestCase
   end
 
   def test_fragment_field_for_checkbox_with_value
-    tag = ComfortableMediaSurfer::Content::Tags::Checkbox.new(context: @page, params: ['boolean'])
+    tag = ComfyMiddleSeat::Content::Tags::Checkbox.new(context: @page, params: ['boolean'])
     actual = @builder.fragment_field(tag, 123)
     expected = if RAILS_EDGE
                  <<~HTML
@@ -167,7 +167,7 @@ class FormBuilderTest < ActionView::TestCase
   end
 
   def test_fragment_field_for_date
-    tag = ComfortableMediaSurfer::Content::Tags::Date.new(context: @page, params: ['test'])
+    tag = ComfyMiddleSeat::Content::Tags::Date.new(context: @page, params: ['test'])
     actual = @builder.fragment_field(tag, 123)
     expected = if RAILS_EDGE
                  <<~HTML
@@ -196,7 +196,7 @@ class FormBuilderTest < ActionView::TestCase
   end
 
   def test_fragment_field_for_datetime
-    tag = ComfortableMediaSurfer::Content::Tags::Datetime.new(context: @page, params: ['test'])
+    tag = ComfyMiddleSeat::Content::Tags::Datetime.new(context: @page, params: ['test'])
     actual = @builder.fragment_field(tag, 123)
     expected = if RAILS_EDGE
                  <<~HTML
@@ -225,7 +225,7 @@ class FormBuilderTest < ActionView::TestCase
   end
 
   def test_fragment_field_for_file
-    tag = ComfortableMediaSurfer::Content::Tags::File.new(context: @page, params: ['test'])
+    tag = ComfyMiddleSeat::Content::Tags::File.new(context: @page, params: ['test'])
     actual = @builder.fragment_field(tag, 123)
     expected = if RAILS_EDGE
                  <<~HTML
@@ -256,7 +256,7 @@ class FormBuilderTest < ActionView::TestCase
   end
 
   def test_fragment_field_for_file_with_content
-    tag = ComfortableMediaSurfer::Content::Tags::File.new(context: @page, params: ['file'])
+    tag = ComfyMiddleSeat::Content::Tags::File.new(context: @page, params: ['file'])
     actual = @builder.fragment_field(tag, 123)
 
     attachment = active_storage_attachments(:file)
@@ -308,7 +308,7 @@ class FormBuilderTest < ActionView::TestCase
   end
 
   def test_fragment_field_for_files
-    tag = ComfortableMediaSurfer::Content::Tags::Files.new(context: @page, params: ['test'])
+    tag = ComfyMiddleSeat::Content::Tags::Files.new(context: @page, params: ['test'])
     actual = @builder.fragment_field(tag, 123)
     expected = if RAILS_EDGE
                  <<~HTML
@@ -339,7 +339,7 @@ class FormBuilderTest < ActionView::TestCase
   end
 
   def test_fragment_field_for_files_with_content
-    tag = ComfortableMediaSurfer::Content::Tags::Files.new(context: @page, params: ['file'])
+    tag = ComfyMiddleSeat::Content::Tags::Files.new(context: @page, params: ['file'])
     actual = @builder.fragment_field(tag, 123)
 
     attachment = active_storage_attachments(:file)
@@ -390,7 +390,7 @@ class FormBuilderTest < ActionView::TestCase
   end
 
   def test_fragment_field_for_markdown
-    tag = ComfortableMediaSurfer::Content::Tags::Markdown.new(context: @page, params: ['test'])
+    tag = ComfyMiddleSeat::Content::Tags::Markdown.new(context: @page, params: ['test'])
     actual = @builder.fragment_field(tag, 123)
     expected = if RAILS_EDGE
                  <<~HTML
@@ -419,7 +419,7 @@ class FormBuilderTest < ActionView::TestCase
   end
 
   def test_fragment_field_for_number
-    tag = ComfortableMediaSurfer::Content::Tags::Number.new(context: @page, params: ['test'])
+    tag = ComfyMiddleSeat::Content::Tags::Number.new(context: @page, params: ['test'])
     actual = @builder.fragment_field(tag, 123)
     expected = if RAILS_EDGE
                  <<~HTML
@@ -448,7 +448,7 @@ class FormBuilderTest < ActionView::TestCase
   end
 
   def test_fragment_field_for_textarea
-    tag = ComfortableMediaSurfer::Content::Tags::File.new(context: @page, params: ['test'])
+    tag = ComfyMiddleSeat::Content::Tags::File.new(context: @page, params: ['test'])
     actual = @builder.fragment_field(tag, 123)
     expected = if RAILS_EDGE
                  <<~HTML
@@ -480,7 +480,7 @@ class FormBuilderTest < ActionView::TestCase
   end
 
   def test_fragment_field_for_wysiwyg
-    tag = ComfortableMediaSurfer::Content::Tags::Wysiwyg.new(context: @page, params: ['test'])
+    tag = ComfyMiddleSeat::Content::Tags::Wysiwyg.new(context: @page, params: ['test'])
     actual = @builder.fragment_field(tag, 123)
     expected = if RAILS_EDGE
                  <<~HTML

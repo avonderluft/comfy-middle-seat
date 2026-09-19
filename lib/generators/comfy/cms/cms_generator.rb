@@ -25,8 +25,8 @@ module Comfy
       end
 
       def generate_initializer
-        copy_file 'config/initializers/comfortable_media_surfer.rb',
-                  'config/initializers/comfortable_media_surfer.rb'
+        copy_file 'config/initializers/comfy_middle_seat.rb',
+                  'config/initializers/comfy_middle_seat.rb'
       end
 
       def generate_railties_order

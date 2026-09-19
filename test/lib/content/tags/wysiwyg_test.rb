@@ -8,7 +8,7 @@ class ContentTagsWysiwygTest < ActiveSupport::TestCase
   end
 
   def test_init
-    tag = ComfortableMediaSurfer::Content::Tags::Wysiwyg.new(context: @page, params: ['test'])
+    tag = ComfyMiddleSeat::Content::Tags::Wysiwyg.new(context: @page, params: ['test'])
     assert_equal 'test', tag.identifier
   end
 end

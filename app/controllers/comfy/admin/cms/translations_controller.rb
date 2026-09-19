@@ -61,7 +61,7 @@ class Comfy::Admin::Cms::TranslationsController < Comfy::Admin::Cms::BaseControl
 private
 
   def translation_select_options
-    all = ComfortableMediaSurfer.config.locales
+    all = ComfyMiddleSeat.config.locales
     taken = @page.translations.pluck(:locale) + [@site.locale] - [@translation.locale]
     all.except(*taken).map { |k, v| ["#{v} (#{k})", k] }
   end

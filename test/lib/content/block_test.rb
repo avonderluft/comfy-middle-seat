@@ -3,16 +3,16 @@
 require_relative '../../test_helper'
 
 class ContentBlockTest < ActiveSupport::TestCase
-  class TestBlockTag < ComfortableMediaSurfer::Content::Block
+  class TestBlockTag < ComfyMiddleSeat::Content::Block
     # ...
   end
 
   setup do
-    ComfortableMediaSurfer::Content::Renderer.register_tag(:test_block, TestBlockTag)
+    ComfyMiddleSeat::Content::Renderer.register_tag(:test_block, TestBlockTag)
   end
 
   teardown do
-    ComfortableMediaSurfer::Content::Renderer.tags.delete('test_block')
+    ComfyMiddleSeat::Content::Renderer.tags.delete('test_block')
   end
 
   # -- Tests -------------------------------------------------------------------

@@ -13,8 +13,8 @@ class Admin::FoosControllerTest < ActionDispatch::IntegrationTest
     headers = options[:headers] || {}
     headers['HTTP_AUTHORIZATION'] =
       ActionController::HttpAuthentication::Basic.encode_credentials(
-        ComfortableMediaSurfer::AccessControl::AdminAuthentication.username,
-        ComfortableMediaSurfer::AccessControl::AdminAuthentication.password
+        ComfyMiddleSeat::AccessControl::AdminAuthentication.username,
+        ComfyMiddleSeat::AccessControl::AdminAuthentication.password
       )
     options.merge!(headers: headers)
     send(verb, path, options)

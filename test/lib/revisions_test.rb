@@ -206,7 +206,7 @@ class RevisionsTest < ActiveSupport::TestCase
   end
 
   def test_creation_with_limit
-    ComfortableMediaSurfer.config.revisions_limit = 1
+    ComfyMiddleSeat.config.revisions_limit = 1
     revision = comfy_cms_revisions(:snippet)
 
     assert_equal 1, @snippet.revisions.count

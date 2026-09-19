@@ -31,7 +31,7 @@ class AdminCmsHelpersTest < ActionView::TestCase
     actual = comfy_admin_partial('path/to/partial', foo: 'bar')
     assert_nil actual
 
-    ComfortableMediaSurfer.config.reveal_cms_partials = true
+    ComfyMiddleSeat.config.reveal_cms_partials = true
     actual = comfy_admin_partial('path/to/partial', foo: 'bar')
     expected = '<div class="comfy-admin-partial">path/to/partial</div>'
     assert_equal expected, actual

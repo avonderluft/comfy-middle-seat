@@ -13,13 +13,13 @@ class ContentTagsFileLinkTest < ActiveSupport::TestCase
   # -- Tests -------------------------------------------------------------------
 
   def test_init
-    tag = ComfortableMediaSurfer::Content::Tags::FileLink.new(context: @page, params: ['123'])
+    tag = ComfyMiddleSeat::Content::Tags::FileLink.new(context: @page, params: ['123'])
     assert_equal '123', tag.identifier
     assert_equal 'url', tag.as
   end
 
   def test_init_with_params
-    tag = ComfortableMediaSurfer::Content::Tags::FileLink.new(
+    tag = ComfyMiddleSeat::Content::Tags::FileLink.new(
       context: @page,
       params: [
         '123', {
@@ -41,29 +41,29 @@ class ContentTagsFileLinkTest < ActiveSupport::TestCase
 
   def test_init_without_identifier
     message = 'Missing identifier for file link tag'
-    error = assert_raises ComfortableMediaSurfer::Content::Tag::Error do
-      ComfortableMediaSurfer::Content::Tags::FileLink.new(context: @page)
+    error = assert_raises ComfyMiddleSeat::Content::Tag::Error do
+      ComfyMiddleSeat::Content::Tags::FileLink.new(context: @page)
     end
     assert_equal message, error.message
   end
 
   def test_file
-    tag = ComfortableMediaSurfer::Content::Tags::FileLink.new(context: @page, params: [@file.id])
+    tag = ComfyMiddleSeat::Content::Tags::FileLink.new(context: @page, params: [@file.id])
     assert_instance_of Comfy::Cms::File, tag.file_record
 
-    tag = ComfortableMediaSurfer::Content::Tags::FileLink.new(context: @page, params: ['invalid'])
+    tag = ComfyMiddleSeat::Content::Tags::FileLink.new(context: @page, params: ['invalid'])
     assert_nil tag.file_record
   end
 
   def test_content
-    tag = ComfortableMediaSurfer::Content::Tags::FileLink.new(context: @page, params: [@file.id])
+    tag = ComfyMiddleSeat::Content::Tags::FileLink.new(context: @page, params: [@file.id])
     out = rails_blob_path(tag.file, only_path: true)
     assert_equal out, tag.content
     assert_equal out, tag.render
   end
 
   def test_content_as_link
-    tag = ComfortableMediaSurfer::Content::Tags::FileLink.new(
+    tag = ComfyMiddleSeat::Content::Tags::FileLink.new(
       context: @page,
       params: [@file.id, { 'as' => 'link', 'class' => 'html-class' }]
     )
@@ -74,7 +74,7 @@ class ContentTagsFileLinkTest < ActiveSupport::TestCase
   end
 
   def test_content_as_image
-    tag = ComfortableMediaSurfer::Content::Tags::FileLink.new(
+    tag = ComfyMiddleSeat::Content::Tags::FileLink.new(
       context: @page,
       params: [@file.id, { 'as' => 'image', 'class' => 'html-class' }]
     )
@@ -85,7 +85,7 @@ class ContentTagsFileLinkTest < ActiveSupport::TestCase
   end
 
   def test_content_when_not_found
-    tag = ComfortableMediaSurfer::Content::Tags::FileLink.new(context: @page, params: ['invalid'])
+    tag = ComfyMiddleSeat::Content::Tags::FileLink.new(context: @page, params: ['invalid'])
     assert_equal '', tag.content
     assert_equal '', tag.render
   end

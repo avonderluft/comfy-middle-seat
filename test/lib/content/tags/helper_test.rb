@@ -4,13 +4,13 @@ require_relative '../../../test_helper'
 
 class ContentTagsHelperTest < ActiveSupport::TestCase
   def test_init
-    tag = ComfortableMediaSurfer::Content::Tags::Helper.new(context: @page, params: ['helper_method'])
+    tag = ComfyMiddleSeat::Content::Tags::Helper.new(context: @page, params: ['helper_method'])
     assert_equal 'helper_method', tag.method_name
     assert_equal [], tag.params
   end
 
   def test_init_with_params
-    tag = ComfortableMediaSurfer::Content::Tags::Helper.new(
+    tag = ComfyMiddleSeat::Content::Tags::Helper.new(
       context: @page,
       params: ['helper_method', 'param', { 'key' => 'val' }]
     )
@@ -20,14 +20,14 @@ class ContentTagsHelperTest < ActiveSupport::TestCase
 
   def test_init_without_method_name
     message = 'Missing method name for helper tag'
-    error = assert_raises ComfortableMediaSurfer::Content::Tag::Error do
-      ComfortableMediaSurfer::Content::Tags::Helper.new(context: @page)
+    error = assert_raises ComfyMiddleSeat::Content::Tag::Error do
+      ComfyMiddleSeat::Content::Tags::Helper.new(context: @page)
     end
     assert_equal message, error.message
   end
 
   def test_content
-    tag = ComfortableMediaSurfer::Content::Tags::Helper.new(
+    tag = ComfyMiddleSeat::Content::Tags::Helper.new(
       context: @page,
       params: ['method_name', 'param', { 'key' => 'val' }]
     )
@@ -35,7 +35,7 @@ class ContentTagsHelperTest < ActiveSupport::TestCase
   end
 
   def test_render
-    tag = ComfortableMediaSurfer::Content::Tags::Helper.new(
+    tag = ComfyMiddleSeat::Content::Tags::Helper.new(
       context: @page,
       params: ['method_name', 'param', { 'key' => 'val' }]
     )
@@ -43,26 +43,26 @@ class ContentTagsHelperTest < ActiveSupport::TestCase
   end
 
   def test_render_with_whitelist
-    ComfortableMediaSurfer.config.allowed_helpers = %i[tester eval]
-    tag = ComfortableMediaSurfer::Content::Tags::Helper.new(context: @page, params: ['tester'])
+    ComfyMiddleSeat.config.allowed_helpers = %i[tester eval]
+    tag = ComfyMiddleSeat::Content::Tags::Helper.new(context: @page, params: ['tester'])
     assert_equal '<%= tester() %>', tag.render
 
-    tag = ComfortableMediaSurfer::Content::Tags::Helper.new(context: @page, params: ['eval'])
+    tag = ComfyMiddleSeat::Content::Tags::Helper.new(context: @page, params: ['eval'])
     assert_equal '<%= eval() %>', tag.render
 
-    tag = ComfortableMediaSurfer::Content::Tags::Helper.new(context: @page, params: ['not_whitelisted'])
+    tag = ComfyMiddleSeat::Content::Tags::Helper.new(context: @page, params: ['not_whitelisted'])
     assert_nil tag.render
   end
 
   def test_render_with_blacklist
-    ComfortableMediaSurfer::Content::Tags::Helper::BLACKLIST.each do |method|
-      tag = ComfortableMediaSurfer::Content::Tags::Helper.new(context: @page, params: [method])
+    ComfyMiddleSeat::Content::Tags::Helper::BLACKLIST.each do |method|
+      tag = ComfyMiddleSeat::Content::Tags::Helper.new(context: @page, params: [method])
       assert_nil tag.render
     end
   end
 
   def test_render_with_erb_injection
-    tag = ComfortableMediaSurfer::Content::Tags::Helper.new(
+    tag = ComfyMiddleSeat::Content::Tags::Helper.new(
       context: @page,
       params: ["foo\#{:bar}", "foo\#{Kernel.exec('poweroff')"]
     )

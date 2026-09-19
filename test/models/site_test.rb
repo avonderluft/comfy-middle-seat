@@ -141,7 +141,7 @@ class CmsSiteTest < ActiveSupport::TestCase
   end
 
   def test_find_site_with_public_cms_path
-    ComfortableMediaSurfer.config.public_cms_path = '/custom'
+    ComfyMiddleSeat.config.public_cms_path = '/custom'
     assert_equal '//www.example.com/custom', @site.url
 
     site_a = Comfy::Cms::Site.create!(identifier: 'test_a', hostname: 'test2.host', path: 'en')
@@ -165,7 +165,7 @@ class CmsSiteTest < ActiveSupport::TestCase
     site_a = @site
     site_b = Comfy::Cms::Site.create!(identifier: 'site_b', hostname: 'test2.host')
 
-    ComfortableMediaSurfer.config.hostname_aliases = {
+    ComfyMiddleSeat.config.hostname_aliases = {
       'www.example.com' => 'alias_a.host',
       'test2.host' => %w[alias_b.host alias_c.host]
     }
@@ -182,7 +182,7 @@ class CmsSiteTest < ActiveSupport::TestCase
     @site.update_column(:path, '/site-path')
     assert_equal '//www.example.com/site-path', @site.url
 
-    ComfortableMediaSurfer.config.public_cms_path = 'cms'
+    ComfyMiddleSeat.config.public_cms_path = 'cms'
     assert_equal '//www.example.com/cms/site-path', @site.url
 
     assert_equal '/cms/site-path', @site.url(relative: true)

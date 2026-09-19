@@ -8,7 +8,7 @@ require 'stringio'
 
 Rails.application.load_tasks
 
-module ComfortableMediaSurferTestOutput
+module ComfyMiddleSeatTestOutput
   SUMMARY = %r{(?<assertions>\d+) assertions, (?<errors>\d+) errors, (?<failures>\d+) failures, (?<skips>\d+) skips?, (?<tests>\d+) tests}
   COLORS = { green: 32, yellow: 33, red: 31, cyan: 36 }.freeze
 
@@ -71,7 +71,7 @@ module ComfortableMediaSurferTestOutput
     def flush
       return if @pending.empty?
 
-      @io.print ComfortableMediaSurferTestOutput.progress_color(@pending)
+      @io.print ComfyMiddleSeatTestOutput.progress_color(@pending)
       @io.flush
       @pending.clear
     end
@@ -197,7 +197,7 @@ namespace :test do
   Rake::Task['test:serial'].enhance(['test:prepare_serial'])
 
   desc 'Run tests in isolated processes'
-  task(:parallel) { ComfortableMediaSurferTestOutput.run_parallel }
+  task(:parallel) { ComfyMiddleSeatTestOutput.run_parallel }
 end
 
 Rake::Task[:test].clear

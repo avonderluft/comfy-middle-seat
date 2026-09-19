@@ -1,5 +1,5 @@
 {
-  "name": "comfortable-media-surfer",
+  "name": "comfy-middle-seat",
   "private": true,
   "scripts": {
     "build": "esbuild app/assets/javascripts/comfy/admin/cms/application.js --bundle --sourcemap --outdir=app/assets/builds/comfy/admin/cms --public-path=/assets",

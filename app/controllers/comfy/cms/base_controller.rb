@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Comfy::Cms::BaseController < ComfortableMediaSurfer.config.public_base_controller.to_s.constantize
+class Comfy::Cms::BaseController < ComfyMiddleSeat.config.public_base_controller.to_s.constantize
   before_action :load_cms_site
 
   helper Comfy::CmsHelper

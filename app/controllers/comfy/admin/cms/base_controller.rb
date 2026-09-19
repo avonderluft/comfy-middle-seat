@@ -8,12 +8,12 @@ class Comfy::Admin::Cms::BaseController < Comfy::Admin::BaseController
 
   layout :infer_layout
 
-  if ComfortableMediaSurfer.config.admin_cache_sweeper.present?
-    cache_sweeper(*ComfortableMediaSurfer.config.admin_cache_sweeper)
+  if ComfyMiddleSeat.config.admin_cache_sweeper.present?
+    cache_sweeper(*ComfyMiddleSeat.config.admin_cache_sweeper)
   end
 
   def jump
-    path = ComfortableMediaSurfer.config.admin_route_redirect
+    path = ComfyMiddleSeat.config.admin_route_redirect
     return redirect_to(path) unless path.blank?
 
     load_admin_site
@@ -27,24 +27,24 @@ protected
     if (@site = ::Comfy::Cms::Site.find_by(id: id_param) || ::Comfy::Cms::Site.first)
       session[:site_id] = @site.id
     else
-      I18n.locale = ComfortableMediaSurfer.config.admin_locale || I18n.default_locale
+      I18n.locale = ComfyMiddleSeat.config.admin_locale || I18n.default_locale
       flash[:danger] = I18n.t('comfy.admin.cms.base.site_not_found')
       redirect_to(new_comfy_admin_cms_site_path)
     end
   end
 
   def set_locale?
-    I18n.locale = ComfortableMediaSurfer.config.admin_locale || @site&.locale
+    I18n.locale = ComfyMiddleSeat.config.admin_locale || @site&.locale
     true
   end
 
   def load_seeds
-    return unless ComfortableMediaSurfer.config.enable_seeds
+    return unless ComfyMiddleSeat.config.enable_seeds
 
     controllers = %w[layouts pages snippets files].collect { |c| "comfy/admin/cms/#{c}" }
     return unless controllers.member?(params[:controller]) && params[:action] == 'index'
 
-    ComfortableMediaSurfer::Seeds::Importer.new(@site.identifier).import!
+    ComfyMiddleSeat::Seeds::Importer.new(@site.identifier).import!
     flash.now[:warning] = I18n.t('comfy.admin.cms.base.seeds_enabled')
   end
 

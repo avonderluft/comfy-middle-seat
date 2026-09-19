@@ -14,7 +14,7 @@ class SeedsPagesTest < ActiveSupport::TestCase
 
     assert_difference -> { Comfy::Cms::Page.count }, 4 do
       assert_difference -> { Comfy::Cms::Translation.count }, 2 do
-        ComfortableMediaSurfer::Seeds::Page::Importer.new('sample-site', 'default-site').import!
+        ComfyMiddleSeat::Seeds::Page::Importer.new('sample-site', 'default-site').import!
       end
     end
 
@@ -98,7 +98,7 @@ class SeedsPagesTest < ActiveSupport::TestCase
     child.update_column(:slug, 'old')
 
     assert_difference -> { Comfy::Cms::Page.count }, 2 do
-      ComfortableMediaSurfer::Seeds::Page::Importer.new('sample-site', 'default-site').import!
+      ComfyMiddleSeat::Seeds::Page::Importer.new('sample-site', 'default-site').import!
 
       @page.reload
       assert_equal 'Home Seed Page', @page.label
@@ -118,12 +118,12 @@ class SeedsPagesTest < ActiveSupport::TestCase
       ]
     )
 
-    page_path         = File.join(ComfortableMediaSurfer.config.seeds_path, 'sample-site', 'pages', 'index')
+    page_path         = File.join(ComfyMiddleSeat.config.seeds_path, 'sample-site', 'pages', 'index')
     content_path      = File.join(page_path, 'content.html')
 
     assert page.updated_at >= File.mtime(content_path)
 
-    ComfortableMediaSurfer::Seeds::Page::Importer.new('sample-site', 'default-site').import!
+    ComfyMiddleSeat::Seeds::Page::Importer.new('sample-site', 'default-site').import!
     page.reload
 
     assert_nil page.slug
@@ -144,7 +144,7 @@ class SeedsPagesTest < ActiveSupport::TestCase
     )
     page.update_column(:updated_at, 10.years.ago)
 
-    ComfortableMediaSurfer::Seeds::Page::Importer.new('sample-site', 'default-site').import!
+    ComfyMiddleSeat::Seeds::Page::Importer.new('sample-site', 'default-site').import!
     page.reload
 
     frag = page.fragments.where(identifier: 'content').first
@@ -171,13 +171,13 @@ class SeedsPagesTest < ActiveSupport::TestCase
       }
     ])
 
-    host_path = File.join(ComfortableMediaSurfer.config.seeds_path, 'test-site')
+    host_path = File.join(ComfyMiddleSeat.config.seeds_path, 'test-site')
     page_1_content_path     = File.join(host_path, 'pages/index/content.html')
     page_1_attachment_path  = File.join(host_path, 'pages/index/fragment.jpeg')
     page_2_content_path     = File.join(host_path, 'pages/index/child-page/content.html')
     translation_path        = File.join(host_path, 'pages/index/content.fr.html')
 
-    ComfortableMediaSurfer::Seeds::Page::Exporter.new('default-site', 'test-site').export!
+    ComfyMiddleSeat::Seeds::Page::Exporter.new('default-site', 'test-site').export!
 
     out = <<~TEXT.chomp
       [attributes]

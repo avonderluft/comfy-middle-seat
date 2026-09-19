@@ -3,26 +3,26 @@
 require_relative '../../test_helper'
 
 class ContentTagTest < ActiveSupport::TestCase
-  class TestTag < ComfortableMediaSurfer::Content::Tag
+  class TestTag < ComfyMiddleSeat::Content::Tag
     def content
       'test tag content'
     end
   end
 
-  class TestNestedTag < ComfortableMediaSurfer::Content::Tag
+  class TestNestedTag < ComfyMiddleSeat::Content::Tag
     def content
       'test {{cms:test}} content'
     end
   end
 
   setup do
-    ComfortableMediaSurfer::Content::Renderer.register_tag(:test, TestTag)
-    ComfortableMediaSurfer::Content::Renderer.register_tag(:test_nested, TestNestedTag)
+    ComfyMiddleSeat::Content::Renderer.register_tag(:test, TestTag)
+    ComfyMiddleSeat::Content::Renderer.register_tag(:test_nested, TestNestedTag)
   end
 
   teardown do
-    ComfortableMediaSurfer::Content::Renderer.tags.delete('test')
-    ComfortableMediaSurfer::Content::Renderer.tags.delete('test_nested')
+    ComfyMiddleSeat::Content::Renderer.tags.delete('test')
+    ComfyMiddleSeat::Content::Renderer.tags.delete('test_nested')
   end
 
   # -- Tests -------------------------------------------------------------------
@@ -53,8 +53,8 @@ class ContentTagTest < ActiveSupport::TestCase
   end
 
   def test_content_on_base_class
-    tag = ComfortableMediaSurfer::Content::Tag.new(context: nil)
-    assert_raise ComfortableMediaSurfer::Content::Tag::Error do
+    tag = ComfyMiddleSeat::Content::Tag.new(context: nil)
+    assert_raise ComfyMiddleSeat::Content::Tag::Error do
       tag.content
     end
   end

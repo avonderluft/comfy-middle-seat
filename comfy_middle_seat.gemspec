@@ -1,19 +1,24 @@
 # frozen_string_literal: true
 
 $LOAD_PATH.unshift File.expand_path('lib', __dir__)
-require 'comfortable_media_surfer/version'
+require 'comfy_middle_seat/version'
 
 Gem::Specification.new do |spec|
   spec.name          = 'comfy_middle_seat'
-  spec.version       = ComfortableMediaSurfer::VERSION
+  spec.version       = ComfyMiddleSeat::VERSION
   spec.authors       = ['Oleg Khabarov', 'Andrew vonderLuft']
   spec.email         = ['wonder@hey.com']
   spec.homepage      = 'https://github.com/avonderluft/comfy-middle-seat'
   spec.summary       = 'Rails 7.2+ CMS Engine'
-  spec.description   = 'Comfy Middle Seat is a Rails 7.2+ CMS Engine forked from ComfortableMediaSurfer'
+  spec.description   = 'Comfy Middle Seat is a Rails 7.2+ CMS engine.'
   spec.license       = 'MIT'
 
-  spec.post_install_message = 'Please run rake comfy:compile_assets to compile assets.'
+  spec.post_install_message = <<~MESSAGE
+    Please run rake comfy:compile_assets to compile assets.
+    Upgrading from comfortable_media_surfer? Run bundle exec comfy-middle-seat-upgrade --dry-run first.
+  MESSAGE
+  spec.bindir = 'exe'
+  spec.executables = ['comfy-middle-seat-upgrade']
 
   spec.files = `git ls-files -z`.split("\x0").reject do |f|
     f.match(%r{^(test|doc)/})

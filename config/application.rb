@@ -8,7 +8,7 @@ require 'rails/all'
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
-module ComfortableMediaSurfer
+module ComfyMiddleSeat
   class Application < Rails::Application
     # Ensuring that ActiveStorage routes are loaded before Comfy's globbing
     # route. Without this file serving routes are inaccessible.
@@ -32,7 +32,7 @@ module ComfortableMediaSurfer
       # not contain `.rb` files, or that should not be reloaded or eager loaded.
       # Common ones are `templates`, `generators`, or `middleware`, for example.
       config.add_autoload_paths_to_load_path = false
-      # These gem entrypoints are explicitly required and retain the ComfortableMediaSurfer namespace.
+      # These gem entrypoints are explicitly required and retain the ComfyMiddleSeat namespace.
       config.autoload_lib(ignore: %w[generators comfy_middle_seat.rb comfy_middle_seat])
     end
 

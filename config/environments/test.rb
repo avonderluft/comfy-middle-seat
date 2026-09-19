@@ -7,7 +7,7 @@ require 'active_support/core_ext/integer/time'
 # your test database is "scratch space" for the test suite and is wiped
 # and recreated between test runs. Don't rely on the data there!
 
-defined?(ComfortableMediaSurfer::Application) && ComfortableMediaSurfer::Application.configure do
+defined?(ComfyMiddleSeat::Application) && ComfyMiddleSeat::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
   config.active_job.queue_adapter = :test # added for Rails 7.1

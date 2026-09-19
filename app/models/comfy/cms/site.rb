@@ -37,7 +37,7 @@ class Comfy::Cms::Site < ActiveRecord::Base
 
     cms_site = nil
 
-    public_cms_path = ComfortableMediaSurfer.configuration.public_cms_path
+    public_cms_path = ComfyMiddleSeat.configuration.public_cms_path
     if path && public_cms_path != '/'
       path = path.sub(%r{\A#{public_cms_path}}, '')
     end
@@ -54,7 +54,7 @@ class Comfy::Cms::Site < ActiveRecord::Base
   end
 
   def self.real_host_from_aliases(host)
-    if (aliases = ComfortableMediaSurfer.config.hostname_aliases)
+    if (aliases = ComfyMiddleSeat.config.hostname_aliases)
       aliases.each do |alias_host, hosts|
         return alias_host if hosts.include?(host)
       end
@@ -64,7 +64,7 @@ class Comfy::Cms::Site < ActiveRecord::Base
 
   # -- Instance Methods --------------------------------------------------------
   def url(relative: false)
-    public_cms_path = ComfortableMediaSurfer.config.public_cms_path || '/'
+    public_cms_path = ComfyMiddleSeat.config.public_cms_path || '/'
     host = "//#{hostname}"
     path = ['/', public_cms_path, self.path].compact.join('/').squeeze('/').chomp('/')
     relative ? path.presence : [host, path].join

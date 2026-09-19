@@ -26,7 +26,7 @@ class SeedsLayoutsTest < ActiveSupport::TestCase
     Comfy::Cms::Layout.delete_all
 
     assert_difference 'Comfy::Cms::Layout.count', 2 do
-      ComfortableMediaSurfer::Seeds::Layout::Importer.new('sample-site', 'default-site').import!
+      ComfyMiddleSeat::Seeds::Layout::Importer.new('sample-site', 'default-site').import!
     end
 
     assert layout = Comfy::Cms::Layout.where(identifier: 'default').first
@@ -53,7 +53,7 @@ class SeedsLayoutsTest < ActiveSupport::TestCase
     child_layout.update_column(:updated_at, 10.years.ago)
 
     assert_difference(-> { Comfy::Cms::Layout.count }, -1) do
-      ComfortableMediaSurfer::Seeds::Layout::Importer.new('sample-site', 'default-site').import!
+      ComfyMiddleSeat::Seeds::Layout::Importer.new('sample-site', 'default-site').import!
 
       layout.reload
       assert_equal 'Default Seed Layout', layout.label
@@ -76,12 +76,12 @@ class SeedsLayoutsTest < ActiveSupport::TestCase
 
   def test_update_ignore
     layout = comfy_cms_layouts(:default)
-    layout_path       = File.join(ComfortableMediaSurfer.config.seeds_path, 'sample-site', 'layouts', 'default')
+    layout_path       = File.join(ComfyMiddleSeat.config.seeds_path, 'sample-site', 'layouts', 'default')
     content_file_path = File.join(layout_path, 'content.html')
 
     assert layout.updated_at >= File.mtime(content_file_path)
 
-    ComfortableMediaSurfer::Seeds::Layout::Importer.new('sample-site', 'default-site').import!
+    ComfyMiddleSeat::Seeds::Layout::Importer.new('sample-site', 'default-site').import!
     layout.reload
     assert_equal 'default',                   layout.identifier
     assert_equal 'Default Layout',            layout.label
@@ -91,13 +91,13 @@ class SeedsLayoutsTest < ActiveSupport::TestCase
   end
 
   def test_export
-    host_path = File.join(ComfortableMediaSurfer.config.seeds_path, 'test-site')
+    host_path = File.join(ComfyMiddleSeat.config.seeds_path, 'test-site')
 
     layout_1_content_path = File.join(host_path, 'layouts/default/content.html')
     layout_2_content_path = File.join(host_path, 'layouts/nested/content.html')
     layout_3_content_path = File.join(host_path, 'layouts/nested/child/content.html')
 
-    ComfortableMediaSurfer::Seeds::Layout::Exporter.new('default-site', 'test-site').export!
+    ComfyMiddleSeat::Seeds::Layout::Exporter.new('default-site', 'test-site').export!
 
     assert File.exist?(layout_1_content_path)
     assert File.exist?(layout_2_content_path)

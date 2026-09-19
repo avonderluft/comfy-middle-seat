@@ -5,7 +5,7 @@ module Comfy
     module CmsHelper
       # Wrapper around Comfy::FormBuilder
       def comfy_form_with(**options, &)
-        form_options = options.merge(builder: ComfortableMediaSurfer::FormBuilder)
+        form_options = options.merge(builder: ComfyMiddleSeat::FormBuilder)
         form_options[:bootstrap]  = { layout: :horizontal }
         form_options[:local]      = true
         bootstrap_form_with(**form_options, &)
@@ -14,7 +14,7 @@ module Comfy
       def comfy_admin_partial(path, params = {})
         render path, params
       rescue ActionView::MissingTemplate
-        if ComfortableMediaSurfer.config.reveal_cms_partials
+        if ComfyMiddleSeat.config.reveal_cms_partials
           content_tag(:div, class: 'comfy-admin-partial') do
             path
           end
@@ -23,7 +23,7 @@ module Comfy
 
       # Injects some content somewhere inside cms admin area
       def cms_hook(name, options = {})
-        ComfortableMediaSurfer::ViewHooks.render(name, self, options)
+        ComfyMiddleSeat::ViewHooks.render(name, self, options)
       end
 
       # @param [String] fragment_id

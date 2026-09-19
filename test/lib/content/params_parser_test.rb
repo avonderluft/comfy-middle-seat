@@ -3,7 +3,7 @@
 require_relative '../../test_helper'
 
 class ContentParamsParserTest < ActiveSupport::TestCase
-  PARSER = ComfortableMediaSurfer::Content::ParamsParser
+  PARSER = ComfyMiddleSeat::Content::ParamsParser
 
   def test_tokenizer
     tokens = PARSER.new.send(:tokenize, 'param')

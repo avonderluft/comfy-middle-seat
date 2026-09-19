@@ -8,7 +8,7 @@ class ContentTagsAssetTest < ActiveSupport::TestCase
   end
 
   def test_init
-    tag = ComfortableMediaSurfer::Content::Tags::Asset.new(
+    tag = ComfyMiddleSeat::Content::Tags::Asset.new(
       context: @page,
       params: ['default']
     )
@@ -18,7 +18,7 @@ class ContentTagsAssetTest < ActiveSupport::TestCase
   end
 
   def test_init_with_params
-    tag = ComfortableMediaSurfer::Content::Tags::Asset.new(
+    tag = ComfyMiddleSeat::Content::Tags::Asset.new(
       context: @page,
       params: ['default', { 'type' => 'css', 'as' => 'tag' }]
     )
@@ -29,24 +29,24 @@ class ContentTagsAssetTest < ActiveSupport::TestCase
 
   def test_init_without_identifier
     message = 'Missing layout identifier for asset tag'
-    error = assert_raises ComfortableMediaSurfer::Content::Tag::Error do
-      ComfortableMediaSurfer::Content::Tags::Asset.new(context: @page)
+    error = assert_raises ComfyMiddleSeat::Content::Tag::Error do
+      ComfyMiddleSeat::Content::Tags::Asset.new(context: @page)
     end
     assert_equal message, error.message
   end
 
   def test_layout
-    tag = ComfortableMediaSurfer::Content::Tags::Asset.new(context: @page, params: ['default'])
+    tag = ComfyMiddleSeat::Content::Tags::Asset.new(context: @page, params: ['default'])
     assert tag.layout.is_a?(Comfy::Cms::Layout)
   end
 
   def test_content_for_invalid
-    tag = ComfortableMediaSurfer::Content::Tags::Asset.new(context: @page, params: ['default'])
+    tag = ComfyMiddleSeat::Content::Tags::Asset.new(context: @page, params: ['default'])
     assert_nil tag.content
   end
 
   def test_content_for_css
-    tag = ComfortableMediaSurfer::Content::Tags::Asset.new(
+    tag = ComfyMiddleSeat::Content::Tags::Asset.new(
       context: @page,
       params: ['default', { 'type' => 'css' }]
     )
@@ -55,7 +55,7 @@ class ContentTagsAssetTest < ActiveSupport::TestCase
   end
 
   def test_content_for_css_as_tag
-    tag = ComfortableMediaSurfer::Content::Tags::Asset.new(
+    tag = ComfyMiddleSeat::Content::Tags::Asset.new(
       context: @page,
       params: ['default', { 'type' => 'css', 'as' => 'tag' }]
     )
@@ -65,8 +65,8 @@ class ContentTagsAssetTest < ActiveSupport::TestCase
   end
 
   def test_content_for_css_with_public_cms_path
-    ComfortableMediaSurfer.config.public_cms_path = '/custom'
-    tag = ComfortableMediaSurfer::Content::Tags::Asset.new(
+    ComfyMiddleSeat.config.public_cms_path = '/custom'
+    tag = ComfyMiddleSeat::Content::Tags::Asset.new(
       context: @page,
       params: ['default', { 'type' => 'css' }]
     )
@@ -75,7 +75,7 @@ class ContentTagsAssetTest < ActiveSupport::TestCase
   end
 
   def test_content_for_js
-    tag = ComfortableMediaSurfer::Content::Tags::Asset.new(
+    tag = ComfyMiddleSeat::Content::Tags::Asset.new(
       context: @page,
       params: ['default', { 'type' => 'js' }]
     )
@@ -84,7 +84,7 @@ class ContentTagsAssetTest < ActiveSupport::TestCase
   end
 
   def test_content_for_js_as_tag
-    tag = ComfortableMediaSurfer::Content::Tags::Asset.new(
+    tag = ComfyMiddleSeat::Content::Tags::Asset.new(
       context: @page,
       params: ['default', { 'type' => 'js', 'as' => 'tag' }]
     )
@@ -94,8 +94,8 @@ class ContentTagsAssetTest < ActiveSupport::TestCase
   end
 
   def test_content_for_js_with_public_cms_path
-    ComfortableMediaSurfer.config.public_cms_path = '/custom'
-    tag = ComfortableMediaSurfer::Content::Tags::Asset.new(
+    ComfyMiddleSeat.config.public_cms_path = '/custom'
+    tag = ComfyMiddleSeat::Content::Tags::Asset.new(
       context: @page,
       params: ['default', { 'type' => 'js' }]
     )

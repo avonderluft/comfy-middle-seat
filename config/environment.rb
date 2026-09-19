@@ -4,4 +4,4 @@
 require_relative 'application'
 
 # Initialize the rails application
-ComfortableMediaSurfer::Application.initialize!
+ComfyMiddleSeat::Application.initialize!

@@ -2,10 +2,10 @@
 
 class Comfy::Cms::ContentController < Comfy::Cms::BaseController
   # Authentication module must have `authenticate` method
-  include ComfortableMediaSurfer.config.public_auth.to_s.constantize
+  include ComfyMiddleSeat.config.public_auth.to_s.constantize
 
   # Authorization module must have `authorize` method
-  include ComfortableMediaSurfer.config.public_authorization.to_s.constantize
+  include ComfyMiddleSeat.config.public_authorization.to_s.constantize
 
   before_action :load_seeds
   before_action :load_cms_page,
@@ -24,7 +24,7 @@ class Comfy::Cms::ContentController < Comfy::Cms::BaseController
             inline: @cms_page.content_cache,
             layout: false
           )
-          json_page = @cms_page.as_json(ComfortableMediaSurfer.config.page_to_json_options)
+          json_page = @cms_page.as_json(ComfyMiddleSeat.config.page_to_json_options)
           render json: json_page
         end
       end
@@ -53,9 +53,9 @@ protected
   end
 
   def load_seeds
-    return unless ComfortableMediaSurfer.config.enable_seeds
+    return unless ComfyMiddleSeat.config.enable_seeds
 
-    ComfortableMediaSurfer::Seeds::Importer.new(@cms_site.identifier).import!
+    ComfyMiddleSeat::Seeds::Importer.new(@cms_site.identifier).import!
   end
 
   # Attempting to populate @cms_page and @cms_layout instance variables so they

@@ -52,7 +52,7 @@ module Comfy
       snippet = cms_site&.snippets&.find_by_identifier(identifier)
       return '' unless snippet
 
-      r = ComfortableMediaSurfer::Content::Renderer.new(snippet)
+      r = ComfyMiddleSeat::Content::Renderer.new(snippet)
       render inline: r.render(r.nodes(r.tokenize(snippet.content)))
     end
 

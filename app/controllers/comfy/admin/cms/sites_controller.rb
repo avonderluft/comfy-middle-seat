@@ -56,7 +56,7 @@ protected
 
   def load_site
     @site = ::Comfy::Cms::Site.find(params[:id])
-    I18n.locale = ComfortableMediaSurfer.config.admin_locale || @site.locale
+    I18n.locale = ComfyMiddleSeat.config.admin_locale || @site.locale
   rescue ActiveRecord::RecordNotFound
     flash[:danger] = I18n.t('comfy.admin.cms.sites.not_found')
     redirect_to action: :index

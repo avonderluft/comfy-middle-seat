@@ -11,7 +11,7 @@ class CmsGeneratorTest < Rails::Generators::TestCase
 
     assert_migration 'db/migrate/create_cms.rb'
 
-    assert_file 'config/initializers/comfortable_media_surfer.rb'
+    assert_file 'config/initializers/comfy_middle_seat.rb'
 
     assert_file 'config/routes.rb', read_file('cms/routes.rb')
 

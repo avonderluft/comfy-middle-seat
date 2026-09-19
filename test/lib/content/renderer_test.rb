@@ -3,60 +3,60 @@
 require_relative '../../test_helper'
 
 class ContentRendererTest < ActiveSupport::TestCase
-  class TestTag < ComfortableMediaSurfer::Content::Tag
+  class TestTag < ComfyMiddleSeat::Content::Tag
     def content
       'test tag content'
     end
   end
 
-  class TestNestedTag < ComfortableMediaSurfer::Content::Tag
+  class TestNestedTag < ComfyMiddleSeat::Content::Tag
     def content
       'test {{cms:test}} content'
     end
   end
 
-  class TestBlockTag < ComfortableMediaSurfer::Content::Block
+  class TestBlockTag < ComfyMiddleSeat::Content::Block
     # ...
   end
 
   DEFAULT_REGISTERED_TAGS = {
-    'wysiwyg' => ComfortableMediaSurfer::Content::Tags::Wysiwyg,
-    'text' => ComfortableMediaSurfer::Content::Tags::Text,
-    'textarea' => ComfortableMediaSurfer::Content::Tags::Textarea,
-    'markdown' => ComfortableMediaSurfer::Content::Tags::Markdown,
-    'datetime' => ComfortableMediaSurfer::Content::Tags::Datetime,
-    'date' => ComfortableMediaSurfer::Content::Tags::Date,
-    'number' => ComfortableMediaSurfer::Content::Tags::Number,
-    'checkbox' => ComfortableMediaSurfer::Content::Tags::Checkbox,
-    'file' => ComfortableMediaSurfer::Content::Tags::File,
-    'files' => ComfortableMediaSurfer::Content::Tags::Files,
-    'snippet' => ComfortableMediaSurfer::Content::Tags::Snippet,
-    'asset' => ComfortableMediaSurfer::Content::Tags::Asset,
-    'file_link' => ComfortableMediaSurfer::Content::Tags::FileLink,
-    'image' => ComfortableMediaSurfer::Content::Tags::Image,
-    'page_file_link' => ComfortableMediaSurfer::Content::Tags::PageFileLink,
-    'helper' => ComfortableMediaSurfer::Content::Tags::Helper,
-    'partial' => ComfortableMediaSurfer::Content::Tags::Partial,
-    'template' => ComfortableMediaSurfer::Content::Tags::Template,
-    'audio' => ComfortableMediaSurfer::Content::Tags::Audio,
-    'breadcrumbs' => ComfortableMediaSurfer::Content::Tags::Breadcrumbs,
-    'children' => ComfortableMediaSurfer::Content::Tags::Children,
-    'siblings' => ComfortableMediaSurfer::Content::Tags::Siblings
+    'wysiwyg' => ComfyMiddleSeat::Content::Tags::Wysiwyg,
+    'text' => ComfyMiddleSeat::Content::Tags::Text,
+    'textarea' => ComfyMiddleSeat::Content::Tags::Textarea,
+    'markdown' => ComfyMiddleSeat::Content::Tags::Markdown,
+    'datetime' => ComfyMiddleSeat::Content::Tags::Datetime,
+    'date' => ComfyMiddleSeat::Content::Tags::Date,
+    'number' => ComfyMiddleSeat::Content::Tags::Number,
+    'checkbox' => ComfyMiddleSeat::Content::Tags::Checkbox,
+    'file' => ComfyMiddleSeat::Content::Tags::File,
+    'files' => ComfyMiddleSeat::Content::Tags::Files,
+    'snippet' => ComfyMiddleSeat::Content::Tags::Snippet,
+    'asset' => ComfyMiddleSeat::Content::Tags::Asset,
+    'file_link' => ComfyMiddleSeat::Content::Tags::FileLink,
+    'image' => ComfyMiddleSeat::Content::Tags::Image,
+    'page_file_link' => ComfyMiddleSeat::Content::Tags::PageFileLink,
+    'helper' => ComfyMiddleSeat::Content::Tags::Helper,
+    'partial' => ComfyMiddleSeat::Content::Tags::Partial,
+    'template' => ComfyMiddleSeat::Content::Tags::Template,
+    'audio' => ComfyMiddleSeat::Content::Tags::Audio,
+    'breadcrumbs' => ComfyMiddleSeat::Content::Tags::Breadcrumbs,
+    'children' => ComfyMiddleSeat::Content::Tags::Children,
+    'siblings' => ComfyMiddleSeat::Content::Tags::Siblings
   }.freeze
 
   setup do
     @page     = comfy_cms_pages(:default)
-    @template = ComfortableMediaSurfer::Content::Renderer.new(@page)
+    @template = ComfyMiddleSeat::Content::Renderer.new(@page)
 
-    ComfortableMediaSurfer::Content::Renderer.register_tag(:test, TestTag)
-    ComfortableMediaSurfer::Content::Renderer.register_tag(:test_nested, TestNestedTag)
-    ComfortableMediaSurfer::Content::Renderer.register_tag(:test_block, TestBlockTag)
+    ComfyMiddleSeat::Content::Renderer.register_tag(:test, TestTag)
+    ComfyMiddleSeat::Content::Renderer.register_tag(:test_nested, TestNestedTag)
+    ComfyMiddleSeat::Content::Renderer.register_tag(:test_block, TestBlockTag)
   end
 
   teardown do
-    ComfortableMediaSurfer::Content::Renderer.tags.delete('test')
-    ComfortableMediaSurfer::Content::Renderer.tags.delete('test_nested')
-    ComfortableMediaSurfer::Content::Renderer.tags.delete('test_block')
+    ComfyMiddleSeat::Content::Renderer.tags.delete('test')
+    ComfyMiddleSeat::Content::Renderer.tags.delete('test_nested')
+    ComfyMiddleSeat::Content::Renderer.tags.delete('test_block')
   end
 
   # Test helper so we don't have to do this each time
@@ -73,19 +73,19 @@ class ContentRendererTest < ActiveSupport::TestCase
       'test' => ContentRendererTest::TestTag,
       'test_nested' => ContentRendererTest::TestNestedTag,
       'test_block' => ContentRendererTest::TestBlockTag
-    ), ComfortableMediaSurfer::Content::Renderer.tags
+    ), ComfyMiddleSeat::Content::Renderer.tags
   end
 
   def test_register_tags
-    ComfortableMediaSurfer::Content::Renderer.register_tag(:other, TestTag)
+    ComfyMiddleSeat::Content::Renderer.register_tag(:other, TestTag)
     assert_equal DEFAULT_REGISTERED_TAGS.merge(
       'test' => ContentRendererTest::TestTag,
       'test_nested' => ContentRendererTest::TestNestedTag,
       'test_block' => ContentRendererTest::TestBlockTag,
       'other' => ContentRendererTest::TestTag
-    ), ComfortableMediaSurfer::Content::Renderer.tags
+    ), ComfyMiddleSeat::Content::Renderer.tags
   ensure
-    ComfortableMediaSurfer::Content::Renderer.tags.delete('other')
+    ComfyMiddleSeat::Content::Renderer.tags.delete('other')
   end
 
   def test_tokenize
@@ -202,7 +202,7 @@ class ContentRendererTest < ActiveSupport::TestCase
     string = 'a {{cms:test_block}} b'
     tokens = @template.tokenize(string)
     message = 'unclosed block detected'
-    error = assert_raises ComfortableMediaSurfer::Content::Renderer::SyntaxError do
+    error = assert_raises ComfyMiddleSeat::Content::Renderer::SyntaxError do
       @template.nodes(tokens)
     end
     assert_equal message, error.message
@@ -212,7 +212,7 @@ class ContentRendererTest < ActiveSupport::TestCase
     string = 'a {{cms:end}} b'
     tokens = @template.tokenize(string)
     message = 'closing unopened block'
-    error = assert_raises ComfortableMediaSurfer::Content::Renderer::SyntaxError do
+    error = assert_raises ComfyMiddleSeat::Content::Renderer::SyntaxError do
       @template.nodes(tokens)
     end
     assert_equal message, error.message
@@ -222,7 +222,7 @@ class ContentRendererTest < ActiveSupport::TestCase
     string = 'a {{cms:invalid}} b'
     tokens = @template.tokenize(string)
     message = 'Unrecognized tag: {{cms:invalid}}'
-    error = assert_raises ComfortableMediaSurfer::Content::Renderer::SyntaxError do
+    error = assert_raises ComfyMiddleSeat::Content::Renderer::SyntaxError do
       @template.nodes(tokens)
     end
     assert_equal message, error.message
@@ -252,7 +252,7 @@ class ContentRendererTest < ActiveSupport::TestCase
   end
 
   def test_render_with_erb_allowed
-    ComfortableMediaSurfer.config.allow_erb = true
+    ComfyMiddleSeat.config.allow_erb = true
     out = render_string('<%= 1 + 1 %>')
     assert_equal '<%= 1 + 1 %>', out
   end
@@ -274,7 +274,7 @@ class ContentRendererTest < ActiveSupport::TestCase
     # making self-referencing content loop here
     comfy_cms_snippets(:default).update_column(:content, 'a {{cms:snippet default}} b')
     message = 'Deep tag nesting or recursive nesting detected'
-    error = assert_raises ComfortableMediaSurfer::Content::Renderer::Error do
+    error = assert_raises ComfyMiddleSeat::Content::Renderer::Error do
       render_string('{{cms:snippet default}}')
     end
     assert_equal message, error.message
@@ -282,10 +282,10 @@ class ContentRendererTest < ActiveSupport::TestCase
 
   def test_render_with_more_than_max_depth_tags_but_without_stack_overflow
     test_string =
-      Array.new(ComfortableMediaSurfer::Content::Renderer::MAX_DEPTH * 2) { '{{cms:text content}}' }.join(' ')
+      Array.new(ComfyMiddleSeat::Content::Renderer::MAX_DEPTH * 2) { '{{cms:text content}}' }.join(' ')
     out = render_string(test_string)
     expected =
-      Array.new(ComfortableMediaSurfer::Content::Renderer::MAX_DEPTH * 2) { 'content' }.join(' ')
+      Array.new(ComfyMiddleSeat::Content::Renderer::MAX_DEPTH * 2) { 'content' }.join(' ')
     assert_equal expected, out
   end
 end

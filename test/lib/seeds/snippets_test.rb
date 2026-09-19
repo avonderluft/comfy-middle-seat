@@ -12,7 +12,7 @@ class SeedsSnippetsTest < ActiveSupport::TestCase
     Comfy::Cms::Snippet.delete_all
 
     assert_difference -> { Comfy::Cms::Snippet.count } do
-      ComfortableMediaSurfer::Seeds::Snippet::Importer.new('sample-site', 'default-site').import!
+      ComfyMiddleSeat::Seeds::Snippet::Importer.new('sample-site', 'default-site').import!
     end
 
     snippet = Comfy::Cms::Snippet.last
@@ -30,7 +30,7 @@ class SeedsSnippetsTest < ActiveSupport::TestCase
     assert_equal 'Default Snippet', @snippet.label
     assert_equal '## snippet content', @snippet.content
 
-    ComfortableMediaSurfer::Seeds::Snippet::Importer.new('sample-site', 'default-site').import!
+    ComfyMiddleSeat::Seeds::Snippet::Importer.new('sample-site', 'default-site').import!
 
     @snippet.reload
     assert_equal 'default', @snippet.identifier
@@ -42,7 +42,7 @@ class SeedsSnippetsTest < ActiveSupport::TestCase
     old_snippet = @snippet
     old_snippet.update_column(:identifier, 'old')
 
-    ComfortableMediaSurfer::Seeds::Snippet::Importer.new('sample-site', 'default-site').import!
+    ComfyMiddleSeat::Seeds::Snippet::Importer.new('sample-site', 'default-site').import!
 
     assert snippet = Comfy::Cms::Snippet.last
     assert_equal 'default', snippet.identifier
@@ -53,12 +53,12 @@ class SeedsSnippetsTest < ActiveSupport::TestCase
   end
 
   def test_update_ignoring
-    snippet_path = File.join(ComfortableMediaSurfer.config.seeds_path, 'sample-site', 'snippets')
+    snippet_path = File.join(ComfyMiddleSeat.config.seeds_path, 'sample-site', 'snippets')
     content_path = File.join(snippet_path, 'default.html')
 
     assert @snippet.updated_at >= File.mtime(content_path)
 
-    ComfortableMediaSurfer::Seeds::Snippet::Importer.new('sample-site', 'default-site').import!
+    ComfyMiddleSeat::Seeds::Snippet::Importer.new('sample-site', 'default-site').import!
     @snippet.reload
     assert_equal 'default', @snippet.identifier
     assert_equal 'Default Snippet', @snippet.label
@@ -70,10 +70,10 @@ class SeedsSnippetsTest < ActiveSupport::TestCase
       categorized: @snippet
     )
 
-    host_path     = File.join(ComfortableMediaSurfer.config.seeds_path, 'test-site')
+    host_path     = File.join(ComfyMiddleSeat.config.seeds_path, 'test-site')
     content_path  = File.join(host_path, 'snippets/default.html')
 
-    ComfortableMediaSurfer::Seeds::Snippet::Exporter.new('default-site', 'test-site').export!
+    ComfyMiddleSeat::Seeds::Snippet::Exporter.new('default-site', 'test-site').export!
 
     assert File.exist?(content_path)
     out = <<~TEXT.chomp

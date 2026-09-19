@@ -14,7 +14,7 @@ class CmsSeedsTaskTest < ActiveSupport::TestCase
 
   def test_import
     importer = mock
-    ComfortableMediaSurfer::Seeds::Importer.expects(:new).with('from_folder', 'to_site').returns(importer)
+    ComfyMiddleSeat::Seeds::Importer.expects(:new).with('from_folder', 'to_site').returns(importer)
     importer.expects(:import!)
 
     with_captured_stdout do
@@ -24,7 +24,7 @@ class CmsSeedsTaskTest < ActiveSupport::TestCase
 
   def test_import_for_a_specific_class
     importer = mock
-    ComfortableMediaSurfer::Seeds::Importer.expects(:new).with('from_folder', 'to_site').returns(importer)
+    ComfyMiddleSeat::Seeds::Importer.expects(:new).with('from_folder', 'to_site').returns(importer)
     importer.expects(:import!).with(['Page'])
 
     with_captured_stdout do
@@ -34,7 +34,7 @@ class CmsSeedsTaskTest < ActiveSupport::TestCase
 
   def test_export
     exporter = mock
-    ComfortableMediaSurfer::Seeds::Exporter.expects(:new).with('from_site', 'to_folder').returns(exporter)
+    ComfyMiddleSeat::Seeds::Exporter.expects(:new).with('from_site', 'to_folder').returns(exporter)
     exporter.expects(:export!)
 
     with_captured_stdout do
@@ -44,7 +44,7 @@ class CmsSeedsTaskTest < ActiveSupport::TestCase
 
   def test_export_for_a_specific_class
     exporter = mock
-    ComfortableMediaSurfer::Seeds::Exporter.expects(:new).with('from_site', 'to_folder').returns(exporter)
+    ComfyMiddleSeat::Seeds::Exporter.expects(:new).with('from_site', 'to_folder').returns(exporter)
     exporter.expects(:export!).with(['Page'])
 
     with_captured_stdout do

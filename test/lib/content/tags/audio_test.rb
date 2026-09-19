@@ -4,7 +4,7 @@ require_relative '../../../test_helper'
 
 class ContentTagsAudioTest < ActiveSupport::TestCase
   def test_init
-    tag = ComfortableMediaSurfer::Content::Tags::Audio.new(
+    tag = ComfyMiddleSeat::Content::Tags::Audio.new(
       context: @page,
       params: ['path/to/audio']
     )
@@ -13,7 +13,7 @@ class ContentTagsAudioTest < ActiveSupport::TestCase
   end
 
   def test_init_with_locals
-    tag = ComfortableMediaSurfer::Content::Tags::Audio.new(
+    tag = ComfyMiddleSeat::Content::Tags::Audio.new(
       context: @page,
       params: ['path/to/audio', { 'key' => 'val' }]
     )
@@ -23,8 +23,8 @@ class ContentTagsAudioTest < ActiveSupport::TestCase
 
   def test_init_without_path
     message = 'Missing path for audio tag'
-    error = assert_raises ComfortableMediaSurfer::Content::Tag::Error do
-      ComfortableMediaSurfer::Content::Tags::Audio.new(
+    error = assert_raises ComfyMiddleSeat::Content::Tag::Error do
+      ComfyMiddleSeat::Content::Tags::Audio.new(
         context: @page,
         params: [{ 'key' => 'val' }]
       )
@@ -33,7 +33,7 @@ class ContentTagsAudioTest < ActiveSupport::TestCase
   end
 
   def test_render
-    tag = ComfortableMediaSurfer::Content::Tags::Audio.new(
+    tag = ComfyMiddleSeat::Content::Tags::Audio.new(
       context: @page,
       params: ['path/to/audio', { 'style' => 'font-weight: bold' }]
     )

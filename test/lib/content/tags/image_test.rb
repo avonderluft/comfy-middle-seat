@@ -13,29 +13,29 @@ class ContentTagsImageTest < ActiveSupport::TestCase
   # -- Tests -------------------------------------------------------------------
 
   def test_init
-    tag = ComfortableMediaSurfer::Content::Tags::Image.new(context: @page, params: ['my_image'])
+    tag = ComfyMiddleSeat::Content::Tags::Image.new(context: @page, params: ['my_image'])
     assert_equal 'my_image', tag.identifier
     assert_equal 'image', tag.as
   end
 
   def test_init_without_identifier
     message = 'Missing identifier label for image tag'
-    error = assert_raises ComfortableMediaSurfer::Content::Tag::Error do
-      ComfortableMediaSurfer::Content::Tags::Image.new(context: @page)
+    error = assert_raises ComfyMiddleSeat::Content::Tag::Error do
+      ComfyMiddleSeat::Content::Tags::Image.new(context: @page)
     end
     assert_equal message, error.message
   end
 
   def test_file
-    tag = ComfortableMediaSurfer::Content::Tags::Image.new(context: @page, params: [@file.label])
+    tag = ComfyMiddleSeat::Content::Tags::Image.new(context: @page, params: [@file.label])
     assert_instance_of Comfy::Cms::File, tag.file_record
 
-    tag = ComfortableMediaSurfer::Content::Tags::Image.new(context: @page, params: ['invalid'])
+    tag = ComfyMiddleSeat::Content::Tags::Image.new(context: @page, params: ['invalid'])
     assert_nil tag.file_record
   end
 
   def test_content
-    tag = ComfortableMediaSurfer::Content::Tags::Image.new(
+    tag = ComfyMiddleSeat::Content::Tags::Image.new(
       context: @page,
       params: [@file.label, { 'as' => 'image', 'class' => 'html-class' }]
     )
@@ -46,7 +46,7 @@ class ContentTagsImageTest < ActiveSupport::TestCase
   end
 
   def test_content_when_not_found
-    tag = ComfortableMediaSurfer::Content::Tags::Image.new(context: @page, params: ['invalid'])
+    tag = ComfyMiddleSeat::Content::Tags::Image.new(context: @page, params: ['invalid'])
     assert_equal '', tag.content
     assert_equal '', tag.render
   end

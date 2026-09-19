@@ -8,7 +8,7 @@ class ContentTagsNumberTest < ActiveSupport::TestCase
   end
 
   def test_init
-    tag = ComfortableMediaSurfer::Content::Tags::Number.new(context: @page, params: ['test'])
+    tag = ComfyMiddleSeat::Content::Tags::Number.new(context: @page, params: ['test'])
     assert_equal 'test', tag.identifier
   end
 end

@@ -3,7 +3,7 @@
 class Comfy::Cms::Layout < ActiveRecord::Base
   self.table_name = 'comfy_cms_layouts'
 
-  require_relative '../../../../lib/comfortable_media_surfer/extensions/acts_as_tree'
+  require_relative '../../../../lib/comfy_middle_seat/extensions/acts_as_tree'
 
   cms_acts_as_tree
   cms_has_revisions_for :content, :css, :js
@@ -68,12 +68,12 @@ class Comfy::Cms::Layout < ActiveRecord::Base
   # and merges on the {{cms:tag_type content}} tag (if parent layout has that).
   # Returns a list of tokens that can be fed into the renderer.
   def content_tokens
-    renderer  = ComfortableMediaSurfer::Content::Renderer.new(nil)
+    renderer  = ComfyMiddleSeat::Content::Renderer.new(nil)
     tokens    = renderer.tokenize(content)
 
     if parent
-      fragment_tags = ComfortableMediaSurfer::Content::Tags::Fragment.subclasses.map do |c|
-        ComfortableMediaSurfer::Content::Renderer.tags.key(c)
+      fragment_tags = ComfyMiddleSeat::Content::Tags::Fragment.subclasses.map do |c|
+        ComfyMiddleSeat::Content::Renderer.tags.key(c)
       end
 
       parent_tokens = parent.content_tokens

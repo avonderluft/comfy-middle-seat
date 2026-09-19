@@ -4,13 +4,13 @@ require_relative '../test_helper'
 
 class ConfigurationTest < ActiveSupport::TestCase
   def test_configuration_defaults
-    config = ComfortableMediaSurfer::Configuration.new
-    assert_equal 'ComfortableMediaSurfer CMS Engine', config.cms_title
+    config = ComfyMiddleSeat::Configuration.new
+    assert_equal 'ComfyMiddleSeat CMS Engine', config.cms_title
     assert_equal 'ApplicationController', config.admin_base_controller
     assert_equal 'ApplicationController', config.public_base_controller
-    assert_equal 'ComfortableMediaSurfer::AccessControl::AdminAuthentication',  config.admin_auth
-    assert_equal 'ComfortableMediaSurfer::AccessControl::AdminAuthorization',   config.admin_authorization
-    assert_equal 'ComfortableMediaSurfer::AccessControl::PublicAuthentication', config.public_auth
+    assert_equal 'ComfyMiddleSeat::AccessControl::AdminAuthentication',  config.admin_auth
+    assert_equal 'ComfyMiddleSeat::AccessControl::AdminAuthorization',   config.admin_authorization
+    assert_equal 'ComfyMiddleSeat::AccessControl::PublicAuthentication', config.public_auth
     assert_equal '', config.admin_route_redirect
     assert_equal false, config.enable_seeds
     assert_equal File.expand_path('db/cms_seeds', Rails.root), config.seeds_path
@@ -29,11 +29,11 @@ class ConfigurationTest < ActiveSupport::TestCase
   end
 
   def test_initialization_overrides
-    ComfortableMediaSurfer.configuration.cms_title = 'New Title'
-    assert_equal 'New Title', ComfortableMediaSurfer.configuration.cms_title
+    ComfyMiddleSeat.configuration.cms_title = 'New Title'
+    assert_equal 'New Title', ComfyMiddleSeat.configuration.cms_title
   end
 
   def test_version
-    assert ComfortableMediaSurfer::VERSION
+    assert ComfyMiddleSeat::VERSION
   end
 end

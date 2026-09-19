@@ -8,13 +8,13 @@ class ContentTagsCheckboxTest < ActiveSupport::TestCase
   end
 
   def test_init
-    tag = ComfortableMediaSurfer::Content::Tags::Checkbox.new(context: @page, params: ['test'])
+    tag = ComfyMiddleSeat::Content::Tags::Checkbox.new(context: @page, params: ['test'])
     assert_equal 'test', tag.identifier
   end
 
   def test_content
     frag = comfy_cms_fragments(:boolean)
-    tag = ComfortableMediaSurfer::Content::Tags::Checkbox.new(context: @page, params: [frag.identifier])
+    tag = ComfyMiddleSeat::Content::Tags::Checkbox.new(context: @page, params: [frag.identifier])
     assert_equal frag,          tag.fragment
     assert_equal frag.boolean,  tag.content
   end

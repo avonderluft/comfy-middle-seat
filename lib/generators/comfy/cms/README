@@ -1,13 +1,5 @@
-    ____                 __            _        _     _      
-   / ___|___  _ __ ___  / _| ___  _ __| |_ __ _| |__ | | ___ 
-  | |   / _ \| '_ ` _ \| |_ / _ \| '__| __/ _` | '_ \| |/ _ \
-  | |__| (_) | | | | | |  _| (_) | |  | || (_| | |_) | |  __/
-   \____\___/|_| |_| |_|_|  \___/|_|   \__\__,_|_.__/|_|\___|
-  __  __          _ _         ____              __
-  |  \/  | ___  __| (_) __ _  / ___| _   _ _ __ / _| ___ _ __
-  | |\/| |/ _ \/ _` | |/ _` | \___ \| | | | '__| |_ / _ \ '__|
-  | |  | |  __/ (_| | | (_| |  ___) | |_| | |  |  _|  __/ |
-  |_|  |_|\___|\__,_|_|\__,_| |____/ \__,_|_|  |_|  \___|_|
+Comfy Middle Seat
+=================
 
 You are almost done.  Don't forget to:
 
@@ -18,4 +10,4 @@ You are almost done.  Don't forget to:
 Then go to http://your-rails-app/admin to start adding content.
 
 Default username and password are: user / pass
-Change these defaults in config/initializers/comfortable_media_surfer.rb
+Change these defaults in config/initializers/comfy_middle_seat.rb

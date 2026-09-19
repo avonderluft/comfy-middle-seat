@@ -504,7 +504,7 @@ class CmsPageTest < ActiveSupport::TestCase
     @page.layout.update_column(:content, content)
     nodes = @page.fragment_nodes
     assert_equal 1, nodes.count
-    assert_equal ComfortableMediaSurfer::Content::Tags::Wysiwyg, nodes[0].class
+    assert_equal ComfyMiddleSeat::Content::Tags::Wysiwyg, nodes[0].class
     assert_equal 'test', nodes[0].identifier
   end
 
@@ -561,7 +561,7 @@ class CmsPageTest < ActiveSupport::TestCase
   end
 
   def test_url_with_public_cms_path
-    ComfortableMediaSurfer.config.public_cms_path = '/custom'
+    ComfyMiddleSeat.config.public_cms_path = '/custom'
     assert_equal '//www.example.com/custom/', @page.url
     assert_equal '//www.example.com/custom/child-page', comfy_cms_pages(:child).url
 

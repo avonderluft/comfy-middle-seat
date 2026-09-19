@@ -26,8 +26,12 @@ class Comfy::Admin::Cms::PagesController < Comfy::Admin::Cms::BaseController
     @pages_by_parent = pages_grouped_by_parent
 
     @pages =
-      if params[:categories].present?
-        @site.pages.includes(:categories).for_category(params[:categories]).order(:label)
+      if page_filters?
+        @site.pages
+          .includes(:categories)
+          .for_category(params[:categories])
+          .search(params[:q])
+          .order(:label)
       else
         [@site.pages.root].compact
       end
@@ -140,6 +144,10 @@ protected
 
   def pages_grouped_by_parent
     @site.pages.order(:position).includes(:categories).group_by(&:parent_id)
+  end
+
+  def page_filters?
+    params[:categories].present? || params[:q].present?
   end
 
   def check_for_layouts

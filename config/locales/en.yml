@@ -64,6 +64,13 @@ en:
           snippets: Snippets
           files: Files
 
+        forms:
+          unsaved_changes: You have unsaved changes. Are you sure you want to leave this page?
+
+        search:
+          submit: Search
+          clear: Clear
+
         sites:
           created: Site created
           creation_failure: Failed to create site
@@ -129,6 +136,8 @@ en:
           index:
             title: Pages
             new_link: Create New Page
+            search_placeholder: Search pages by label, slug, path, or content
+            no_results: No pages found.
           index_branch:
             toggle: Toggle
             add_child_page: Add Child Page
@@ -152,6 +161,9 @@ en:
             choose_link: Select page...
 
         fragments:
+          loading: Loading layout content…
+          load_error: Layout content could not be loaded. Your current content has been kept.
+          discard_confirmation: Some content cannot be preserved in the selected layout. Replace it anyway?
           form_fragments:
             no_tags: |-
               Layout has no content tags defined.<br/>
@@ -235,6 +247,8 @@ en:
             title: Files
             new_link: Upload New File
             button: Upload Files
+            search_placeholder: Search files by label, description, or filename
+            no_results: No files found.
           new:
             title: New File
           edit:

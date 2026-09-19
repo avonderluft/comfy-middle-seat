@@ -21,10 +21,17 @@
 
   = comfy_admin_partial "comfy/admin/cms/partials/files_before"
 
+  = render "comfy/admin/cms/shared/search",
+           url: comfy_admin_cms_site_files_path(@site),
+           placeholder: t(".search_placeholder")
+
   = comfy_paginate @files
 
-  %ul.list.sortable.cms-uploader-filelist
-    = render partial: "file", collection: @files
+  - if @files.present?
+    %ul.list.cms-uploader-filelist{class: ("sortable" unless params[:categories].present? || params[:q].present?)}
+      = render partial: "file", collection: @files
+  - else
+    .alert.alert-info= t(".no_results")
 
   = comfy_admin_partial "comfy/admin/cms/partials/files_after"
 

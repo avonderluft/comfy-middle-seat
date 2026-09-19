@@ -64,6 +64,13 @@ zh-CN:
           snippets: 片段
           files: 文件
 
+        forms:
+          unsaved_changes: 您有未保存的更改。确定要离开此页面吗？
+
+        search:
+          submit: 搜索
+          clear: 清除
+
         sites:
           created: 站点创建成功
           creation_failure: 站点创建失败
@@ -129,6 +136,8 @@ zh-CN:
           index:
             title: 页面
             new_link: 创建新页面
+            search_placeholder: 按标签、缩略路径、路径或内容搜索页面
+            no_results: 未找到页面。
           index_branch:
             toggle: 切换
             add_child_page: 创建子页面
@@ -152,6 +161,9 @@ zh-CN:
             choose_link: 选择页面...
 
         fragments:
+          loading: 正在加载布局内容…
+          load_error: 无法加载布局内容。您当前的内容已保留。
+          discard_confirmation: 部分内容无法在所选布局中保留。仍要替换吗？
           form_fragments:
             no_tags: |-
               布局中没有定义内容标签。<br/>
@@ -235,6 +247,8 @@ zh-CN:
             title: 文件
             new_link: 上传新文件
             button: 上传文件
+            search_placeholder: 按标签、描述或文件名搜索文件
+            no_results: 未找到文件。
           new:
             title: 新文件
           edit:

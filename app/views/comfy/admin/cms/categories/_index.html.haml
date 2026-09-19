@@ -4,7 +4,7 @@
     .categories
       .category
         - active_class = params[:categories].blank?? "active" : nil
-        = link_to t('.all'), {categories: nil}, class: "btn btn-sm btn-light btn-block #{active_class}"
+        = link_to t('.all'), {categories: nil, q: params[:q].presence}, class: "btn btn-sm btn-light btn-block #{active_class}"
       - @site.categories.of_type(type).each do |category|
         = render "comfy/admin/cms/categories/show", category: category, read: true
     %button.toggle-cat-edit.btn.btn-secondary.btn-sm.btn-block{type: "button"}

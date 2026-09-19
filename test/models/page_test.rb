@@ -89,6 +89,25 @@ class CmsPageTest < ActiveSupport::TestCase
     assert page.valid?
   end
 
+  def test_search_matches_label_slug_full_path_and_fragment_content
+    page = comfy_cms_pages(:child)
+    page.update_columns(
+      label: 'Editorial Guide',
+      slug: 'news-room',
+      full_path: '/about/team'
+    )
+    page.fragments.create!(identifier: 'searchable', content: 'Distinctive body copy')
+
+    assert_equal [page.id], Comfy::Cms::Page.search('EDITORIAL').pluck(:id)
+    assert_equal [page.id], Comfy::Cms::Page.search('news-room').pluck(:id)
+    assert_equal [page.id], Comfy::Cms::Page.search('about/team').pluck(:id)
+    assert_equal [page.id], Comfy::Cms::Page.search('BODY COPY').pluck(:id)
+  end
+
+  def test_search_does_not_match_translation_fragment_content
+    assert_empty Comfy::Cms::Page.search('translated content')
+  end
+
   def test_label_assignment
     page = @site.pages.new(
       slug: 'test',

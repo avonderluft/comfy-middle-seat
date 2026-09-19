@@ -64,6 +64,13 @@ uk:
           snippets: Сніппети
           files: Файли
 
+        forms:
+          unsaved_changes: У вас є незбережені зміни. Ви впевнені, що хочете залишити цю сторінку?
+
+        search:
+          submit: Пошук
+          clear: Очистити
+
         sites:
           created: Сайт створено
           creation_failure: Не вийшло створити сайт
@@ -129,6 +136,8 @@ uk:
           index:
             title: Сторінки
             new_link: Створити нову сторінку
+            search_placeholder: Шукати сторінки за назвою, посиланням, шляхом або вмістом
+            no_results: Сторінок не знайдено.
           index_branch:
             toggle: Перемикач
             add_child_page: Додати дочірню сторінку
@@ -152,6 +161,9 @@ uk:
             choose_link: Select page...
 
         fragments:
+          loading: Завантаження вмісту шаблону…
+          load_error: Не вдалося завантажити вміст шаблону. Ваш поточний вміст збережено.
+          discard_confirmation: Деякий вміст неможливо зберегти у вибраному шаблоні. Усе одно замінити його?
           form_fragments:
             no_tags: |-
               Шаблон не містить жодного контент-тега. <br/>
@@ -235,6 +247,8 @@ uk:
             title: Файли
             new_link: Завантажити новий файл
             button: Завантажити файли
+            search_placeholder: Шукати файли за назвою, описом або іменем файлу
+            no_results: Файлів не знайдено.
           new:
             title: Новий файл
           edit:

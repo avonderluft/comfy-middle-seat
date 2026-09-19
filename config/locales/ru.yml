@@ -64,6 +64,13 @@ ru:
           snippets: Сниппеты
           files: Файлы
 
+        forms:
+          unsaved_changes: У вас есть несохранённые изменения. Вы уверены, что хотите покинуть эту страницу?
+
+        search:
+          submit: Поиск
+          clear: Очистить
+
         sites:
           created: Сайт создан
           creation_failure: Не удалось создать сайт
@@ -129,6 +136,8 @@ ru:
           index:
             title: Страницы
             new_link: Создать новую страницу
+            search_placeholder: Искать страницы по названию, ссылке, пути или содержимому
+            no_results: Страницы не найдены.
           index_branch:
             toggle: Toggle
             add_child_page: Добавить дочернюю страницу
@@ -152,6 +161,9 @@ ru:
             choose_link: Select page...
 
         fragments:
+          loading: Загрузка содержимого шаблона…
+          load_error: Не удалось загрузить содержимое шаблона. Ваш текущий контент был сохранён.
+          discard_confirmation: Часть контента невозможно сохранить в выбранном шаблоне. Всё равно заменить его?
           form_fragments:
             no_tags: |-
               Шаблон не содержит ни одного контент-тега.<br/>
@@ -235,6 +247,8 @@ ru:
             title: Файлы
             new_link: Загрузить новый файл
             button: Загрузить файлы
+            search_placeholder: Искать файлы по названию, описанию или имени файла
+            no_results: Файлы не найдены.
           new:
             title: Новый файл
           edit:

@@ -1,0 +1,9 @@
+= form_tag url, method: :get, class: "mb-3", role: "search" do
+  - Array(params[:categories]).each do |category|
+    = hidden_field_tag "categories[]", category
+  .input-group
+    = search_field_tag :q, params[:q], class: "form-control", placeholder: placeholder, aria: {label: placeholder}
+    .input-group-append
+      = submit_tag t("comfy.admin.cms.search.submit"), name: nil, class: "btn btn-primary"
+      - if params[:q].present?
+        = link_to t("comfy.admin.cms.search.clear"), url_for(q: nil, categories: params[:categories]), class: "btn btn-outline-secondary"

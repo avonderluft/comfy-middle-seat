@@ -24,7 +24,9 @@ class Comfy::Cms::File < ActiveRecord::Base
   before_create :assign_position
   # active_storage attachment behavior changed in rails 6
   before_save :process_attachment
-  after_save :clear_page_content_cache
+  after_commit :clear_page_content_cache,
+               on: %i[create update destroy],
+               if: :page_content_cache_stale?
 
   # -- Validations -------------------------------------------------------------
   validates :label, presence: true
@@ -36,17 +38,37 @@ class Comfy::Cms::File < ActiveRecord::Base
   scope :with_images, -> {
     where("active_storage_blobs.content_type LIKE 'image/%'").references(:blob)
   }
+  scope :search, ->(query) {
+    term = query.to_s.strip
+    if term.present?
+      pattern = "%#{sanitize_sql_like(term.downcase)}%"
+      left_joins(attachment_attachment: :blob)
+        .where(
+          <<~SQL.squish,
+            LOWER(comfy_cms_files.label) LIKE :pattern OR
+            LOWER(comfy_cms_files.description) LIKE :pattern OR
+            LOWER(active_storage_blobs.filename) LIKE :pattern
+          SQL
+          pattern: pattern
+        )
+        .distinct
+    end
+  }
 
 private
 
   def clear_page_content_cache
-    Comfy::Cms::Page.where(id: site.pages.pluck(:id)).update_all(content_cache: nil)
+    site.pages.update_all(content_cache: nil)
+  end
+
+  def page_content_cache_stale?
+    destroyed? || saved_changes? || @file.present?
   end
 
 protected
 
   def assign_position
-    max = Comfy::Cms::File.maximum(:position)
+    max = site.files.maximum(:position)
     self.position = max ? max + 1 : 0
   end
 

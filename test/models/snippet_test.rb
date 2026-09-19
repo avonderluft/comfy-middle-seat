@@ -42,6 +42,16 @@ class CmsSnippetTest < ActiveSupport::TestCase
     end
   end
 
+  def test_save_without_changes_does_not_force_page_content_reload
+    snippet = comfy_cms_snippets(:default)
+    page = comfy_cms_pages(:default)
+    page.update_column(:content_cache, 'cached content')
+
+    snippet.save!
+
+    assert_equal 'cached content', page.reload.read_attribute(:content_cache)
+  end
+
   def test_update_forces_page_content_reload
     snippet = comfy_cms_snippets(:default)
     page    = comfy_cms_pages(:default)
@@ -52,5 +62,14 @@ class CmsSnippetTest < ActiveSupport::TestCase
     snippet.update(content: 'new ## snippet content')
     page.reload
     assert_equal 'new ## snippet content', page.content_cache
+  end
+
+  def test_destroy_forces_page_content_reload
+    page = comfy_cms_pages(:default)
+    page.update_column(:content_cache, 'cached content')
+
+    comfy_cms_snippets(:default).destroy!
+
+    assert_nil page.reload.read_attribute(:content_cache)
   end
 end

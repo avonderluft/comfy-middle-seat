@@ -24,42 +24,60 @@ if (!RedactorPlugins) var RedactorPlugins = {};
         var $box = $(
           '<div id="redactor-file-manager-box" style="overflow: auto; height: 300px;" class="redactor-tab redactor-tab2">'
         ).hide();
+        var $search = $(
+          '<input type="search" class="form-control" placeholder="Search files" style="margin-bottom: 10px;">'
+        );
+        var $results = $("<div>");
+        $box.append($search, $results);
         $modal.append($box);
 
-        $.ajax({
-          dataType: "json",
-          cache: false,
-          url: this.opts.fileManagerJson,
-          success: $.proxy(function (data) {
-            var ul = $('<ul id="redactor-modal-list">');
-            $.each(
-              data,
-              $.proxy(function (key, val) {
-                var a = $(
-                  '<a href="#" title="' +
-                    val.title +
-                    '" rel="' +
-                    val.link +
-                    '" class="redactor-file-manager-link">' +
-                    val.title +
-                    ' <span style="font-size: 11px; color: #888;">' +
-                    val.name +
-                    '</span> <span style="position: absolute; right: 10px; font-size: 11px; color: #888;">(' +
-                    val.size +
-                    ")</span></a>"
-                );
-                var li = $("<li />");
+        var request;
+        var timer;
+        var loadFiles = $.proxy(function () {
+          if (request) request.abort();
+          request = $.ajax({
+            dataType: "json",
+            cache: false,
+            data: { q: $search.val() },
+            url: this.opts.fileManagerJson,
+            success: $.proxy(function (data) {
+              var ul = $('<ul id="redactor-modal-list">');
+              $results.empty();
+              $.each(
+                data,
+                $.proxy(function (key, val) {
+                  var a = $(
+                    '<a href="#" title="' +
+                      val.title +
+                      '" rel="' +
+                      val.link +
+                      '" class="redactor-file-manager-link">' +
+                      val.title +
+                      ' <span style="font-size: 11px; color: #888;">' +
+                      val.name +
+                      '</span> <span style="position: absolute; right: 10px; font-size: 11px; color: #888;">(' +
+                      val.size +
+                      ")</span></a>"
+                  );
+                  var li = $("<li />");
 
-                a.on("click", $.proxy(this.filemanager.insert, this));
+                  a.on("click", $.proxy(this.filemanager.insert, this));
 
-                li.append(a);
-                ul.append(li);
-              }, this)
-            );
+                  li.append(a);
+                  ul.append(li);
+                }, this)
+              );
 
-            $("#redactor-file-manager-box").append(ul);
-          }, this),
+              $results.append(ul);
+            }, this),
+          });
+        }, this);
+
+        $search.on("input", function () {
+          clearTimeout(timer);
+          timer = setTimeout(loadFiles, 250);
         });
+        loadFiles();
       },
       insert: function (e) {
         e.preventDefault();

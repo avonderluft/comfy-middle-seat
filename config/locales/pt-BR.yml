@@ -64,6 +64,13 @@ pt-BR:
           snippets: Fragmentos
           files: Arquivos
 
+        forms:
+          unsaved_changes: Você tem alterações não salvas. Tem certeza de que deseja sair desta página?
+
+        search:
+          submit: Pesquisar
+          clear: Limpar
+
         sites:
           created: Site criado com sucesso.
           creation_failure: Não foi possível criar site.
@@ -129,6 +136,8 @@ pt-BR:
           index:
             title: Páginas
             new_link: Criar Nova Página
+            search_placeholder: Pesquisar páginas por título, identificador, caminho ou conteúdo
+            no_results: Nenhuma página encontrada.
           index_branch:
             toggle: Alterar
             add_child_page: Adicionar Página Filha
@@ -152,6 +161,9 @@ pt-BR:
             choose_link: Select page...
 
         fragments:
+          loading: Carregando o conteúdo do leiaute…
+          load_error: Não foi possível carregar o conteúdo do leiaute. Seu conteúdo atual foi mantido.
+          discard_confirmation: Parte do conteúdo não pode ser preservada no leiaute selecionado. Deseja substituí-la mesmo assim?
           form_fragments:
             no_tags: |-
               O leiaute não possui tags de conteúdo definidas.<br/>
@@ -235,6 +247,8 @@ pt-BR:
             title: Arquivos
             new_link: Enviar Novo Arquivo
             button: Enviar Arquivos
+            search_placeholder: Pesquisar arquivos por nome, descrição ou nome do arquivo
+            no_results: Nenhum arquivo encontrado.
           new:
             title: Novo Arquivo
           edit:

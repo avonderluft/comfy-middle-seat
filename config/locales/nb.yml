@@ -64,6 +64,13 @@ nb:
           snippets: Snutter
           files: Filer
 
+        forms:
+          unsaved_changes: Du har ulagrede endringer. Er du sikker på at du vil forlate denne siden?
+
+        search:
+          submit: Søk
+          clear: Tøm
+
         sites:
           created: Nettside opprettet
           creation_failure: Klarte ikke å opprette ny nettside
@@ -129,6 +136,8 @@ nb:
           index:
             title: Sider
             new_link: Opprett ny side
+            search_placeholder: Søk i sider etter navn, slug, sti eller innhold
+            no_results: Ingen sider funnet.
           index_branch:
             toggle: Toggle
             add_child_page: Legg til underside
@@ -152,6 +161,9 @@ nb:
             choose_link: Velg side...
 
         fragments:
+          loading: Laster layoutinnhold…
+          load_error: Innholdet i layouten kunne ikke lastes inn. Det nåværende innholdet ditt er beholdt.
+          discard_confirmation: Noe innhold kan ikke bevares i den valgte layouten. Erstatt det likevel?
           form_fragments:
             no_tags: |-
               layout har ingen innholdsknagger definert.<br/>
@@ -235,6 +247,8 @@ nb:
             title: Filer
             new_link: Last opp ny fil
             button: Last opp filer
+            search_placeholder: Søk etter filer etter navn, beskrivelse eller filnavn
+            no_results: Ingen filer funnet.
           new:
             title: Ny fil
           edit:

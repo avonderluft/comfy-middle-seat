@@ -64,6 +64,13 @@ fr:
           snippets: Fragments
           files: Fichiers
 
+        forms:
+          unsaved_changes: Vous avez des modifications non enregistrées. Êtes-vous sûr de vouloir quitter cette page ?
+
+        search:
+          submit: Rechercher
+          clear: Effacer
+
         sites:
           created: Site créé
           creation_failure: Échec de la création du site
@@ -129,6 +136,8 @@ fr:
           index:
             title: Pages
             new_link: Nouvelle page
+            search_placeholder: Rechercher des pages par nom, identifiant, chemin ou contenu
+            no_results: Aucune page trouvée.
           index_branch:
             toggle: Basculer
             add_child_page: Ajouter une page enfant
@@ -152,6 +161,9 @@ fr:
             choose_link: Sélectionner une page...
 
         fragments:
+          loading: Chargement du contenu de la mise en page…
+          load_error: Impossible de charger le contenu de la mise en page. Votre contenu actuel a été conservé.
+          discard_confirmation: Du contenu ne peut pas être conservé dans la mise en page sélectionnée. Voulez-vous tout de même le remplacer ?
           form_fragments:
             no_tags: |-
               Mise en page sans aucun tag de contenu.<br/>
@@ -235,6 +247,8 @@ fr:
             title: Fichiers
             new_link: Nouveau fichier
             button: Ajouter des fichiers
+            search_placeholder: Rechercher des fichiers par nom, description ou nom de fichier
+            no_results: Aucun fichier trouvé.
           new:
             title: Nouveau fichier
           edit:

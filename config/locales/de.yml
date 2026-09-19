@@ -64,6 +64,13 @@ de:
           snippets: Schnipsel
           files: Dateien
 
+        forms:
+          unsaved_changes: Sie haben ungespeicherte Änderungen. Möchten Sie diese Seite wirklich verlassen?
+
+        search:
+          submit: Suchen
+          clear: Leeren
+
         sites:
           created: Site erstellt
           creation_failure: Fehler beim Erstellen der Site!
@@ -129,6 +136,8 @@ de:
           index:
             title: Seiten
             new_link: Neue Seite erstellen
+            search_placeholder: Seiten nach Bezeichnung, URL-Teil, Pfad oder Inhalt durchsuchen
+            no_results: Keine Seiten gefunden.
           index_branch:
             toggle: Schalter
             add_child_page: Neue, untergeordnete Seite erstellen
@@ -152,6 +161,9 @@ de:
             choose_link: Seite auswählen...
 
         fragments:
+          loading: Vorlageninhalt wird geladen…
+          load_error: Der Vorlageninhalt konnte nicht geladen werden. Ihr aktueller Inhalt wurde beibehalten.
+          discard_confirmation: Einige Inhalte können in der ausgewählten Vorlage nicht beibehalten werden. Trotzdem ersetzen?
           form_fragments:
             no_tags: |-
               Das gewählte Layout hat kein Comfy-Tags deklariert, daher kann diese Seite nicht bearbeitet werden.<br/>
@@ -235,6 +247,8 @@ de:
             title: Dateien
             new_link: Neue Datei hochladen
             button: Datei hochladen
+            search_placeholder: Dateien nach Bezeichnung, Beschreibung oder Dateiname durchsuchen
+            no_results: Keine Dateien gefunden.
           new:
             title: Datei erstellen
           edit:

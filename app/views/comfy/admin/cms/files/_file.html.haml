@@ -5,7 +5,7 @@
   .row
     .col-md-5.item
       .item-controls.d-none.d-lg-block
-        - if !params[:categories].present? && @site.files.count > 1
+        - if !params[:categories].present? && !params[:q].present? && @site.files.count > 1
           .dragger
             %i.fas.fa-bars
       .item-content

@@ -15,7 +15,9 @@ class Comfy::Cms::Layout < ActiveRecord::Base
   # -- Callbacks ---------------------------------------------------------------
   before_validation :assign_label
   before_create :assign_position
-  after_save    :clear_page_content_cache
+  after_commit  :clear_page_content_cache,
+                on: %i[create update],
+                if: :saved_changes?
   after_destroy :clear_page_content_cache
 
   # -- Validations -------------------------------------------------------------
@@ -96,7 +98,7 @@ class Comfy::Cms::Layout < ActiveRecord::Base
 
   # Forcing page content reload
   def clear_page_content_cache
-    Comfy::Cms::Page.where(id: pages.pluck(:id)).update_all(content_cache: nil)
+    pages.update_all(content_cache: nil)
     children.each(&:clear_page_content_cache)
   end
 

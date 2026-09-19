@@ -64,6 +64,13 @@ sk:
           snippets: Fragmenty
           files: Súbory
 
+        forms:
+          unsaved_changes: Máte neuložené zmeny. Naozaj chcete opustiť túto stránku?
+
+        search:
+          submit: Hľadať
+          clear: Vyčistiť
+
         sites:
           created: Web vytvorený
           creation_failure: Nepodarilo sa vytvoriť web
@@ -129,6 +136,8 @@ sk:
           index:
             title: Stránky
             new_link: Vytvoriť novú stránku
+            search_placeholder: Vyhľadať stránky podľa popisu, strojového názvu, cesty alebo obsahu
+            no_results: Nenašli sa žiadne stránky.
           index_branch:
             toggle: Prepnúť
             add_child_page: Pridať podstránku
@@ -152,6 +161,9 @@ sk:
             choose_link: Zvoľte stránku...
 
         fragments:
+          loading: Načítava sa obsah rozloženia…
+          load_error: Obsah rozloženia sa nepodarilo načítať. Váš aktuálny obsah zostal zachovaný.
+          discard_confirmation: Časť obsahu nemožno vo vybranom rozložení zachovať. Chcete ho napriek tomu nahradiť?
           form_fragments:
             no_tags: |-
               Rozloženie nemá definované žiadne značky obsahu.<br/>
@@ -235,6 +247,8 @@ sk:
             title: Súbory
             new_link: Nahrať nový súbor
             button: Nahrať súbory
+            search_placeholder: Vyhľadať súbory podľa označenia, opisu alebo názvu súboru
+            no_results: Nenašli sa žiadne súbory.
           new:
             title: Nový súbor
           edit:

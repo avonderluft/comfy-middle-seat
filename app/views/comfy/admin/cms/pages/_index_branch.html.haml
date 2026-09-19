@@ -4,13 +4,13 @@
 - has_children  = children.present?
 - has_siblings  = siblings.size > 1
 - branch_open   = (session[:cms_page_tree] || []).member?(page.id.to_s) || page.root?
-- category_view = params[:categories].present?
+- filter_view   = params[:categories].present? || params[:q].present?
 
 %li{id: dom_id(page), data: {id: page.id}}
   .row
 
     .col-md-6.item
-      - unless category_view
+      - unless filter_view
         .item-controls
           - if has_siblings
             .dragger.d-none.d-md-block
@@ -39,6 +39,6 @@
         = link_to t(".edit"), edit_comfy_admin_cms_site_page_path(@site, page), class: "btn btn-outline-secondary"
         = link_to t(".delete"), comfy_admin_cms_site_page_path(@site, page), method: :delete, data: {confirm: t('.are_you_sure')}, class: "btn btn-danger"
 
-  - if !category_view && has_children && branch_open
+  - if !filter_view && has_children && branch_open
     %ul.list.children.sortable.pl-md-3
       = render partial: "index_branch", collection: children

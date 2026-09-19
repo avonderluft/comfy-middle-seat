@@ -64,6 +64,13 @@ pl:
           snippets: Snippety
           files: Pliki
 
+        forms:
+          unsaved_changes: Masz niezapisane zmiany. Czy na pewno chcesz opuścić tę stronę?
+
+        search:
+          submit: Szukaj
+          clear: Wyczyść
+
         sites:
           created: Witryna została utworzona
           creation_failure: Błąd przy tworzeniu witryny
@@ -129,6 +136,8 @@ pl:
           index:
             title: Strony
             new_link: Utwórz nową stronę
+            search_placeholder: Szukaj stron według tytułu, uproszczonej nazwy, ścieżki lub treści
+            no_results: Nie znaleziono stron.
           index_branch:
             toggle: Przełącz
             add_child_page: Dodaj podstronę
@@ -152,6 +161,9 @@ pl:
             choose_link: Wybierz stronę...
 
         fragments:
+          loading: Ładowanie zawartości szablonu…
+          load_error: Nie udało się wczytać zawartości szablonu. Twoja bieżąca zawartość została zachowana.
+          discard_confirmation: Części zawartości nie można zachować w wybranym szablonie. Czy mimo to ją zastąpić?
           form_fragments:
             no_tags: |-
               Szablon nie ma zdefiniowanych tagów<br/>
@@ -235,6 +247,8 @@ pl:
             title: Pliki
             new_link: Wgraj nowy plik
             button: Wgraj plik
+            search_placeholder: Szukaj plików według tytułu, opisu lub nazwy pliku
+            no_results: Nie znaleziono plików.
           new:
             title: Nowy plik
           edit:

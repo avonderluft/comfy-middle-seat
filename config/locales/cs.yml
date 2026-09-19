@@ -64,6 +64,13 @@ cs:
           snippets: Úryvky
           files: Soubory
 
+        forms:
+          unsaved_changes: Máte neuložené změny. Opravdu chcete tuto stránku opustit?
+
+        search:
+          submit: Hledat
+          clear: Vymazat
+
         sites:
           created: Web vytvořen
           creation_failure: Nepodařilo se vytvořit web
@@ -129,6 +136,8 @@ cs:
           index:
             title: Stránky
             new_link: Vytvořit novou stránku
+            search_placeholder: Hledat stránky podle popisu, části URL, cesty nebo obsahu
+            no_results: Nebyly nalezeny žádné stránky.
           index_branch:
             toggle: Přepnout
             add_child_page: Přidat podstránku
@@ -152,6 +161,9 @@ cs:
             choose_link: Select page...
 
         fragments:
+          loading: Načítání obsahu rozložení…
+          load_error: Obsah rozložení se nepodařilo načíst. Váš aktuální obsah byl zachován.
+          discard_confirmation: Některý obsah nelze ve vybraném rozložení zachovat. Přesto ho nahradit?
           form_fragments:
             no_tags: |-
               Rozložení nedefinuje žádné obsahové značky.<br/>
@@ -235,6 +247,8 @@ cs:
             title: Soubory
             new_link: Nahrát nový soubor
             button: Nahrát soubory
+            search_placeholder: Hledat soubory podle názvu, popisu nebo názvu souboru
+            no_results: Nebyly nalezeny žádné soubory.
           new:
             title: Nový soubor
           edit:

@@ -64,6 +64,13 @@ hr:
           snippets: Isječci
           files: Datoteke
 
+        forms:
+          unsaved_changes: Imate nespremljene promjene. Jeste li sigurni da želite napustiti ovu stranicu?
+
+        search:
+          submit: Pretraži
+          clear: Očisti
+
         sites:
           created: Website kreiran
           creation_failure: Website nije kreiran
@@ -129,6 +136,8 @@ hr:
           index:
             title: Stranice
             new_link: Kreiraj novu stranicu
+            search_placeholder: Pretraži stranice prema nazivu, URL oznaci, putanji ili sadržaju
+            no_results: Nije pronađena nijedna stranica.
           index_branch:
             toggle: Pomakni
             add_child_page: Dodaj podređenu stranicu
@@ -152,6 +161,9 @@ hr:
             choose_link: Odaberi stranicu...
 
         fragments:
+          loading: Učitavanje sadržaja predloška…
+          load_error: Sadržaj predloška nije se mogao učitati. Vaš trenutačni sadržaj je zadržan.
+          discard_confirmation: Dio sadržaja nije moguće sačuvati u odabranom predlošku. Svejedno ga zamijeniti?
           form_fragments:
             no_tags: |-
               Predložak nema definiranih tagova.<br/>
@@ -235,6 +247,8 @@ hr:
             title: Datoteke
             new_link: Dodaj novu datoteku
             button: Učitavanje datoteke
+            search_placeholder: Pretraži datoteke prema nazivu, opisu ili nazivu datoteke
+            no_results: Nije pronađena nijedna datoteka.
           new:
             title: Nova datoteka
           edit:

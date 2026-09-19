@@ -64,6 +64,13 @@ nl:
           snippets: Snippets
           files: Bestanden
 
+        forms:
+          unsaved_changes: U hebt niet-opgeslagen wijzigingen. Weet u zeker dat u deze pagina wilt verlaten?
+
+        search:
+          submit: Zoeken
+          clear: Wissen
+
         sites:
           created: Site aangemaakt
           creation_failure: Site aanmaken mislukt
@@ -129,6 +136,8 @@ nl:
           index:
             title: Pagina's
             new_link: Maak Nieuwe Pagina Aan
+            search_placeholder: Zoek pagina's op label, slug, pad of inhoud
+            no_results: Geen pagina's gevonden.
           index_branch:
             toggle: Toggle
             add_child_page: Voeg Kind Pagina Toe
@@ -152,6 +161,9 @@ nl:
             choose_link: Select page...
 
         fragments:
+          loading: Lay-outinhoud laden…
+          load_error: De lay-outinhoud kon niet worden geladen. Uw huidige inhoud is behouden.
+          discard_confirmation: Sommige inhoud kan niet behouden blijven in de geselecteerde lay-out. Toch vervangen?
           form_fragments:
             no_tags: |-
               Lay-out heeft geen inhoud-tags gedefinieerd.<br/>
@@ -235,6 +247,8 @@ nl:
             title: Bestanden
             new_link: Upload Nieuw Bestand
             button: Upload Bestanden
+            search_placeholder: Zoek bestanden op label, beschrijving of bestandsnaam
+            no_results: Geen bestanden gevonden.
           new:
             title: Nieuw Bestand
           edit:

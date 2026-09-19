@@ -33,6 +33,11 @@ import "codemirror/mode/htmlmixed/htmlmixed";
           }
         });
     },
+    sync(root = document) {
+      for (const codemirror of codeMirrorInstances) {
+        if (root.contains(codemirror.getTextArea())) codemirror.save();
+      }
+    },
     dispose() {
       for (const codemirror of codeMirrorInstances) {
         codemirror.toTextArea();

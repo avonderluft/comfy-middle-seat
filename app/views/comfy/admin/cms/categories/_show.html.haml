@@ -6,7 +6,7 @@
   - if read
     - active_class = active ? "active" : nil
     - categories = active ? categories.reject{|c| c == category.label} : categories << category.label
-    - url = "?#{{categories: categories}.to_query}"
+    - url = "?#{{categories: categories, q: params[:q].presence}.compact.to_query}"
     = link_to category.label, url, class: "btn btn-sm btn-light btn-block text-left text-truncate #{active_class}"
   - else
     .btn-group.d-flex

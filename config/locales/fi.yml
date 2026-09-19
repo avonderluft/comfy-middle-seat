@@ -64,6 +64,13 @@ fi:
           snippets: Koodinpätkät
           files: Tiedostot
 
+        forms:
+          unsaved_changes: Sinulla on tallentamattomia muutoksia. Haluatko varmasti poistua tältä sivulta?
+
+        search:
+          submit: Hae
+          clear: Tyhjennä
+
         sites:
           created: Sivusto on luotu
           creation_failure: Sivustoa ei voitu luoda
@@ -129,6 +136,8 @@ fi:
           index:
             title: Sivut
             new_link: Luo uusi sivu
+            search_placeholder: Hae sivuja merkinnän, URL-osan, polun tai sisällön perusteella
+            no_results: Sivuja ei löytynyt.
           index_branch:
             toggle: Valinta
             add_child_page: Lisää periytyvä sivu
@@ -152,6 +161,9 @@ fi:
             choose_link: Valitse sivu...
 
         fragments:
+          loading: Ladataan ulkoasun sisältöä…
+          load_error: Ulkoasun sisältöä ei voitu ladata. Nykyinen sisältösi on säilytetty.
+          discard_confirmation: Osaa sisällöstä ei voida säilyttää valitussa ulkoasussa. Korvataanko se silti?
           form_fragments:
             no_tags: |-
               Ulkoasulla ei ole määriteltyjä tageja sisällölle.<br/>
@@ -235,6 +247,8 @@ fi:
             title: Tiedostot
             new_link: Lataa uusi tiedosto
             button: Lataa tiedostoja
+            search_placeholder: Hae tiedostoja merkinnän, kuvauksen tai tiedostonimen perusteella
+            no_results: Tiedostoja ei löytynyt.
           new:
             title: Uusi tiedosto
           edit:

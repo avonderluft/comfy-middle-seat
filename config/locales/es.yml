@@ -64,6 +64,13 @@ es:
           snippets: Fragmentos
           files: Archivos
 
+        forms:
+          unsaved_changes: Tiene cambios sin guardar. ¿Está seguro de que desea salir de esta página?
+
+        search:
+          submit: Buscar
+          clear: Limpiar
+
         sites:
           created: Sitio creado
           creation_failure: El sitio no ha podido ser creado
@@ -129,6 +136,8 @@ es:
           index:
             title: Páginas
             new_link: Crear Nueva Página
+            search_placeholder: Buscar páginas por nombre, slug, ruta o contenido
+            no_results: No se encontraron páginas.
           index_branch:
             toggle: Cambiar
             add_child_page: Añadir página hija
@@ -152,6 +161,9 @@ es:
             choose_link: Seleccione una página...
 
         fragments:
+          loading: Cargando el contenido del diseño…
+          load_error: No se pudo cargar el contenido del diseño. Se ha conservado el contenido actual.
+          discard_confirmation: Parte del contenido no se puede conservar en el diseño seleccionado. ¿Desea reemplazarlo de todos modos?
           form_fragments:
             no_tags: |-
               La plantilla no tiene etiquetas de contenido definidas.<br/>
@@ -235,6 +247,8 @@ es:
             title: Archivos
             new_link: Subir Nuevo Archivo
             button: Cargar Archivos
+            search_placeholder: Buscar archivos por nombre, descripción o nombre de archivo
+            no_results: No se encontraron archivos.
           new:
             title: Nuevo Archivo
           edit:

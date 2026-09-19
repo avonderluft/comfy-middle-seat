@@ -7,7 +7,14 @@
 
 = comfy_admin_partial "comfy/admin/cms/partials/pages_before"
 
-%ul.list.sortable
-  = render partial: "index_branch", collection: @pages
+= render "comfy/admin/cms/shared/search",
+         url: comfy_admin_cms_site_pages_path(@site),
+         placeholder: t(".search_placeholder")
+
+- if @pages.present?
+  %ul.list{class: ("sortable" unless params[:categories].present? || params[:q].present?)}
+    = render partial: "index_branch", collection: @pages
+- else
+  .alert.alert-info= t(".no_results")
 
 = comfy_admin_partial "comfy/admin/cms/partials/pages_after"

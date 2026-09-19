@@ -64,6 +64,13 @@ sv:
           snippets: Snippets
           files: Filer
 
+        forms:
+          unsaved_changes: Du har osparade ändringar. Är du säker på att du vill lämna den här sidan?
+
+        search:
+          submit: Sök
+          clear: Rensa
+
         sites:
           created: Site skapad
           creation_failure: Kunde inte skapa site
@@ -129,6 +136,8 @@ sv:
           index:
             title: Sidor
             new_link: Skapa ny sida
+            search_placeholder: Sök efter sidor via etikett, slug, sökväg eller innehåll
+            no_results: Inga sidor hittades.
           index_branch:
             toggle: Välj
             add_child_page: Lägg till undersida
@@ -152,6 +161,9 @@ sv:
             choose_link: Välj sida...
 
         fragments:
+          loading: Läser in layoutinnehåll…
+          load_error: Layoutinnehållet kunde inte läsas in. Ditt nuvarande innehåll har behållits.
+          discard_confirmation: En del innehåll kan inte bevaras i den valda layouten. Ersätt det ändå?
           form_fragments:
             no_tags: |-
               Layout har inga innehållstaggar definierade.<br/>
@@ -235,6 +247,8 @@ sv:
             title: Filer
             new_link: Ladda upp en ny fil
             button: Ladda upp filer
+            search_placeholder: Sök efter filer via etikett, beskrivning eller filnamn
+            no_results: Inga filer hittades.
           new:
             title: Ny Fil
           edit:

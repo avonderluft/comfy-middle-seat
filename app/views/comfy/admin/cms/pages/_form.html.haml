@@ -9,7 +9,8 @@
   = form.select :parent_id, options, bootstrap: {custom_control: true}
 
 - if (options = ::Comfy::Cms::Layout.options_for_select(@site)).present?
-  = form.select :layout_id, options, {bootstrap: {custom_control: true}}, {data: {url: form_fragments_comfy_admin_cms_site_page_path(@site, @page.id.to_i)}, id: "fragments-toggle"}
+  - fragments_data = {url: form_fragments_comfy_admin_cms_site_page_path(@site, @page.id.to_i), loading_message: t("comfy.admin.cms.fragments.loading", default: "Loading layout content…"), error_message: t("comfy.admin.cms.fragments.load_error", default: "Layout content could not be loaded. Your current content has been kept."), discard_message: t("comfy.admin.cms.fragments.discard_confirmation", default: "Some content cannot be preserved in the selected layout. Replace it anyway?")}
+  = form.select :layout_id, options, {bootstrap: {custom_control: true}}, {data: fragments_data, id: "fragments-toggle"}
 
 = comfy_admin_partial "comfy/admin/cms/partials/page_form_inner", form: form
 

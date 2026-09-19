@@ -44,6 +44,57 @@ class Comfy::Admin::Cms::PagesControllerTest < ActionDispatch::IntegrationTest
     assert_equal 0, assigns(:pages).count
   end
 
+  def test_get_index_with_search
+    child = comfy_cms_pages(:child)
+
+    r :get, comfy_admin_cms_site_pages_path(site_id: @site), params: { q: 'child-page' }
+
+    assert_response :success
+    assert_equal [child], assigns(:pages)
+    assert_select "input[type='search'][value='child-page']"
+    assert_select "a[href='#{edit_comfy_admin_cms_site_page_path(@site, child)}']", child.label
+    assert_select '.item-meta a', child.url
+  end
+
+  def test_get_index_searches_fragment_content
+    child = comfy_cms_pages(:child)
+    child.fragments.create!(identifier: 'searchable', content: 'Distinctive body copy')
+
+    r :get, comfy_admin_cms_site_pages_path(site_id: @site), params: { q: 'body copy' }
+
+    assert_response :success
+    assert_equal [child], assigns(:pages)
+  end
+
+  def test_get_index_search_is_site_scoped
+    foreign_site = Comfy::Cms::Site.create!(identifier: 'foreign', hostname: 'foreign.example.com')
+    foreign_layout = foreign_site.layouts.create!(identifier: 'foreign')
+    foreign_site.pages.create!(label: 'Child Page', layout: foreign_layout)
+
+    r :get, comfy_admin_cms_site_pages_path(site_id: @site), params: { q: 'Child Page' }
+
+    assert_response :success
+    assert_equal [comfy_cms_pages(:child)], assigns(:pages)
+  end
+
+  def test_get_index_combines_search_and_category_filters
+    child = comfy_cms_pages(:child)
+    category = @site.categories.create!(
+      label: 'Landing Pages',
+      categorized_type: 'Comfy::Cms::Page'
+    )
+    category.categorizations.create!(categorized: child)
+    @site.pages.create!(label: 'Child Page Archive', slug: 'archive', layout: @layout)
+
+    r :get, comfy_admin_cms_site_pages_path(site_id: @site), params: {
+      categories: category.label,
+      q: 'Child Page'
+    }
+
+    assert_response :success
+    assert_equal [child], assigns(:pages)
+  end
+
   def test_get_index_with_toggle
     @site.pages.create!(
       label: 'test',
@@ -605,17 +656,41 @@ class Comfy::Admin::Cms::PagesControllerTest < ActionDispatch::IntegrationTest
       label: 'test',
       slug: 'test'
     )
+    unaffected_page = @site.pages.create!(
+      parent: page_one,
+      layout: @layout,
+      label: 'unaffected',
+      slug: 'unaffected'
+    )
     assert_equal 0, page_one.position
     assert_equal 1, page_two.position
 
-    r :put, reorder_comfy_admin_cms_site_pages_path(site_id: @site), params: {
-      order: [page_two.id, page_one.id]
-    }
+    @page.update_column(:content_cache, 'parent content')
+    page_one.update_column(:content_cache, 'page one content')
+    page_two.update_column(:content_cache, 'page two content')
+    unaffected_page.update_column(:content_cache, 'unaffected content')
+
+    position_updates = []
+    subscriber = ->(_name, _start, _finish, _id, payload) do
+      sql = payload[:sql]
+      position_updates << sql if sql.match?(%r{\AUPDATE "comfy_cms_pages" SET "position"})
+    end
+
+    ActiveSupport::Notifications.subscribed(subscriber, 'sql.active_record') do
+      r :put, reorder_comfy_admin_cms_site_pages_path(site_id: @site), params: {
+        order: [page_two.id, page_one.id]
+      }
+    end
     assert_response :success
     page_one.reload
     page_two.reload
 
+    assert_equal 1, position_updates.size
     assert_equal 1, page_one.position
     assert_equal 0, page_two.position
+    assert_nil @page.reload.read_attribute(:content_cache)
+    assert_nil page_one.read_attribute(:content_cache)
+    assert_nil page_two.read_attribute(:content_cache)
+    assert_equal 'unaffected content', unaffected_page.reload.read_attribute(:content_cache)
   end
 end

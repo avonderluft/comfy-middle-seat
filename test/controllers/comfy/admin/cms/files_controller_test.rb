@@ -37,6 +37,42 @@ class Comfy::Admin::Cms::FilesControllerTest < ActionDispatch::IntegrationTest
     assert_template :index
   end
 
+  def test_get_index_with_search
+    r :get, comfy_admin_cms_site_files_path(site_id: @site), params: { q: 'default.jpg' }
+
+    assert_response :success
+    assert_equal [@file], assigns(:files).to_a
+    assert_select "input[type='search'][value='default.jpg']"
+  end
+
+  def test_get_index_search_is_site_scoped
+    foreign_site = Comfy::Cms::Site.create!(identifier: 'foreign', hostname: 'foreign.example.com')
+    foreign_site.files.create!(
+      label: @file.label,
+      file: fixture_file_upload('document.pdf', 'application/pdf')
+    )
+
+    r :get, comfy_admin_cms_site_files_path(site_id: @site), params: { q: @file.label }
+
+    assert_response :success
+    assert_equal [@file], assigns(:files).to_a
+  end
+
+  def test_get_index_combines_search_and_category_filters
+    @site.files.create!(
+      label: @file.label,
+      file: fixture_file_upload('document.pdf', 'application/pdf')
+    )
+
+    r :get, comfy_admin_cms_site_files_path(site_id: @site), params: {
+      categories: comfy_cms_categories(:default).label,
+      q: @file.label
+    }
+
+    assert_response :success
+    assert_equal [@file], assigns(:files).to_a
+  end
+
   def test_get_index_with_redactor_images
     r :get, comfy_admin_cms_site_files_path(site_id: @site), params: {
       source: 'redactor', type: 'image'
@@ -60,6 +96,20 @@ class Comfy::Admin::Cms::FilesControllerTest < ActionDispatch::IntegrationTest
       'link' => url_for(@file.attachment),
       'size' => '12.1 KB'
     }], JSON.parse(response.body)
+  end
+
+  def test_get_index_with_redactor_file_search
+    @site.files.create!(
+      label: 'Another file',
+      file: fixture_file_upload('document.pdf', 'application/pdf')
+    )
+
+    r :get, comfy_admin_cms_site_files_path(site_id: @site), params: {
+      source: 'redactor', type: 'file', q: 'default.jpg'
+    }
+
+    assert_response :success
+    assert_equal ['default.jpg'], JSON.parse(response.body).pluck('name')
   end
 
   def test_get_index_with_svg_file

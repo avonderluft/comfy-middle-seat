@@ -10,5 +10,5 @@
       = link_to t('.publish_children', default: 'Publish children'), publish_children_comfy_admin_cms_site_page_path(@site, @page), method: :patch, data: {confirm: t('.publish_children_confirmation', default: 'Publish all child pages?')}, class: 'btn btn-success'
       = link_to t('.unpublish_children', default: 'Unpublish children'), unpublish_children_comfy_admin_cms_site_page_path(@site, @page), method: :patch, data: {confirm: t('.unpublish_children_confirmation', default: 'Unpublish all child pages?')}, class: 'btn btn-outline-secondary'
 
-= comfy_form_with model: @page, scope: :page, url: {action: :update}, html: {multipart: true} do |form|
+= comfy_form_with model: @page, scope: :page, url: {action: :update}, html: {multipart: true, data: {cms_unsaved_message: t("comfy.admin.cms.forms.unsaved_changes", default: "You have unsaved changes. Are you sure you want to leave this page?")}} do |form|
   = render form

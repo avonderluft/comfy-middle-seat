@@ -64,6 +64,13 @@ it:
           snippets: Snippet
           files: Files
 
+        forms:
+          unsaved_changes: Hai modifiche non salvate. Vuoi davvero lasciare questa pagina?
+
+        search:
+          submit: Cerca
+          clear: Pulisci
+
         sites:
           created: Sito creato
           creation_failure: Impossibile creare il sito
@@ -129,6 +136,8 @@ it:
           index:
             title: Pagine
             new_link: Crea nuova pagina
+            search_placeholder: Cerca pagine per etichetta, slug, percorso o contenuto
+            no_results: Nessuna pagina trovata.
           index_branch:
             toggle: Alterna
             add_child_page: Aggiungi Pagina figlio
@@ -152,6 +161,9 @@ it:
             choose_link: Select page...
 
         fragments:
+          loading: Caricamento del contenuto del layout…
+          load_error: Impossibile caricare il contenuto del layout. Il contenuto attuale è stato mantenuto.
+          discard_confirmation: Alcuni contenuti non possono essere mantenuti nel layout selezionato. Sostituirli comunque?
           form_fragments:
             no_tags: |-
               Il Layout non ha tag di contenuto definiti.<br/>
@@ -235,6 +247,8 @@ it:
             title: Files
             new_link: Carica nuovo file
             button: Carica File
+            search_placeholder: Cerca file per etichetta, descrizione o nome del file
+            no_results: Nessun file trovato.
           new:
             title: Nuovo File
           edit:

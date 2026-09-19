@@ -26,7 +26,7 @@ end
 group :test do
   gem 'brakeman'
   gem 'bundler-audit',            '~> 0.9.1'
-  gem 'coveralls_reborn',         '~> 0.29.0', require: false
+  gem 'coveralls_reborn',         require: false
   gem 'cuprite',                  '>= 0.15'
   gem 'diffy'
   gem 'equivalent-xml',           '~> 0.6.0'

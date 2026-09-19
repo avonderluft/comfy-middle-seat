@@ -44,6 +44,28 @@ class Comfy::Cms::Page < ActiveRecord::Base
 
   # -- Scopes ------------------------------------------------------------------
   scope :published, -> { where(is_published: true) }
+  scope :search, ->(query) {
+    term = query.to_s.strip
+    if term.present?
+      pattern = "%#{sanitize_sql_like(term.downcase)}%"
+      where(
+        <<~SQL.squish,
+          LOWER(comfy_cms_pages.label) LIKE :pattern OR
+          LOWER(comfy_cms_pages.slug) LIKE :pattern OR
+          LOWER(comfy_cms_pages.full_path) LIKE :pattern OR
+          EXISTS (
+            SELECT 1
+            FROM comfy_cms_fragments
+            WHERE comfy_cms_fragments.record_type = :record_type
+              AND comfy_cms_fragments.record_id = comfy_cms_pages.id
+              AND LOWER(comfy_cms_fragments.content) LIKE :pattern
+          )
+        SQL
+        pattern: pattern,
+        record_type: polymorphic_name
+      )
+    end
+  }
 
   # -- Class Methods -----------------------------------------------------------
   # Tree-like structure for pages

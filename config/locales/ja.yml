@@ -64,6 +64,13 @@ ja:
           snippets: スニペット
           files: ファイル
 
+        forms:
+          unsaved_changes: 保存されていない変更があります。このページを離れてもよろしいですか？
+
+        search:
+          submit: 検索
+          clear: クリア
+
         sites:
           created: サイトが作成されました
           creation_failure: サイトの作成に失敗しました
@@ -129,6 +136,8 @@ ja:
           index:
             title: ページ
             new_link: 新規ページを作成
+            search_placeholder: ラベル、スラッグ、パス、またはコンテンツでページを検索
+            no_results: ページが見つかりません。
           index_branch:
             toggle: 切り替え
             add_child_page: 子ページを追加
@@ -152,6 +161,9 @@ ja:
             choose_link: Select page...
 
         fragments:
+          loading: レイアウトのコンテンツを読み込んでいます…
+          load_error: レイアウトのコンテンツを読み込めませんでした。現在のコンテンツは保持されています。
+          discard_confirmation: 選択したレイアウトでは一部のコンテンツを保持できません。それでも置き換えますか？
           form_fragments:
             no_tags: |-
               レイアウトにはコンテンツタグが定義されていません。<br/>
@@ -235,6 +247,8 @@ ja:
             title: ファイル
             new_link: 新規ファイルをアップロード
             button: ファイルをアップロード
+            search_placeholder: ラベル、説明、またはファイル名でファイルを検索
+            no_results: ファイルが見つかりません。
           new:
             title: 新規ファイル
           edit:

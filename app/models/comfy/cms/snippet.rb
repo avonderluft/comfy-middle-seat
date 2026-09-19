@@ -13,8 +13,9 @@ class Comfy::Cms::Snippet < ActiveRecord::Base
   # -- Callbacks ---------------------------------------------------------------
   before_validation :assign_label
   before_create :assign_position
-  after_save    :clear_page_content_cache
-  after_destroy :clear_page_content_cache
+  after_commit :clear_page_content_cache,
+               on: %i[create update destroy],
+               if: :page_content_cache_stale?
 
   # -- Validations -------------------------------------------------------------
   validates :label,
@@ -33,7 +34,11 @@ protected
   # When snippet is changed or removed we need to blow away all page caches as
   # we don't know where it was used.
   def clear_page_content_cache
-    Comfy::Cms::Page.where(id: site.pages.pluck(:id)).update_all(content_cache: nil)
+    site.pages.update_all(content_cache: nil)
+  end
+
+  def page_content_cache_stale?
+    destroyed? || saved_changes?
   end
 
   def assign_position

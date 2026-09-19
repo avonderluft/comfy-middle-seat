@@ -12,7 +12,7 @@ class Comfy::Admin::Cms::FilesController < Comfy::Admin::Cms::BaseController
   before_action :authorize
 
   def index
-    files_scope = @site.files.with_attached_attachment
+    files_scope = @site.files.with_attached_attachment.search(params[:q])
 
     case params[:source]
 

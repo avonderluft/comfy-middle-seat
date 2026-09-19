@@ -64,6 +64,13 @@ ca:
           snippets: Fragments
           files: Arxius
 
+        forms:
+          unsaved_changes: Teniu canvis sense desar. Esteu segur que voleu sortir d'aquesta pàgina?
+
+        search:
+          submit: Cerca
+          clear: Neteja
+
         sites:
           created: S'ha creat el lloc
           creation_failure: El lloc no s'ha pogut ser crear
@@ -129,6 +136,8 @@ ca:
           index:
             title: Pàgines
             new_link: Crea una nova pàgina
+            search_placeholder: Cerca pàgines per nom, slug, ruta o contingut
+            no_results: No s'ha trobat cap pàgina.
           index_branch:
             toggle: Canvia
             add_child_page: Afegeix una pàgina filla
@@ -152,6 +161,9 @@ ca:
             choose_link: Sel·leccioneu una pàgina…
 
         fragments:
+          loading: S'està carregant el contingut del disseny…
+          load_error: No s'ha pogut carregar el contingut del disseny. S'ha conservat el contingut actual.
+          discard_confirmation: Part del contingut no es pot conservar en el disseny seleccionat. Voleu substituir-lo igualment?
           form_fragments:
             no_tags: |-
               La plantilla no té etiquetes de contingut definides.<br/>
@@ -235,6 +247,8 @@ ca:
             title: Arxius
             new_link: Puja un nou arxiu
             button: Carrega els arxius
+            search_placeholder: Cerca arxius per nom, descripció o nom de fitxer
+            no_results: No s'ha trobat cap arxiu.
           new:
             title: Nou arxiu
           edit:

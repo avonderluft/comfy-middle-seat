@@ -64,6 +64,13 @@ ar:
           snippets: مقتطفات
           files: ملفات
 
+        forms:
+          unsaved_changes: لديك تغييرات غير محفوظة. هل أنت متأكد أنك تريد مغادرة هذه الصفحة؟
+
+        search:
+          submit: بحث
+          clear: مسح
+
         sites:
           created: موقع جديد تم انشاءه
           creation_failure: فشل في إنشاء الموقع
@@ -129,6 +136,8 @@ ar:
           index:
             title: الصفحات
             new_link: إنشاء صفحة جديدة
+            search_placeholder: البحث في الصفحات حسب العنوان أو الاسم المختصر أو المسار أو المحتوى
+            no_results: لم يتم العثور على صفحات.
           index_branch:
             toggle: تبديل
             add_child_page: أضف صفحة فرعية
@@ -152,6 +161,9 @@ ar:
             choose_link: اختر الصفحة...
 
         fragments:
+          loading: جارٍ تحميل محتوى التخطيط…
+          load_error: تعذر تحميل محتوى التخطيط. تم الاحتفاظ بالمحتوى الحالي.
+          discard_confirmation: لا يمكن الاحتفاظ ببعض المحتوى في التخطيط المحدد. هل تريد استبداله على أي حال؟
           form_fragments:
             no_tags: |-
               لا يحتوي التخطيط على علامات محتوى محددة.<br/>
@@ -235,6 +247,8 @@ ar:
             title: ملفات
             new_link: رفع ملف جديد
             button: رفع الملفات
+            search_placeholder: البحث في الملفات حسب العنوان أو الوصف أو اسم الملف
+            no_results: لم يتم العثور على ملفات.
           new:
             title: ملف جديد
           edit:

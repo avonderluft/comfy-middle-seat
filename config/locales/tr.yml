@@ -64,6 +64,13 @@ tr:
           snippets: Pasajlar
           files: Dosyalar
 
+        forms:
+          unsaved_changes: Kaydedilmemiş değişiklikleriniz var. Bu sayfadan ayrılmak istediğinizden emin misiniz?
+
+        search:
+          submit: Ara
+          clear: Temizle
+
         sites:
           created: Site oluşturuldu
           creation_failure: Site oluşturulamadı
@@ -129,6 +136,8 @@ tr:
           index:
             title: Sayfalar
             new_link: Yeni Sayfa Oluştur
+            search_placeholder: Sayfaları etikete, kısa ada, yola veya içeriğe göre ara
+            no_results: Sayfa bulunamadı.
           index_branch:
             toggle: Toggle
             add_child_page: Alt Sayfa Oluştur
@@ -152,6 +161,9 @@ tr:
             choose_link: Sayfa Seç...
 
         fragments:
+          loading: Şablon içeriği yükleniyor…
+          load_error: Şablon içeriği yüklenemedi. Mevcut içeriğiniz korundu.
+          discard_confirmation: Bazı içerikler seçilen şablonda korunamaz. Yine de değiştirilsin mi?
           form_fragments:
             no_tags: |-
               Şablon etiket içermiyor.<br/>
@@ -235,6 +247,8 @@ tr:
             title: Dosyalar
             new_link: Yeni Dosya Yükle
             button: Dosyaları Yükle
+            search_placeholder: Dosyaları etikete, açıklamaya veya dosya adına göre ara
+            no_results: Dosya bulunamadı.
           new:
             title: Yeni Dosya
           edit:

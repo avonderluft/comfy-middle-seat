@@ -13,6 +13,27 @@ class PagesFrontendTest < ApplicationSystemTestCase
     assert_equal 'test-page', find_field('Slug').value
   end
 
+  def test_lazy_tree_opens_and_reopens_without_duplicate_pages
+    child = comfy_cms_pages(:child)
+    grandchild = @site.pages.create!(
+      label: 'Grandchild',
+      slug: 'grandchild',
+      parent: child,
+      layout: comfy_cms_layouts(:default)
+    )
+
+    visit_p comfy_admin_cms_site_pages_path(@site)
+    assert_no_selector "#comfy_cms_page_#{grandchild.id}"
+
+    find("#comfy_cms_page_#{child.id} a.toggle").click
+    assert_selector "#comfy_cms_page_#{grandchild.id}", count: 1
+
+    find("#comfy_cms_page_#{child.id} a.toggle").click
+    assert_no_selector "#comfy_cms_page_#{grandchild.id}"
+    find("#comfy_cms_page_#{child.id} a.toggle").click
+    assert_selector "#comfy_cms_page_#{grandchild.id}", count: 1
+  end
+
   def test_publish_and_unpublish_children
     child = comfy_cms_pages(:child)
     visit_p edit_comfy_admin_cms_site_page_path(@site, comfy_cms_pages(:default))
@@ -141,5 +162,68 @@ class PagesFrontendTest < ApplicationSystemTestCase
     click_button 'Update Page'
     assert_text 'Page, siblings, and parent updated'
     assert_equal 'Unsaved page label', cms_page.reload.label
+  end
+
+  def test_draft_restores_dynamic_layout_fields_and_warns_about_files
+    original_layout = comfy_cms_layouts(:default)
+    original_layout.update_column(:content, '{{ cms:text content }}')
+
+    draft_layout = comfy_cms_layouts(:child)
+    draft_layout.update_column(:content, <<~TEXT)
+      {{ cms:text content }}
+      {{ cms:text draft_only }}
+      {{ cms:file upload }}
+    TEXT
+
+    cms_page = comfy_cms_pages(:default)
+    path = edit_comfy_admin_cms_site_page_path(@site, cms_page)
+    visit_p path
+    fill_in 'Label', with: 'Locally drafted page'
+    select draft_layout.label, from: 'Layout'
+    assert_field 'fragment-draft_only'
+    fill_in 'fragment-content', with: 'Shared draft content'
+    fill_in 'fragment-draft_only', with: 'Layout-specific draft content'
+    attach_file 'fragment-upload', Rails.root.join('test/fixtures/files/image.jpg')
+
+    accept_confirm('You have unsaved changes. Are you sure you want to leave this page?') do
+      click_link 'Cancel'
+    end
+    visit_p path
+
+    assert_selector '.modal', text: 'Unsaved draft found'
+    assert_text 'Selected files are not stored and must be selected again.'
+    click_button 'Restore draft'
+
+    assert_field 'Label', with: 'Locally drafted page'
+    assert_field 'Layout', with: draft_layout.id.to_s
+    assert_field 'fragment-content', with: 'Shared draft content'
+    assert_field 'fragment-draft_only', with: 'Layout-specific draft content'
+    assert_equal '', find_field('fragment-upload').value
+  end
+
+  def test_validation_failure_keeps_draft_until_success_is_acknowledged
+    cms_page = comfy_cms_pages(:default)
+    path = edit_comfy_admin_cms_site_page_path(@site, cms_page)
+    visit_p path
+    fill_in 'Label', with: ''
+    click_button 'Update Page'
+    assert_text 'Failed to update page'
+
+    accept_confirm('You have unsaved changes. Are you sure you want to leave this page?') do
+      click_link 'Cancel'
+    end
+    visit_p path
+    assert_selector '.modal', text: 'Unsaved draft found'
+    click_button 'Restore draft'
+    assert_field 'Label', with: ''
+
+    fill_in 'Label', with: 'Recovered valid page'
+    click_button 'Update Page'
+    assert_text 'Page, siblings, and parent updated'
+
+    click_link 'Cancel'
+    visit_p path
+    assert_no_selector '.modal', text: 'Unsaved draft found', wait: 0.5
+    assert_field 'Label', with: 'Recovered valid page'
   end
 end

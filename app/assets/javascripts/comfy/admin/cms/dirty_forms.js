@@ -45,6 +45,7 @@
 
   const syncEditors = () => {
     if (CMS.codemirror && CMS.codemirror.sync) CMS.codemirror.sync();
+    if (CMS.wysiwyg && CMS.wysiwyg.sync) CMS.wysiwyg.sync();
   };
 
   const dirtyForms = () => {
@@ -163,7 +164,11 @@
       submittingForms = new WeakSet();
       navigationAllowed = false;
 
-      for (const form of forms) baselines.set(form, formState(form));
+      for (const form of forms) {
+        const baseline =
+          form.dataset.cmsSaveFailed === "true" ? null : formState(form);
+        baselines.set(form, baseline);
+      }
 
       window.addEventListener("beforeunload", beforeUnload);
       document.addEventListener("click", confirmLinkNavigation, true);

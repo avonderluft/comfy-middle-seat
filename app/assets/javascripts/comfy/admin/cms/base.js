@@ -25,16 +25,19 @@
     CMS.wysiwyg.init();
     CMS.sortableList.init();
     CMS.timepicker.init();
-    CMS.pageFragments();
+    CMS.pageFragments.init();
     CMS.categories();
     CMS.files.init();
     CMS.fileLinks();
     CMS.fileUpload.init();
     CMS.diff();
+    CMS.draftForms.init();
     CMS.dirtyForms.init();
   };
 
   CMS.dispose = () => {
+    CMS.pageFragments.dispose();
+    CMS.draftForms.dispose();
     CMS.dirtyForms.dispose();
     CMS.codemirror.dispose();
     CMS.wysiwyg.dispose();

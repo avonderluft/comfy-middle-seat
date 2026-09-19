@@ -217,6 +217,29 @@ body#comfy
     .label
       padding: 15px 0
       font-weight: bold
+    .revision-summary
+      margin-bottom: 1rem
+      padding: 1rem
+      background-color: $white
+      border: 1px solid $gray-300
+    .revision-legend
+      display: flex
+      flex-wrap: wrap
+      gap: 1rem
+      font-size: 0.875rem
+    .revision-legend-item
+      display: inline-flex
+      align-items: center
+    .revision-legend-swatch
+      display: inline-block
+      width: 1.25rem
+      height: 1rem
+      margin-right: 0.35rem
+      border: 1px solid $gray-400
+      &.added
+        background-color: #c6ffc6
+      &.removed
+        background-color: #ffc6c6
     .revision
       margin-bottom: 5px
       .content

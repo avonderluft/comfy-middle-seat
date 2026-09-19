@@ -1,10 +1,10 @@
-- page        ||= index_branch
-- children      = @pages_by_parent[page.id]
-- siblings      = @pages_by_parent[page.parent_id]
-- has_children  = children.present?
-- has_siblings  = siblings.size > 1
-- branch_open   = (session[:cms_page_tree] || []).member?(page.id.to_s) || page.root?
-- filter_view   = params[:categories].present? || params[:q].present?
+- page          ||= index_branch
+- filter_view     = params[:categories].present? || params[:q].present?
+- children        = filter_view ? [] : @pages_by_parent.fetch(page.id, [])
+- siblings        = filter_view ? [] : @pages_by_parent.fetch(page.parent_id, [])
+- has_children    = children.present? || page.children_count.to_i.positive?
+- has_siblings    = siblings.size > 1
+- branch_open     = page_branch_open?(page)
 
 %li{id: dom_id(page), data: {id: page.id}}
   .row
@@ -37,7 +37,8 @@
       .btn-group.btn-group-sm
         = link_to t(".add_child_page"), new_comfy_admin_cms_site_page_path(@site, parent_id: page.id), class: "btn btn-outline-secondary"
         = link_to t(".edit"), edit_comfy_admin_cms_site_page_path(@site, page), class: "btn btn-outline-secondary"
-        = link_to t(".delete"), comfy_admin_cms_site_page_path(@site, page), method: :delete, data: {confirm: t('.are_you_sure')}, class: "btn btn-danger"
+        - unless page.root?
+          = link_to t(".delete"), comfy_admin_cms_site_page_path(@site, page), method: :delete, data: {confirm: t('.are_you_sure')}, class: "btn btn-danger"
 
   - if !filter_view && has_children && branch_open
     %ul.list.children.sortable.pl-md-3

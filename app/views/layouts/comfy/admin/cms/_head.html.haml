@@ -6,6 +6,8 @@
   %meta{name: "viewport", content: "width=device-width, initial-scale=1, shrink-to-fit=no"}
 
   = csrf_meta_tag
+  - if flash[:cms_saved_draft_key].present?
+    %meta{name: "cms-saved-draft-key", content: flash[:cms_saved_draft_key]}
 
   - if @site && @site.persisted?
     %meta{name: "cms-file-upload-path", content: comfy_admin_cms_site_files_path(@site)}

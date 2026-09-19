@@ -18,6 +18,9 @@ import "codemirror/mode/htmlmixed/htmlmixed";
           lineNumbers: true,
           viewportMargin: Infinity,
         });
+        codemirror.on("change", () => {
+          textarea.dispatchEvent(new Event("input", { bubbles: true }));
+        });
         codeMirrorInstances.push(codemirror);
       }
 
@@ -36,6 +39,15 @@ import "codemirror/mode/htmlmixed/htmlmixed";
     sync(root = document) {
       for (const codemirror of codeMirrorInstances) {
         if (root.contains(codemirror.getTextArea())) codemirror.save();
+      }
+    },
+    restore(root = document) {
+      for (const codemirror of codeMirrorInstances) {
+        const textarea = codemirror.getTextArea();
+        if (!root.contains(textarea)) continue;
+
+        codemirror.setValue(textarea.value);
+        codemirror.refresh();
       }
     },
     dispose() {

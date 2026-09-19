@@ -38,6 +38,11 @@ protected
     true
   end
 
+  def acknowledge_draft_save
+    key = params[:cms_draft_key].to_s
+    flash[:cms_saved_draft_key] = key if key.start_with?('comfy-cms:draft:v1:')
+  end
+
   def load_seeds
     return unless ComfyMiddleSeat.config.enable_seeds
 

@@ -450,15 +450,26 @@ class Comfy::Admin::Cms::PagesControllerTest < ActionDispatch::IntegrationTest
     assert_equal 'Failed to update page', flash[:danger]
   end
 
-  def test_destroy
-    assert_difference 'Comfy::Cms::Page.count', -2 do
-      assert_difference 'Comfy::Cms::Fragment.count', -5 do
-        r :delete, comfy_admin_cms_site_page_path(site_id: @site, id: @page)
-        assert_response :redirect
-        assert_redirected_to action: :index
-        assert_equal 'Page deleted, siblings, and parent updated', flash[:success]
-      end
+  def test_destroy_rejects_root_page
+    assert_no_difference 'Comfy::Cms::Page.count' do
+      r :delete, comfy_admin_cms_site_page_path(site_id: @site, id: @page)
     end
+
+    assert_response :redirect
+    assert_redirected_to action: :index
+    assert_equal 'The root page cannot be deleted.', flash[:danger]
+  end
+
+  def test_destroy_non_root_page
+    child = comfy_cms_pages(:child)
+
+    assert_difference 'Comfy::Cms::Page.count', -1 do
+      r :delete, comfy_admin_cms_site_page_path(site_id: @site, id: child)
+    end
+
+    assert_response :redirect
+    assert_redirected_to action: :index
+    assert_equal 'Page deleted, siblings, and parent updated', flash[:success]
   end
 
   def test_get_form_fragments
@@ -580,17 +591,75 @@ class Comfy::Admin::Cms::PagesControllerTest < ActionDispatch::IntegrationTest
   def test_get_toggle_branch
     r :get, toggle_branch_comfy_admin_cms_site_page_path(site_id: @site, id: @page), xhr: true, params: { format: :js }
     assert_response :success
-    assert_equal [@page.id.to_s], session[:cms_page_tree]
+    assert_equal [@page.id.to_s], session[:cms_page_tree][@site.id.to_s]
 
     r :get, toggle_branch_comfy_admin_cms_site_page_path(site_id: @site, id: @page), xhr: true, params: { format: :js }
     assert_response :success
-    assert_equal [], session[:cms_page_tree]
+    assert_equal [], session[:cms_page_tree][@site.id.to_s]
   end
 
   def test_get_toggle_branch_no_record
-    r :get, toggle_branch_comfy_admin_cms_site_page_path(site_id: @site, id: @page), xhr: true, params: { format: :js }
+    r :get,
+      toggle_branch_comfy_admin_cms_site_page_path(site_id: @site, id: 999_999_999),
+      xhr: true,
+      params: { format: :js }
+    assert_response :not_found
+  end
+
+  def test_index_only_loads_root_and_direct_children_for_closed_tree
+    child = comfy_cms_pages(:child)
+    grandchild = create_page('Grandchild', parent: child)
+
+    r :get, comfy_admin_cms_site_pages_path(site_id: @site)
+
     assert_response :success
-    assert_equal [@page.id.to_s], session[:cms_page_tree]
+    assert_equal [child], assigns(:pages_by_parent).fetch(@page.id)
+    refute assigns(:pages_by_parent).key?(child.id)
+    assert_no_select "#comfy_cms_page_#{grandchild.id}"
+  end
+
+  def test_index_loads_complete_sibling_sets_below_session_open_pages
+    child = comfy_cms_pages(:child)
+    grandchild_one = create_page('Grandchild One', parent: child)
+    grandchild_two = create_page('Grandchild Two', parent: child)
+    great_grandchild = create_page('Great Grandchild', parent: grandchild_one)
+    toggle_page(child)
+
+    r :get, comfy_admin_cms_site_pages_path(site_id: @site)
+
+    assert_equal [grandchild_one, grandchild_two], assigns(:pages_by_parent).fetch(child.id)
+    refute assigns(:pages_by_parent).key?(grandchild_one.id)
+    assert_select "#comfy_cms_page_#{grandchild_one.id}"
+    assert_select "#comfy_cms_page_#{grandchild_two.id}"
+    assert_no_select "#comfy_cms_page_#{great_grandchild.id}"
+  end
+
+  def test_filtered_index_stays_flat_without_tree_queries
+    child = comfy_cms_pages(:child)
+    grandchild = create_page('Search Result', parent: child)
+    create_page('Hidden Descendant', parent: grandchild)
+
+    r :get, comfy_admin_cms_site_pages_path(site_id: @site), params: { q: 'Search Result' }
+
+    assert_response :success
+    assert_equal [grandchild], assigns(:pages)
+    assert_empty assigns(:pages_by_parent)
+    assert_select 'ul.list.sortable', count: 0
+    assert_select "#comfy_cms_page_#{grandchild.id}"
+  end
+
+  def test_toggle_loads_direct_children_and_session_open_descendants_only
+    child = comfy_cms_pages(:child)
+    grandchild = create_page('Grandchild', parent: child)
+    great_grandchild = create_page('Great Grandchild', parent: grandchild)
+    toggle_page(child)
+    toggle_page(grandchild)
+    toggle_page(child)
+
+    toggle_page(child)
+
+    assert_equal [grandchild], assigns(:pages_by_parent).fetch(child.id)
+    assert_equal [great_grandchild], assigns(:pages_by_parent).fetch(grandchild.id)
   end
 
   def test_publish_children
@@ -692,5 +761,24 @@ class Comfy::Admin::Cms::PagesControllerTest < ActionDispatch::IntegrationTest
     assert_nil page_one.read_attribute(:content_cache)
     assert_nil page_two.read_attribute(:content_cache)
     assert_equal 'unaffected content', unaffected_page.reload.read_attribute(:content_cache)
+  end
+
+private
+
+  def create_page(label, parent:, **attributes)
+    @site.pages.create!({
+      label: label,
+      slug: label.parameterize,
+      parent: parent,
+      layout: @layout
+    }.merge(attributes))
+  end
+
+  def toggle_page(page)
+    r :get,
+      toggle_branch_comfy_admin_cms_site_page_path(site_id: @site, id: page),
+      xhr: true,
+      params: { format: :js }
+    assert_response :success
   end
 end

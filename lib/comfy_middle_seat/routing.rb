@@ -17,6 +17,7 @@ module ComfyMiddleSeat::Routing
             concern :with_revisions do |options|
               resources :revisions, **options, only: %i[index show] do
                 patch :revert, on: :member
+                get :preview, on: :member if options[:controller].in?(%w[revisions/page revisions/translation])
               end
             end
 

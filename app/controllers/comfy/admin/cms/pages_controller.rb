@@ -8,6 +8,8 @@ class Comfy::Admin::Cms::PagesController < Comfy::Admin::Cms::BaseController
 
   include ::Comfy::ReorderAction
 
+  helper_method :page_branch_open?
+
   self.reorder_action_resource = ::Comfy::Cms::Page
 
   before_action :check_for_layouts, only: %i[new edit]
@@ -23,18 +25,18 @@ class Comfy::Admin::Cms::PagesController < Comfy::Admin::Cms::BaseController
 
     return index_for_redactor if params[:source] == 'redactor'
 
-    @pages_by_parent = pages_grouped_by_parent
-
-    @pages =
-      if page_filters?
-        @site.pages
-          .includes(:categories)
-          .for_category(params[:categories])
-          .search(params[:q])
-          .order(:label)
-      else
-        [@site.pages.root].compact
-      end
+    if page_filters?
+      @pages_by_parent = {}
+      @pages = @site.pages
+        .includes(:categories)
+        .for_category(params[:categories])
+        .search(params[:q])
+        .order(:label)
+    else
+      root = @site.pages.roots.includes(:categories).first
+      @pages = [root].compact
+      @pages_by_parent = pages_grouped_for_open_tree(root)
+    end
   end
 
   def new
@@ -53,6 +55,7 @@ class Comfy::Admin::Cms::PagesController < Comfy::Admin::Cms::BaseController
   def create
     @page.save!
     update_family
+    acknowledge_draft_save
     flash[:success] = I18n.t('comfy.admin.cms.pages.created')
     redirect_to action: :edit, id: @page
   rescue ActiveRecord::RecordInvalid
@@ -63,6 +66,7 @@ class Comfy::Admin::Cms::PagesController < Comfy::Admin::Cms::BaseController
   def update
     @page.save!
     update_family
+    acknowledge_draft_save
     flash[:success] = I18n.t('comfy.admin.cms.pages.updated')
     redirect_to action: :edit, id: @page
   rescue ActiveRecord::RecordInvalid
@@ -71,7 +75,15 @@ class Comfy::Admin::Cms::PagesController < Comfy::Admin::Cms::BaseController
   end
 
   def destroy
-    @page.destroy
+    if @page.root?
+      flash[:danger] = I18n.t(
+        'comfy.admin.cms.pages.root_delete_failure',
+        default: 'The root page cannot be deleted.'
+      )
+      return redirect_to action: :index
+    end
+
+    @page.destroy!
     update_family
     flash[:success] = I18n.t('comfy.admin.cms.pages.deleted')
     redirect_to action: :index
@@ -89,13 +101,21 @@ class Comfy::Admin::Cms::PagesController < Comfy::Admin::Cms::BaseController
   end
 
   def toggle_branch
-    @pages_by_parent = pages_grouped_by_parent
     @page = @site.pages.find(params[:id])
-    s   = (session[:cms_page_tree] ||= [])
-    id  = @page.id.to_s
-    s.member?(id) ? s.delete(id) : s << id
+    tree = page_tree_session
+    id = @page.id.to_s
+
+    if tree.member?(id)
+      tree.delete(id)
+      @branch_open = false
+      @pages_by_parent = {}
+    else
+      tree << id
+      @branch_open = true
+      @pages_by_parent = pages_grouped_for_open_tree(@page)
+    end
   rescue ActiveRecord::RecordNotFound
-    render nothing: true
+    head :not_found
   end
 
   def publish_children
@@ -142,8 +162,40 @@ protected
     @site.pages.none?
   end
 
-  def pages_grouped_by_parent
-    @site.pages.order(:position).includes(:categories).group_by(&:parent_id)
+  def pages_grouped_for_open_tree(parent)
+    return {} unless parent
+
+    pages_by_parent = {}
+    open_ids = session_open_page_ids
+    parent_ids = [parent.id]
+
+    while parent_ids.present?
+      children = @site.pages
+        .where(parent_id: parent_ids)
+        .includes(:categories)
+        .order(:parent_id, :position, :id)
+        .to_a
+      pages_by_parent.merge!(children.group_by(&:parent_id))
+      parent_ids = children.filter_map { |page| page.id if open_ids.include?(page.id) }
+    end
+
+    pages_by_parent
+  end
+
+  def page_branch_open?(page)
+    page.root? || page_tree_session.member?(page.id.to_s)
+  end
+
+  def page_tree_session
+    trees = session[:cms_page_tree]
+    trees = session[:cms_page_tree] = {} unless trees.is_a?(Hash)
+    trees[@site.id.to_s] ||= []
+  end
+
+  def session_open_page_ids
+    page_tree_session.filter_map do |id|
+      id.to_i if id.to_s.match?(%r{\A[1-9]\d*\z})
+    end.to_set
   end
 
   def page_filters?

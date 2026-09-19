@@ -1,6 +1,14 @@
 (() => {
   const fragmentName = /\[fragments_attributes\]\[\d+\]\[identifier\]$/;
 
+  let toggle = null;
+  let container = null;
+  let currentLayoutId = null;
+  let baselineFragments = new Map();
+  let onLayoutChange = null;
+  let requestId = 0;
+  let abortController = null;
+
   const fieldState = (control) => {
     const type = (control.type || "").toLowerCase();
 
@@ -236,7 +244,9 @@
   };
 
   const statusMessage = (container, message, type) => {
-    const current = document.querySelector("[data-cms-fragments-status]");
+    const current = container.parentElement
+      ? container.parentElement.querySelector("[data-cms-fragments-status]")
+      : null;
     if (current) current.remove();
     if (!message) return;
 
@@ -264,56 +274,120 @@
     CMS.codemirror.init();
   };
 
-  window.CMS.pageFragments = () => {
-    const toggle = document.querySelector("select#fragments-toggle");
-    const container = document.querySelector("#form-fragments-container");
-    if (toggle === null || container === null) return;
+  const notifyChanged = () => {
+    if (!toggle) return;
+    toggle.dispatchEvent(
+      new CustomEvent("cms:fragments-changed", { bubbles: true })
+    );
+  };
 
+  const loadLayout = async (
+    requestedLayoutId,
+    { confirmDiscard = true, preserveFragments = true } = {}
+  ) => {
+    if (!toggle || !container) return false;
+    if (requestedLayoutId === currentLayoutId) return true;
+
+    CMS.codemirror.sync(container);
+    CMS.wysiwyg.sync(container);
+    const sourceFragments = fragmentStates(container);
     const url = new URL(toggle.dataset.url, document.location.href);
-    let currentLayoutId = toggle.value;
-    let baselineFragments = fragmentStates(container);
+    url.searchParams.set("layout_id", requestedLayoutId);
 
-    toggle.addEventListener("change", async () => {
-      const requestedLayoutId = toggle.value;
-      CMS.codemirror.sync(container);
-      const sourceFragments = fragmentStates(container);
+    const currentRequestId = ++requestId;
+    if (abortController) abortController.abort();
+    abortController = new AbortController();
 
-      toggle.disabled = true;
-      container.setAttribute("aria-busy", "true");
-      statusMessage(container, toggle.dataset.loadingMessage, "info");
-      url.searchParams.set("layout_id", requestedLayoutId);
+    toggle.value = requestedLayoutId;
+    toggle.disabled = true;
+    container.setAttribute("aria-busy", "true");
+    statusMessage(container, toggle.dataset.loadingMessage, "info");
 
-      try {
-        const response = await fetch(url, { credentials: "same-origin" });
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    try {
+      const response = await fetch(url, {
+        credentials: "same-origin",
+        signal: abortController.signal,
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
-        const html = await response.text();
-        const destinationFragments = fragmentStates(responseFragment(html));
-        statusMessage(container, "", "info");
+      const html = await response.text();
+      if (currentRequestId !== requestId || !container) return false;
 
-        if (
-          wouldDiscardContent(
-            sourceFragments,
-            destinationFragments,
-            baselineFragments
-          ) &&
-          !window.confirm(toggle.dataset.discardMessage)
-        ) {
-          toggle.value = currentLayoutId;
-          return;
-        }
+      const destinationFragments = fragmentStates(responseFragment(html));
+      statusMessage(container, "", "info");
 
-        replaceFragments(container, html, sourceFragments);
-        currentLayoutId = requestedLayoutId;
-        baselineFragments = destinationFragments;
-      } catch (error) {
+      if (
+        confirmDiscard &&
+        wouldDiscardContent(
+          sourceFragments,
+          destinationFragments,
+          baselineFragments
+        ) &&
+        !window.confirm(toggle.dataset.discardMessage)
+      ) {
         toggle.value = currentLayoutId;
-        statusMessage(container, toggle.dataset.errorMessage, "danger");
-        console.error("Unable to load layout fragments", error);
-      } finally {
+        return false;
+      }
+
+      replaceFragments(
+        container,
+        html,
+        preserveFragments ? sourceFragments : new Map()
+      );
+      currentLayoutId = requestedLayoutId;
+      baselineFragments = destinationFragments;
+      return true;
+    } catch (error) {
+      if (error.name === "AbortError") return false;
+
+      toggle.value = currentLayoutId;
+      statusMessage(container, toggle.dataset.errorMessage, "danger");
+      console.error("Unable to load layout fragments", error);
+      return false;
+    } finally {
+      if (currentRequestId === requestId && toggle && container) {
         toggle.disabled = false;
         container.removeAttribute("aria-busy");
+        abortController = null;
+        notifyChanged();
       }
-    });
+    }
+  };
+
+  const dispose = () => {
+    requestId += 1;
+    if (abortController) abortController.abort();
+    if (toggle) {
+      toggle.value = currentLayoutId;
+      toggle.disabled = false;
+      if (onLayoutChange) toggle.removeEventListener("change", onLayoutChange);
+    }
+    if (container) {
+      container.removeAttribute("aria-busy");
+      statusMessage(container, "", "info");
+    }
+
+    toggle = null;
+    container = null;
+    currentLayoutId = null;
+    baselineFragments = new Map();
+    onLayoutChange = null;
+    abortController = null;
+  };
+
+  window.CMS.pageFragments = {
+    init() {
+      dispose();
+      toggle = document.querySelector("select#fragments-toggle");
+      container = document.querySelector("#form-fragments-container");
+      if (!toggle || !container) return;
+
+      currentLayoutId = toggle.value;
+      baselineFragments = fragmentStates(container);
+      onLayoutChange = () => loadLayout(toggle.value);
+      toggle.addEventListener("change", onLayoutChange);
+    },
+    loadLayout,
+    dispose,
   };
 })();

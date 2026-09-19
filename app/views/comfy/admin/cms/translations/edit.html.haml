@@ -6,5 +6,7 @@
 .page-header
   %h2= t('.title')
 
-= comfy_form_with model: @translation, scope: :translation, url: {action: :update}, html: {multipart: true, data: {cms_unsaved_message: t("comfy.admin.cms.forms.unsaved_changes", default: "You have unsaved changes. Are you sure you want to leave this page?")}} do |form|
+- draft_data = cms_draft_form_data('site', @site.id, 'page', @page.id, 'translation', @translation.id, record: @translation)
+= comfy_form_with model: @translation, scope: :translation, url: {action: :update}, html: {multipart: true, data: draft_data} do |form|
+  = hidden_field_tag :cms_draft_key, draft_data[:cms_draft_key]
   = render form

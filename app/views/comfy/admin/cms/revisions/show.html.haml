@@ -1,20 +1,36 @@
+- selected_timestamp = l(@revision.created_at, format: "%Y-%m-%d %H:%M:%S %Z")
+
 - content_for :right_column do
   .box.revisions
     - @record.revisions.order(created_at: :desc).each do |revision|
-      = active_link_to l(revision.created_at, format: :short), { id: revision.id }, class: "btn btn-sm btn-light d-block text-primary mb-1"
+      - timestamp = l(revision.created_at, format: "%Y-%m-%d %H:%M:%S %Z")
+      - label = t('.revision_link', default: 'Revision #%{id} — snapshot replaced at %{timestamp}', id: revision.id, timestamp: timestamp)
+      = active_link_to label, {id: revision.id}, class: "btn btn-sm btn-light d-block text-primary text-left mb-1"
 
 .page-header
   %h2
-    = t('.title')
+    = t('.title', default: 'Revisions for')
     = @record.class.to_s.demodulize
+
+.revision-summary
+  %h3.h5= t('.selected_revision', default: 'Selected revision #%{id}', id: @revision.id)
+  %p.mb-2
+    = t('.snapshot_explanation', default: 'This snapshot contains the content that was replaced at %{timestamp}. The comparison shows how the currently saved content differs from that snapshot.', timestamp: selected_timestamp)
+  .revision-legend{aria: {label: t('.legend', default: 'Change legend')}}
+    %span.revision-legend-item
+      %span.revision-legend-swatch.added{aria: {hidden: true}}
+      = t('.added', default: 'Added since snapshot')
+    %span.revision-legend-item
+      %span.revision-legend-swatch.removed{aria: {hidden: true}}
+      = t('.removed', default: 'Removed since snapshot')
 
 .row.d-none.d-lg-flex
   .col-lg-10.ml-auto
     .row
       .col-lg-6
-        .label= t('.previous')
+        .label= t('.selected_snapshot', default: 'Selected snapshot')
       .col-lg-6
-        .label= t('.current')
+        .label= t('.current_content', default: 'Current saved content (changes highlighted)')
 
 - @current_content.each do |label, content|
   .row.revision
@@ -30,7 +46,9 @@
           .current.d-none= content
           .content
 
-= comfy_form_with model: @revision, url: { action: :revert } do |form|
+= comfy_form_with model: @revision, url: {action: :revert} do |form|
   = form.form_actions do
-    = submit_tag t(".update"), class: "btn btn-primary"
-    = link_to t(".cancel"), record_path, class: "btn btn-link"
+    = submit_tag t('.update', default: 'Restore selected snapshot'), class: 'btn btn-primary'
+    - if preview_path
+      = link_to t('.preview', default: 'Preview selected snapshot'), preview_path, class: 'btn btn-info', target: 'comfy-cms-revision-preview', rel: 'noopener'
+    = link_to t('.cancel', default: 'Cancel'), record_path, class: 'btn btn-link'

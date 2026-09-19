@@ -2,15 +2,12 @@
 
 class Comfy::Admin::Cms::Revisions::PageController < Comfy::Admin::Cms::Revisions::BaseController
   def show
-    @current_content = @record.fragments.to_h do |fragment|
-      [fragment.identifier, fragment.content]
-    end
-    @versioned_content = @record.fragments.to_h do |fragment|
-      data = @revision.data['fragments_attributes'].detect { |item| item[:identifier] == fragment.identifier }
-      [fragment.identifier, data.try(:[], :content)]
-    end
-
+    load_fragment_content
     render 'comfy/admin/cms/revisions/show'
+  end
+
+  def preview
+    render_fragment_preview(cms_page: @record, locale: @site.locale)
   end
 
 private
@@ -24,5 +21,9 @@ private
 
   def record_path
     edit_comfy_admin_cms_site_page_path(@site, @record)
+  end
+
+  def preview_path
+    preview_comfy_admin_cms_site_page_revision_path(@site, @record, @revision)
   end
 end

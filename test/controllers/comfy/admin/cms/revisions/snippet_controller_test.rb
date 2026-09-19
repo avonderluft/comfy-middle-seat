@@ -29,6 +29,7 @@ class Comfy::Admin::Cms::Revisions::SnippetControllerTest < ActionDispatch::Inte
     assert assigns(:revision)
     assert assigns(:record).is_a?(Comfy::Cms::Snippet)
     assert_template :show
+    assert_no_select "a[target='comfy-cms-revision-preview']"
   end
 
   def test_get_show_for_invalid_record

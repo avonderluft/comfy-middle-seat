@@ -66,6 +66,10 @@ import "../../vendor/redactor/video";
       removeNewLines: false,
       deniedTags: [],
       replaceDivs: false,
+      changeCallback() {
+        const textarea = this.core.getTextarea()[0];
+        textarea.dispatchEvent(new Event("input", { bubbles: true }));
+      },
     };
   };
 
@@ -79,6 +83,23 @@ import "../../vendor/redactor/video";
       const redactorOptions = buildRedactorOptions();
       for (const textarea of textareas) {
         redactorInstances.push(new jQuery.Redactor(textarea, redactorOptions));
+      }
+    },
+    sync(root = document) {
+      for (const redactor of redactorInstances) {
+        const textarea = redactor.core.getTextarea()[0];
+        if (root.contains(textarea) && redactor.opts.visual) {
+          redactor.code.startSync();
+        }
+      }
+    },
+    restore(root = document) {
+      for (const redactor of redactorInstances) {
+        const textarea = redactor.core.getTextarea()[0];
+        if (!root.contains(textarea)) continue;
+
+        redactor.code.set(textarea.value);
+        redactor.code.startSync();
       }
     },
     dispose() {

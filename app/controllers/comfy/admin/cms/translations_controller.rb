@@ -25,6 +25,7 @@ class Comfy::Admin::Cms::TranslationsController < Comfy::Admin::Cms::BaseControl
 
   def create
     @translation.save!
+    acknowledge_draft_save
     flash[:success] = I18n.t('comfy.admin.cms.translations.created')
     redirect_to action: :edit, id: @translation
   rescue ActiveRecord::RecordInvalid
@@ -34,6 +35,7 @@ class Comfy::Admin::Cms::TranslationsController < Comfy::Admin::Cms::BaseControl
 
   def update
     @translation.save!
+    acknowledge_draft_save
     flash[:success] = I18n.t('comfy.admin.cms.translations.updated')
     redirect_to action: :edit, id: @translation
   rescue ActiveRecord::RecordInvalid

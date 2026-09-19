@@ -64,8 +64,6 @@ de:
           snippets: Schnipsel
           files: Dateien
 
-        forms:
-          unsaved_changes: Sie haben ungespeicherte Änderungen. Möchten Sie diese Seite wirklich verlassen?
 
         search:
           submit: Suchen

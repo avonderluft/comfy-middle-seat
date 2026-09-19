@@ -64,8 +64,6 @@ fr:
           snippets: Fragments
           files: Fichiers
 
-        forms:
-          unsaved_changes: Vous avez des modifications non enregistrées. Êtes-vous sûr de vouloir quitter cette page ?
 
         search:
           submit: Rechercher

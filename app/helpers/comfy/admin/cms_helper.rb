@@ -26,10 +26,6 @@ module Comfy
       def cms_draft_form_data(*key_parts, record:)
         namespace = session[:comfy_cms_draft_namespace] ||= SecureRandom.hex(16)
         {
-          cms_unsaved_message: t(
-            'comfy.admin.cms.forms.unsaved_changes',
-            default: 'You have unsaved changes. Are you sure you want to leave this page?'
-          ),
           cms_draft_key: ['comfy-cms:draft:v1', namespace, *key_parts].join(':'),
           cms_draft_title: t('comfy.admin.cms.drafts.title', default: 'Unsaved draft found'),
           cms_draft_message: t(

@@ -64,8 +64,6 @@ ar:
           snippets: مقتطفات
           files: ملفات
 
-        forms:
-          unsaved_changes: لديك تغييرات غير محفوظة. هل أنت متأكد أنك تريد مغادرة هذه الصفحة؟
 
         search:
           submit: بحث

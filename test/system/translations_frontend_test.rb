@@ -56,9 +56,7 @@ class TranslationsFrontendTest < ApplicationSystemTestCase
     end
     preview_window.close
 
-    accept_confirm('You have unsaved changes. Are you sure you want to leave this page?') do
-      click_link 'Return to Page'
-    end
+    click_link 'Return to Page'
     visit_p path
     assert_selector '.modal', text: 'Unsaved draft found'
     click_button 'Restore draft'
@@ -67,9 +65,7 @@ class TranslationsFrontendTest < ApplicationSystemTestCase
     assert_selector '.CodeMirror-code', text: 'Translated CodeMirror draft'
     assert_selector '.redactor-editor', text: 'Translated Redactor draft'
 
-    accept_confirm('You have unsaved changes. Are you sure you want to leave this page?') do
-      click_link 'Return to Page'
-    end
+    click_link 'Return to Page'
     visit_p path
     assert_selector '.modal', text: 'Unsaved draft found'
     click_button 'Discard draft'

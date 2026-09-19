@@ -64,8 +64,6 @@ es:
           snippets: Fragmentos
           files: Archivos
 
-        forms:
-          unsaved_changes: Tiene cambios sin guardar. ¿Está seguro de que desea salir de esta página?
 
         search:
           submit: Buscar

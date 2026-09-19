@@ -64,8 +64,6 @@ zh-CN:
           snippets: 片段
           files: 文件
 
-        forms:
-          unsaved_changes: 您有未保存的更改。确定要离开此页面吗？
 
         search:
           submit: 搜索

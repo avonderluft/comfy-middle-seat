@@ -15,7 +15,6 @@ import "./base";
 import "./categories";
 import "./codemirror";
 import "./diff";
-import "./dirty_forms";
 import "./draft_forms";
 import "./file_link";
 import "./file_upload";

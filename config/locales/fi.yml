@@ -64,8 +64,6 @@ fi:
           snippets: Koodinpätkät
           files: Tiedostot
 
-        forms:
-          unsaved_changes: Sinulla on tallentamattomia muutoksia. Haluatko varmasti poistua tältä sivulta?
 
         search:
           submit: Hae

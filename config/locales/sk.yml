@@ -64,8 +64,6 @@ sk:
           snippets: Fragmenty
           files: Súbory
 
-        forms:
-          unsaved_changes: Máte neuložené zmeny. Naozaj chcete opustiť túto stránku?
 
         search:
           submit: Hľadať

@@ -64,8 +64,6 @@ gr:
           snippets: Snippets
           files: Αρχεία
 
-        forms:
-          unsaved_changes: Έχετε μη αποθηκευμένες αλλαγές. Είστε σίγουροι ότι θέλετε να φύγετε από αυτήν τη σελίδα;
 
         search:
           submit: Αναζήτηση

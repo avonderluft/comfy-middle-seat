@@ -64,8 +64,6 @@ ja:
           snippets: スニペット
           files: ファイル
 
-        forms:
-          unsaved_changes: 保存されていない変更があります。このページを離れてもよろしいですか？
 
         search:
           submit: 検索

@@ -64,8 +64,6 @@ en:
           snippets: Snippets
           files: Files
 
-        forms:
-          unsaved_changes: You have unsaved changes. Are you sure you want to leave this page?
 
         search:
           submit: Search

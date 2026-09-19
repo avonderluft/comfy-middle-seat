@@ -64,8 +64,6 @@ cs:
           snippets: Úryvky
           files: Soubory
 
-        forms:
-          unsaved_changes: Máte neuložené změny. Opravdu chcete tuto stránku opustit?
 
         search:
           submit: Hledat

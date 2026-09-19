@@ -64,8 +64,6 @@ sv:
           snippets: Snippets
           files: Filer
 
-        forms:
-          unsaved_changes: Du har osparade ändringar. Är du säker på att du vill lämna den här sidan?
 
         search:
           submit: Sök

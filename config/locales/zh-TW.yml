@@ -64,8 +64,6 @@ zh-TW:
           snippets: 片段
           files: 文件
 
-        forms:
-          unsaved_changes: 您有尚未儲存的變更。確定要離開此頁面嗎？
 
         search:
           submit: 搜尋

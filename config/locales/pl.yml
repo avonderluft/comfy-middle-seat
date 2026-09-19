@@ -64,8 +64,6 @@ pl:
           snippets: Snippety
           files: Pliki
 
-        forms:
-          unsaved_changes: Masz niezapisane zmiany. Czy na pewno chcesz opuścić tę stronę?
 
         search:
           submit: Szukaj

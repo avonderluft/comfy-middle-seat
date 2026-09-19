@@ -32,13 +32,11 @@
     CMS.fileUpload.init();
     CMS.diff();
     CMS.draftForms.init();
-    CMS.dirtyForms.init();
   };
 
   CMS.dispose = () => {
     CMS.pageFragments.dispose();
     CMS.draftForms.dispose();
-    CMS.dirtyForms.dispose();
     CMS.codemirror.dispose();
     CMS.wysiwyg.dispose();
     CMS.files.dispose();

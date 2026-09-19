@@ -64,8 +64,6 @@ uk:
           snippets: Сніппети
           files: Файли
 
-        forms:
-          unsaved_changes: У вас є незбережені зміни. Ви впевнені, що хочете залишити цю сторінку?
 
         search:
           submit: Пошук

@@ -64,8 +64,6 @@ da:
           snippets: Snippets
           files: Filer
 
-        forms:
-          unsaved_changes: Du har ændringer, der ikke er gemt. Er du sikker på, at du vil forlade denne side?
 
         search:
           submit: Søg

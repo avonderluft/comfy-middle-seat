@@ -64,8 +64,6 @@ pt-BR:
           snippets: Fragmentos
           files: Arquivos
 
-        forms:
-          unsaved_changes: Você tem alterações não salvas. Tem certeza de que deseja sair desta página?
 
         search:
           submit: Pesquisar

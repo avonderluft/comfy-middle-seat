@@ -64,8 +64,6 @@ nb:
           snippets: Snutter
           files: Filer
 
-        forms:
-          unsaved_changes: Du har ulagrede endringer. Er du sikker på at du vil forlate denne siden?
 
         search:
           submit: Søk

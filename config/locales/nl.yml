@@ -64,8 +64,6 @@ nl:
           snippets: Snippets
           files: Bestanden
 
-        forms:
-          unsaved_changes: U hebt niet-opgeslagen wijzigingen. Weet u zeker dat u deze pagina wilt verlaten?
 
         search:
           submit: Zoeken

@@ -64,8 +64,6 @@ it:
           snippets: Snippet
           files: Files
 
-        forms:
-          unsaved_changes: Hai modifiche non salvate. Vuoi davvero lasciare questa pagina?
 
         search:
           submit: Cerca

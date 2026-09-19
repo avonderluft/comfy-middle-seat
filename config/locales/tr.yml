@@ -64,8 +64,6 @@ tr:
           snippets: Pasajlar
           files: Dosyalar
 
-        forms:
-          unsaved_changes: Kaydedilmemiş değişiklikleriniz var. Bu sayfadan ayrılmak istediğinizden emin misiniz?
 
         search:
           submit: Ara

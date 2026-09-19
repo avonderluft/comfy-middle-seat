@@ -34,6 +34,20 @@ class PagesFrontendTest < ApplicationSystemTestCase
     assert_selector "#comfy_cms_page_#{grandchild.id}", count: 1
   end
 
+  def test_untouched_page_form_navigates_without_confirmation
+    cms_page = comfy_cms_pages(:default)
+    visit_p comfy_admin_cms_site_pages_path(@site)
+    find("a[href='#{edit_comfy_admin_cms_site_page_path(@site, cms_page)}']", match: :first).click
+    assert_current_path edit_comfy_admin_cms_site_page_path(@site, cms_page)
+    page.execute_script('window.confirm = () => { throw new Error("Unexpected confirmation") }')
+
+    click_link 'Cancel'
+
+    assert_current_path comfy_admin_cms_site_pages_path(@site)
+    visit_p edit_comfy_admin_cms_site_page_path(@site, cms_page)
+    assert_no_selector '.modal', text: 'Unsaved draft found', wait: 0.5
+  end
+
   def test_publish_and_unpublish_children
     child = comfy_cms_pages(:child)
     visit_p edit_comfy_admin_cms_site_page_path(@site, comfy_cms_pages(:default))
@@ -146,22 +160,20 @@ class PagesFrontendTest < ApplicationSystemTestCase
     assert_selector '.CodeMirror-code', text: 'content'
   end
 
-  def test_dirty_navigation_warns_but_successful_submit_does_not
+  def test_navigation_saves_draft_without_confirmation
     cms_page = comfy_cms_pages(:default)
     path = edit_comfy_admin_cms_site_page_path(@site, cms_page)
     visit_p path
     fill_in 'Label', with: 'Unsaved page label'
+    page.execute_script('window.confirm = () => { throw new Error("Unexpected confirmation") }')
 
-    dismiss_confirm('You have unsaved changes. Are you sure you want to leave this page?') do
-      click_link 'Cancel'
-    end
+    click_link 'Cancel'
+    assert_current_path comfy_admin_cms_site_pages_path(@site)
 
-    assert_current_path path
+    visit_p path
+    assert_selector '.modal', text: 'Unsaved draft found'
+    click_button 'Restore draft'
     assert_field 'Label', with: 'Unsaved page label'
-
-    click_button 'Update Page'
-    assert_text 'Page, siblings, and parent updated'
-    assert_equal 'Unsaved page label', cms_page.reload.label
   end
 
   def test_draft_restores_dynamic_layout_fields_and_warns_about_files
@@ -185,9 +197,7 @@ class PagesFrontendTest < ApplicationSystemTestCase
     fill_in 'fragment-draft_only', with: 'Layout-specific draft content'
     attach_file 'fragment-upload', Rails.root.join('test/fixtures/files/image.jpg')
 
-    accept_confirm('You have unsaved changes. Are you sure you want to leave this page?') do
-      click_link 'Cancel'
-    end
+    click_link 'Cancel'
     visit_p path
 
     assert_selector '.modal', text: 'Unsaved draft found'
@@ -209,9 +219,7 @@ class PagesFrontendTest < ApplicationSystemTestCase
     click_button 'Update Page'
     assert_text 'Failed to update page'
 
-    accept_confirm('You have unsaved changes. Are you sure you want to leave this page?') do
-      click_link 'Cancel'
-    end
+    click_link 'Cancel'
     visit_p path
     assert_selector '.modal', text: 'Unsaved draft found'
     click_button 'Restore draft'

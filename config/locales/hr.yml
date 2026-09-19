@@ -64,8 +64,6 @@ hr:
           snippets: Isječci
           files: Datoteke
 
-        forms:
-          unsaved_changes: Imate nespremljene promjene. Jeste li sigurni da želite napustiti ovu stranicu?
 
         search:
           submit: Pretraži

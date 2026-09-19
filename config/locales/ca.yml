@@ -64,8 +64,6 @@ ca:
           snippets: Fragments
           files: Arxius
 
-        forms:
-          unsaved_changes: Teniu canvis sense desar. Esteu segur que voleu sortir d'aquesta pàgina?
 
         search:
           submit: Cerca

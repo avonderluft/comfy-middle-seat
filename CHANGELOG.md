@@ -12,12 +12,29 @@ This changelog follows the project's lineage: **Comfortable Mexican Sofa → Com
 
 ## [Unreleased]
 
+## [v4.0.1] - 2026-09-18
+
 ### Changed
 
-- Complete the implementation namespace and internal-path decoupling from Comfortable Media Surfer: current Ruby APIs now use `ComfyMiddleSeat`, library files live under `comfy_middle_seat`, and generated configuration belongs at `config/initializers/comfy_middle_seat.rb`.
-- Require applications upgrading from `comfortable_media_surfer` to rename the initializer and replace Ruby configuration or integration references from `ComfortableMediaSurfer` to `ComfyMiddleSeat`. The existing `comfy_cms_*` database tables, schema, and stored data remain unchanged, so no database migration is required.
-- Add the standalone `comfy-middle-seat-upgrade` executable to safely preview and convert a legacy initializer without booting Rails, preserving the original as a backup and refusing ambiguous or destructive changes.
-- Preserve Comfortable Media Surfer names and URLs where they describe project history, acknowledgements, inherited release notes, or upstream resources rather than the current API.
+- Remove unsaved-changes navigation warnings. Local draft recovery remains available for Pages and Translations.
+
+## [v4.0.0] - 2026-09-18
+
+### Added
+
+- Search pages by title, path, or content, and find files and images in the editor.
+- Restore or discard locally saved drafts for Pages and Translations.
+- Preview Page and Translation revisions before restoring them.
+- Add `comfy-middle-seat-upgrade` to convert legacy initializers with a backup.
+
+### Changed
+
+- Complete the rename from Comfortable Media Surfer to Comfy Middle Seat.
+- Load page branches on demand and speed up page reordering.
+- Preserve unsaved content when switching layouts; warn before discarding incompatible fields.
+- Improve revision comparisons and prevent deletion of the root page.
+
+**Upgrading:** Rename `config/initializers/comfortable_media_surfer.rb` to `comfy_middle_seat.rb` and replace `ComfortableMediaSurfer` Ruby references with `ComfyMiddleSeat`. Preview initializer conversion with `bundle exec comfy-middle-seat-upgrade --dry-run`. No database migration is required.
 
 ## [v3.2.1] - 2026-09-17
 
@@ -39,7 +56,7 @@ This changelog follows the project's lineage: **Comfortable Mexican Sofa → Com
 ### Changed
 
 - Publish the gem as `comfy_middle_seat` and rename the gemspec to `comfy_middle_seat.gemspec`.
-- At the time of v3.2.0, preserve the `ComfortableMediaSurfer` Ruby namespace and configuration while retaining the existing routes and database tables. The Unreleased namespace decoupling supersedes the Ruby compatibility behavior; the database compatibility remains unchanged.
+- At the time of v3.2.0, preserve the `ComfortableMediaSurfer` Ruby namespace and configuration while retaining the existing routes and database tables. The v4.0.0 namespace rename supersedes the Ruby compatibility behavior; the database compatibility remains unchanged.
 - Move the version definition to `lib/comfy_middle_seat/version.rb` for release tooling, retaining a compatibility loader at the old path.
 - Run the main test suite in six isolated processes by default, with merged coverage and a separate `test:serial` task for Coveralls.
 - Update CI coverage to Rails 7.2, 8.0, and 8.1, with a separate browser/system test job.
@@ -57,7 +74,7 @@ This changelog follows the project's lineage: **Comfortable Mexican Sofa → Com
 
 ### Historical v3.2.0 upgrade behavior
 
-For v3.2.0, users replaced `comfortable_media_surfer` with `comfy_middle_seat` in the Gemfile while keeping the former Ruby namespace and initializer name. That release-specific compatibility guidance is preserved for history but is superseded by the Unreleased change: current upgrades must rename the initializer to `config/initializers/comfy_middle_seat.rb` and replace `ComfortableMediaSurfer` Ruby references with `ComfyMiddleSeat`. Neither stage changes the database schema.
+For v3.2.0, users replaced `comfortable_media_surfer` with `comfy_middle_seat` in the Gemfile while keeping the former Ruby namespace and initializer name. That release-specific compatibility guidance is preserved for history but is superseded by v4.0.0: current upgrades must rename the initializer to `config/initializers/comfy_middle_seat.rb` and replace `ComfortableMediaSurfer` Ruby references with `ComfyMiddleSeat`. Neither stage changes the database schema.
 
 ## Comfortable Media Surfer — inherited releases
 
@@ -186,7 +203,9 @@ First release of `comfortable_media_surfer`. This new gem is a revival of [Comfo
 
 - Rebranded **ComfortableMexicanSofa** as **ComfortableMediaSurfer** in order to publish new gem (database table names and schema have not changed).
 
-[Unreleased]: https://github.com/avonderluft/comfy-middle-seat/compare/v3.2.1...master
+[Unreleased]: https://github.com/avonderluft/comfy-middle-seat/compare/v4.0.1...master
+[v4.0.1]: https://github.com/avonderluft/comfy-middle-seat/compare/v4.0.0...v4.0.1
+[v4.0.0]: https://github.com/avonderluft/comfy-middle-seat/compare/v3.2.1...v4.0.0
 [v3.2.1]: https://github.com/avonderluft/comfy-middle-seat/compare/v3.2.0...v3.2.1
 [v3.2.0]: https://github.com/avonderluft/comfy-middle-seat/compare/eeb5d590f47b5d6bb70191fb81c781540753fa97...v3.2.0
 [v3.1.7]: https://github.com/shakacode/comfortable-media-surfer/compare/v3.1.6...v3.1.7

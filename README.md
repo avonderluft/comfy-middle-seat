@@ -1,8 +1,8 @@
 [![Rails CI](https://github.com/avonderluft/comfy-middle-seat/actions/workflows/rubyonrails.yml/badge.svg)](https://github.com/avonderluft/comfy-middle-seat/actions/workflows/rubyonrails.yml) [![Test Coverage](https://img.shields.io/coverallsCoverage/github/avonderluft/comfy-middle-seat?branch=master&cacheSeconds=300)](https://coveralls.io/github/avonderluft/comfy-middle-seat?branch=master) [![Gem Version](https://img.shields.io/gem/v/comfy_middle_seat.svg?style=flat)](https://rubygems.org/gems/comfy_middle_seat) [![Gem Downloads](https://img.shields.io/gem/dt/comfy_middle_seat.svg?style=flat)](https://rubygems.org/gems/comfy_middle_seat) [![GitHub Release Date - Published_At](https://img.shields.io/github/release-date/avonderluft/comfy-middle-seat?label=last%20release&color=seagreen)](https://github.com/avonderluft/comfy-middle-seat/releases)
 
-# ComfyMiddleSeat
+# Comfy Middle Seat
 
-It all depends on who is on your left and right.
+It all depends on who is sitting on your left and on your right.
 
 Comfy Middle Seat is a Rails CMS (Content Management System) engine, published as the `comfy_middle_seat` gem. It is descended from Comfortable Media Surfer and pays homage to the original Comfortable Mexican Sofa—with the same C.M.S. initials with a new place to sit.
 
@@ -11,7 +11,7 @@ The current implementation uses the `ComfyMiddleSeat` Ruby namespace, `comfy_mid
 ## Project History
 
 - **[Comfortable Mexican Sofa](https://github.com/comfy/comfortable-mexican-sofa)**, created by Oleg Khabarov, is the original Rails CMS on which this project is built.  Oleg deserves the lion's share of kudos.
-- **[Occams](https://github.com/avonderluft/occams)** was an attempted revival of Sofa. Andrew vonderLuft was a contributor to [RadiantCMS](https://github.com/radiant/radiant) back in the day, but that project became inactive. He found Sofa and liked it even better than Radiant, but sadly it too became inactive. Hence Occams.
+- **[oCcaMS](https://github.com/avonderluft/occams)** was an attempted revival of Sofa. Andrew vonderLuft was a contributor to [RadiantCMS](https://github.com/radiant/radiant) back in the day, but that project became inactive. He found Sofa and liked it even better than Radiant, but sadly it too became inactive. Hence Occams.
 - **[Comfortable Media Surfer](https://github.com/shakacode/comfortable-media-surfer)** revived Sofa under the sponsorship of ShakaCode, continuing its development for modern Rails applications.
 - **[Comfy Middle Seat](https://github.com/avonderluft/comfy-middle-seat)** began as a fork of Comfortable Media Surfer and is now implemented under its own `ComfyMiddleSeat` namespace and `comfy_middle_seat` paths.
 

@@ -43,7 +43,7 @@ On Ruby 3.2+, 4.x, Rails 7.2+, 8.x
 Add gem definition to your Gemfile:
 
 ```ruby
-gem "comfy_middle_seat", "~> 3.2.0"
+gem "comfy_middle_seat", "~> 4.0.0"
 ```
 
 Then, for a new installation, run these commands from the Rails project's root:
@@ -112,7 +112,7 @@ Review the converted initializer and remove its `.bak` file when satisfied. The 
 The database structure is the same, so no database migration is required for the CMS tables. Your Sofa project must first be upgraded to Rails 7.2 or newer. Then update the Gemfile, run `bundle install`, use `config/initializers/comfy_middle_seat.rb`, and update CMS library references in application code to `ComfyMiddleSeat`:
 
 ```ruby
-gem "comfy_middle_seat", "~> 3.2.0"
+gem "comfy_middle_seat", "~> 4.0.0"
 ```
 
 ### From Occams to Middle Seat

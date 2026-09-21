@@ -26,6 +26,10 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = '>= 3.2.0'
   spec.metadata['rubygems_mfa_required'] = 'true'
+  spec.metadata['source_code_uri'] = spec.homepage
+  spec.metadata['bug_tracker_uri'] = "#{spec.homepage}/issues"
+  spec.metadata['changelog_uri'] = "#{spec.homepage}/blob/master/CHANGELOG.md"
+  spec.metadata['documentation_uri'] = "#{spec.homepage}/blob/master/README.md#documentation"
 
   spec.add_dependency 'active_link_to',       '~> 1.0',   '>= 1.0.5'
   spec.add_dependency 'comfy_bootstrap_form', '~> 4.0',   '>= 4.0.0'

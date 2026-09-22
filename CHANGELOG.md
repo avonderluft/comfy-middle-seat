@@ -12,6 +12,13 @@ This changelog follows the project's lineage: **Comfortable Mexican Sofa → Com
 
 ## [Unreleased]
 
+## [v4.0.2] - 2026-09-21
+
+### Changed
+
+- Refresh the README with clearer features, setup, compatibility, and upgrade guidance.
+- Add RubyGems links for source code, issues, documentation, and the changelog.
+
 ## [v4.0.1] - 2026-09-18
 
 ### Changed
@@ -203,7 +210,8 @@ First release of `comfortable_media_surfer`. This new gem is a revival of [Comfo
 
 - Rebranded **ComfortableMexicanSofa** as **ComfortableMediaSurfer** in order to publish new gem (database table names and schema have not changed).
 
-[Unreleased]: https://github.com/avonderluft/comfy-middle-seat/compare/v4.0.1...master
+[Unreleased]: https://github.com/avonderluft/comfy-middle-seat/compare/v4.0.2...master
+[v4.0.2]: https://github.com/avonderluft/comfy-middle-seat/compare/v4.0.1...v4.0.2
 [v4.0.1]: https://github.com/avonderluft/comfy-middle-seat/compare/v4.0.0...v4.0.1
 [v4.0.0]: https://github.com/avonderluft/comfy-middle-seat/compare/v3.2.1...v4.0.0
 [v3.2.1]: https://github.com/avonderluft/comfy-middle-seat/compare/v3.2.0...v3.2.1

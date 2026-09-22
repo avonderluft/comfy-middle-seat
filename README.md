@@ -6,7 +6,7 @@
 
 Add editor-managed pages, reusable layouts, rich text, Markdown, files, translations, search, and revision history to an existing Rails application—without moving your content into a separate service.
 
-Comfy Middle Seat is actively maintained and continues the lineage of Comfortable Mexican Sofa and Comfortable Media Surfer. It keeps the memorable C.M.S. initials, with a new place to sit.  It all depend on who is sitting to your right and left.
+Comfy Middle Seat is actively maintained and continues the lineage of Comfortable Mexican Sofa and Comfortable Media Surfer. It keeps the memorable C.M.S. initials, with a new place to sit.  It all depends on who is sitting to your right and left.
 
 [Quick Start](#quick-start) · [Features](#features) · [Documentation](#documentation) · [Upgrading](#upgrading) · [Contributing](#contributing)
 

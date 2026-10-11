@@ -14,7 +14,7 @@ class Comfy::Admin::Cms::PagesController < Comfy::Admin::Cms::BaseController
 
   before_action :check_for_layouts, only: %i[new edit]
   before_action :build_page,        only: %i[new create]
-  before_action :load_page,         only: %i[edit update destroy publish_children unpublish_children]
+  before_action :load_page,         only: %i[edit update destroy toggle_publication publish_children unpublish_children]
 
   before_action :authorize
   before_action :assign_page_params, only: :update
@@ -116,6 +116,13 @@ class Comfy::Admin::Cms::PagesController < Comfy::Admin::Cms::BaseController
     end
   rescue ActiveRecord::RecordNotFound
     head :not_found
+  end
+
+  def toggle_publication
+    @page.update!(is_published: !@page.is_published?)
+    status = @page.is_published? ? 'published' : 'unpublished'
+    flash[:success] = I18n.t("comfy.admin.cms.pages.#{status}", default: "Page #{status}")
+    redirect_to comfy_admin_cms_site_pages_path(@site, params.permit(:q, :categories))
   end
 
   def publish_children

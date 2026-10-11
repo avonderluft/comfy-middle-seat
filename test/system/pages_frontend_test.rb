@@ -48,6 +48,23 @@ class PagesFrontendTest < ApplicationSystemTestCase
     assert_no_selector '.modal', text: 'Unsaved draft found', wait: 0.5
   end
 
+  def test_publish_and_unpublish_page_from_index
+    cms_page = comfy_cms_pages(:child)
+    visit_p comfy_admin_cms_site_pages_path(@site)
+
+    within "#comfy_cms_page_#{cms_page.id} > .row" do
+      click_link 'Unpublish'
+    end
+    assert_text 'Page unpublished'
+    refute cms_page.reload.is_published?
+
+    within "#comfy_cms_page_#{cms_page.id} > .row" do
+      click_link 'Publish'
+    end
+    assert_text 'Page published'
+    assert cms_page.reload.is_published?
+  end
+
   def test_publish_and_unpublish_children
     child = comfy_cms_pages(:child)
     visit_p edit_comfy_admin_cms_site_page_path(@site, comfy_cms_pages(:default))

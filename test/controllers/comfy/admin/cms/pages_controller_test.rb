@@ -662,6 +662,25 @@ class Comfy::Admin::Cms::PagesControllerTest < ActionDispatch::IntegrationTest
     assert_equal [great_grandchild], assigns(:pages_by_parent).fetch(grandchild.id)
   end
 
+  def test_toggle_publication
+    assert @page.is_published?
+
+    r :patch,
+      toggle_publication_comfy_admin_cms_site_page_path(@site, @page),
+      params: { q: 'home', categories: 'Landing' }
+
+    assert_response :redirect
+    assert_redirected_to comfy_admin_cms_site_pages_path(@site, q: 'home', categories: 'Landing')
+    assert_equal 'Page unpublished', flash[:success]
+    refute @page.reload.is_published?
+
+    r :patch, toggle_publication_comfy_admin_cms_site_page_path(@site, @page)
+
+    assert_response :redirect
+    assert_equal 'Page published', flash[:success]
+    assert @page.reload.is_published?
+  end
+
   def test_publish_children
     child = comfy_cms_pages(:child)
     child.update_column(:is_published, false)

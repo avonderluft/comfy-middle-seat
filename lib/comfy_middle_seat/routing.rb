@@ -36,6 +36,7 @@ module ComfyMiddleSeat::Routing
                 concerns :with_revisions, controller: 'revisions/page'
 
                 get :toggle_branch, on: :member
+                patch :toggle_publication, on: :member
                 patch :publish_children, on: :member
                 patch :unpublish_children, on: :member
 

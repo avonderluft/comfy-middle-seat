@@ -35,7 +35,10 @@
 
     .col-md-4.d-flex.align-items-center.justify-content-md-end
       .btn-group.btn-group-sm
-        = link_to t(".add_child_page"), new_comfy_admin_cms_site_page_path(@site, parent_id: page.id), class: "btn btn-outline-secondary"
+        - publication_label = page.is_published? ? t(".unpublish", default: "Unpublish") : t(".publish", default: "Publish")
+        - publication_path = toggle_publication_comfy_admin_cms_site_page_path(@site, page, q: params[:q], categories: params[:categories])
+        = link_to publication_label, publication_path, method: :patch, class: "btn btn-outline-secondary"
+        = link_to t(".add_child_page"), new_comfy_admin_cms_site_page_path(@site, parent_id: page.id), class: "btn btn-outline-secondary text-nowrap"
         = link_to t(".edit"), edit_comfy_admin_cms_site_page_path(@site, page), class: "btn btn-outline-secondary"
         - unless page.root?
           = link_to t(".delete"), comfy_admin_cms_site_page_path(@site, page), method: :delete, data: {confirm: t('.are_you_sure')}, class: "btn btn-danger"

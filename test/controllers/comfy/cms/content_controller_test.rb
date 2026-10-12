@@ -201,10 +201,145 @@ class Comfy::Cms::ContentControllerTest < ActionDispatch::IntegrationTest
   def test_show_unpublished
     @page.update_columns(is_published: false)
 
-    error = assert_raises ActionController::RoutingError do
-      get comfy_cms_render_page_path(cms_path: 'unpublished')
+    %i[html json].each do |format|
+      assert_page_not_found(@page, format: format)
     end
-    assert_equal 'Page Not Found at: "unpublished"', error.message
+  end
+
+  def test_show_with_unpublished_parent
+    child = comfy_cms_pages(:child)
+    @page.update!(is_published: false)
+
+    assert child.reload.is_published?
+    %i[html json].each do |format|
+      assert_page_not_found(child, format: format)
+    end
+  end
+
+  def test_show_with_unpublished_grandparent
+    child = comfy_cms_pages(:child)
+    grandchild = create_page('grandchild', parent: child)
+    @page.update!(is_published: false)
+
+    assert child.reload.is_published?
+    assert grandchild.reload.is_published?
+    %i[html json].each do |format|
+      assert_page_not_found(grandchild, format: format)
+    end
+  end
+
+  def test_show_after_republishing_ancestor_keeps_drafts_private
+    child = comfy_cms_pages(:child)
+    grandchild = create_page('grandchild', parent: child)
+    draft = create_page('draft', parent: child, is_published: false)
+    draft_child = create_page('draft-child', parent: draft)
+    @page.update!(is_published: false)
+
+    [child, grandchild, draft, draft_child].each do |page|
+      assert_page_not_found(page)
+    end
+
+    @page.update!(is_published: true)
+
+    %i[html json].each do |format|
+      [child, grandchild].each do |page|
+        get comfy_cms_render_page_path(cms_path: page.full_path.delete_prefix('/')), as: format
+        assert_response :success
+        assert_equal page, assigns(:cms_page)
+      end
+      [draft, draft_child].each do |page|
+        assert_page_not_found(page, format: format)
+      end
+    end
+    refute draft.reload.is_published?
+    assert draft_child.reload.is_published?
+  end
+
+  def test_show_with_translation_and_unpublished_parent
+    child = comfy_cms_pages(:child)
+    translation = child.translations.create!(
+      locale: 'fr',
+      label: 'Child Translation',
+      layout: @layout,
+      is_published: true,
+      fragments_attributes: [{ identifier: 'content', content: 'translated child' }]
+    )
+    I18n.locale = translation.locale
+
+    %i[html json].each do |format|
+      get comfy_cms_render_page_path(cms_path: 'child-page'), as: format
+      assert_response :success
+      assert_includes response.body, 'translated child'
+    end
+
+    @page.update!(is_published: false)
+    Comfy::Cms::Page.any_instance.expects(:translate!).never
+
+    %i[html json].each do |format|
+      assert_page_not_found(child, format: format)
+    end
+  end
+
+  def test_show_in_development_with_unpublished_page_and_ancestors
+    child = comfy_cms_pages(:child)
+    grandchild = create_page('grandchild', parent: child, is_published: false)
+    [@page, child].each { |page| page.update!(is_published: false) }
+    Rails.stubs(:env).returns(ActiveSupport::StringInquirer.new('development'))
+    Comfy::Cms::Page.any_instance.expects(:published_with_ancestors?).never
+
+    %i[html json].each do |format|
+      get comfy_cms_render_page_path(cms_path: 'child-page/grandchild'), as: format
+      assert_response :success
+      assert_equal grandchild, assigns(:cms_page)
+    end
+  end
+
+  def test_show_in_development_with_unpublished_translation
+    @translation.update!(is_published: false)
+    I18n.locale = @translation.locale
+    Rails.stubs(:env).returns(ActiveSupport::StringInquirer.new('development'))
+
+    %i[html json].each do |format|
+      assert_page_not_found(@page, format: format)
+    end
+  end
+
+  def test_show_with_redirect_and_unpublished_source_ancestor
+    child = comfy_cms_pages(:child)
+    source = create_page('redirect', parent: child)
+    source.update!(target_page: @page)
+    child.update!(is_published: false)
+
+    %i[html json].each do |format|
+      assert_page_not_found(source, format: format)
+    end
+  end
+
+  def test_show_with_unpublished_ancestor_and_custom404
+    child = comfy_cms_pages(:child)
+    grandchild = create_page('grandchild', parent: child)
+    custom404 = create_page('404', parent: @page)
+    child.update!(is_published: false)
+
+    %i[html json].each do |format|
+      get comfy_cms_render_page_path(cms_path: grandchild.full_path.delete_prefix('/')), as: format
+      assert_response :not_found
+      assert_equal custom404, assigns(:cms_page)
+      assert_equal '404 content', response.body
+    end
+  end
+
+  def test_show_with_unpublished_custom404_ancestor
+    custom404 = create_page('404', parent: @page)
+    @page.update!(is_published: false)
+
+    assert custom404.reload.is_published?
+    %i[html json].each do |format|
+      error = assert_raises ActionController::RoutingError do
+        get comfy_cms_render_page_path(cms_path: 'doesnotexist'), as: format
+      end
+      assert_equal 'Page Not Found at: "doesnotexist"', error.message
+    end
   end
 
   def test_show_with_erb_disabled
@@ -287,5 +422,26 @@ class Comfy::Cms::ContentControllerTest < ActionDispatch::IntegrationTest
 
     get comfy_cms_render_page_path(cms_path: '')
     assert_equal 'test ## snippet content test', response.body
+  end
+
+private
+
+  def create_page(slug, parent:, is_published: true)
+    @site.pages.create!(
+      label: slug,
+      slug: slug,
+      parent: parent,
+      layout: @layout,
+      is_published: is_published,
+      fragments_attributes: [{ identifier: 'content', content: "#{slug} content" }]
+    )
+  end
+
+  def assert_page_not_found(page, format: :html)
+    cms_path = page.full_path.delete_prefix('/')
+    error = assert_raises ActionController::RoutingError do
+      get comfy_cms_render_page_path(cms_path: cms_path), as: format
+    end
+    assert_equal "Page Not Found at: \"#{cms_path}\"", error.message
   end
 end

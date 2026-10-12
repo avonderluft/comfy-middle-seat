@@ -28,6 +28,70 @@ class ContentTagsBreadcrumbsTest < ActiveSupport::TestCase
     assert_equal '<style>#breadcrumbs {font-weight: bold}</style>', tag.style
   end
 
+  def test_render_with_unpublished_context
+    @gr_gr_child.update!(is_published: false)
+    tag = ComfyMiddleSeat::Content::Tags::Breadcrumbs.new(
+      context: @gr_gr_child,
+      params: [{ 'style' => 'font-weight: bold' }]
+    )
+
+    assert_equal '', tag.render
+  end
+
+  def test_render_with_unpublished_parent
+    @gr_child.update!(is_published: false)
+    tag = ComfyMiddleSeat::Content::Tags::Breadcrumbs.new(context: @gr_gr_child.reload)
+
+    assert_equal '', tag.render
+  end
+
+  def test_render_with_unpublished_grandparent
+    @child.update!(is_published: false)
+
+    %w[test production staging].each do |environment|
+      Rails.stubs(:env).returns(ActiveSupport::StringInquirer.new(environment))
+      tag = ComfyMiddleSeat::Content::Tags::Breadcrumbs.new(context: @gr_gr_child.reload)
+
+      assert_equal '', tag.render
+    end
+  end
+
+  def test_render_with_unpublished_root
+    @page.update!(is_published: false)
+    tag = ComfyMiddleSeat::Content::Tags::Breadcrumbs.new(context: @gr_gr_child.reload)
+
+    assert_equal '', tag.render
+  end
+
+  def test_render_in_development_with_unpublished_context_and_ancestors
+    [@page, @child, @gr_gr_child].each { |page| page.update!(is_published: false) }
+    Rails.stubs(:env).returns(ActiveSupport::StringInquirer.new('development'))
+    @gr_gr_child.expects(:published_with_ancestors?).never
+    tag = ComfyMiddleSeat::Content::Tags::Breadcrumbs.new(context: @gr_gr_child)
+
+    assert_equal '<div id="breadcrumbs"><a href=/>Default Page</a> &raquo; ' \
+                 '<a href=/child>Child</a> &raquo; ' \
+                 '<a href=/child/gr-child>Gr-child</a> &raquo; Gr-Gr-child</div>', tag.render
+  end
+
+  def test_translation_render_preserves_current_label
+    @layout.update!(content: '{{ cms:breadcrumbs }}')
+    translation = @gr_gr_child.translations.create!(locale: 'fr', label: 'Translated Descendant')
+
+    assert_equal '<div id="breadcrumbs"><a href=/>Default Page</a> &raquo; ' \
+                 '<a href=/child>Child</a> &raquo; ' \
+                 '<a href=/child/gr-child>Gr-child</a> &raquo; Translated Descendant</div>',
+                 translation.content_cache
+  end
+
+  def test_translation_render_with_unpublished_ancestor
+    @child.update!(is_published: false)
+    @layout.update!(content: '{{ cms:breadcrumbs }}')
+    translation = @gr_gr_child.reload.translations.create!(locale: 'fr', label: 'Translated Descendant')
+
+    assert_equal '', translation.content_cache
+  end
+
   def test_render
     tag = ComfyMiddleSeat::Content::Tags::Breadcrumbs.new(
       context: @gr_gr_child,

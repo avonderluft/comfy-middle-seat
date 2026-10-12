@@ -1,0 +1,68 @@
+body#comfy
+  .btn-primary, .btn-secondary
+    @include button-variant($harbor-teal, $harbor-teal, $harbor-hover, $harbor-hover, $harbor-pressed, $harbor-pressed)
+
+  .btn-outline-primary, .btn-outline-secondary
+    @include button-outline-variant($harbor-teal, $harbor-hover, $harbor-tint, $harbor-hover)
+    background-color: $white
+    border-color: $gray-400
+    &:not(:disabled):not(.disabled):active, &:not(:disabled):not(.disabled).active
+      color: $harbor-pressed
+    &:disabled, &.disabled
+      background-color: $white
+      border-color: $gray-300
+
+  a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible
+    outline: 2px solid $harbor-teal
+    outline-offset: 2px
+
+  #cms-left
+    nav.navbar ul.nav li
+      a
+        color: $harbor-nav-text
+        @include transition(color .15s ease-in-out, background-color .15s ease-in-out)
+      a:hover
+        color: $white
+        background-color: $gray-700
+      a.active
+        color: $white
+        background-color: $harbor-teal
+        box-shadow: inset 3px 0 0 $harbor-gold
+      a.active:hover
+        background-color: $harbor-hover
+    a:focus-visible, button:focus-visible
+      outline-color: $harbor-gold
+    .left-footer
+      color: $harbor-nav-text
+      a
+        color: $harbor-nav-text
+        &:hover
+          color: $white
+
+  #cms-main
+    .page-header
+      color: $harbor-navy
+    ul.list
+      li .row
+        @include transition(background-color .15s ease-in-out)
+        .item .item-title a
+          color: $gray-800
+          &:hover
+            color: $harbor-hover
+          &.draft
+            color: $gray-600
+        .item .item-controls .dragger, .item .item-controls .toggle
+          color: $gray-600
+      li.sortable-ghost > .row, li.sortable-chosen > .row, &:not(.sortable-active) > li > .row:hover
+        background-color: $harbor-tint
+
+  #cms-right
+    .box
+      border-color: $gray-300
+    .box.translations a.translation
+      color: $gray-800
+      &.draft
+        color: $gray-600
+
+  #cms-uploader ul.list .file-path
+    color: $gray-600

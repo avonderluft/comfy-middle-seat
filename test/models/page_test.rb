@@ -531,6 +531,141 @@ class CmsPageTest < ActiveSupport::TestCase
     refute_equal old_content, @page.content_cache
   end
 
+  def test_clear_site_content_cache
+    foreign_site = Comfy::Cms::Site.create!(identifier: 'foreign', hostname: 'foreign.example.com')
+    foreign_layout = foreign_site.layouts.create!(identifier: 'foreign')
+    foreign_page = foreign_site.pages.create!(label: 'Foreign', layout: foreign_layout)
+    foreign_translation = foreign_page.translations.create!(label: 'Foreign Translation', locale: 'fr')
+    Comfy::Cms::Page.update_all(content_cache: 'Cached Page')
+    Comfy::Cms::Translation.update_all(content_cache: 'Cached Translation')
+
+    @page.clear_site_content_cache!
+
+    assert_equal [nil, nil], @site.pages.pluck(:content_cache)
+    assert_nil comfy_cms_translations(:default).reload[:content_cache]
+    assert_equal 'Cached Page', foreign_page.reload[:content_cache]
+    assert_equal 'Cached Translation', foreign_translation.reload[:content_cache]
+  end
+
+  def test_site_content_cache_clear_on_publication_change
+    [false, true].each do |is_published|
+      Comfy::Cms::Page.update_all(content_cache: 'Cached Page')
+      Comfy::Cms::Translation.update_all(content_cache: 'Cached Translation')
+
+      comfy_cms_pages(:child).update!(is_published: is_published)
+
+      assert_equal [nil, nil], @site.pages.pluck(:content_cache)
+      assert_nil comfy_cms_translations(:default).reload[:content_cache]
+    end
+  end
+
+  def test_site_content_cache_clear_on_parent_change
+    parent = @site.pages.create!(new_params(is_published: false))
+    child = comfy_cms_pages(:child)
+    Comfy::Cms::Page.update_all(content_cache: 'Cached Page')
+    Comfy::Cms::Translation.update_all(content_cache: 'Cached Translation')
+
+    child.update!(parent_id: parent.id)
+
+    assert_equal [nil, nil, nil], @site.pages.pluck(:content_cache)
+    assert_nil comfy_cms_translations(:default).reload[:content_cache]
+    assert child.is_published?
+    refute child.published_with_ancestors?
+  end
+
+  def test_site_content_cache_clear_on_destroy
+    Comfy::Cms::Page.update_all(content_cache: 'Cached Page')
+    Comfy::Cms::Translation.update_all(content_cache: 'Cached Translation')
+
+    comfy_cms_pages(:child).destroy!
+
+    assert_nil @page.reload[:content_cache]
+    assert_nil comfy_cms_translations(:default).reload[:content_cache]
+  end
+
+  def test_site_content_cache_preserved_on_unrelated_save
+    child = comfy_cms_pages(:child)
+    Comfy::Cms::Page.update_all(content_cache: 'Cached Page')
+    Comfy::Cms::Translation.update_all(content_cache: 'Cached Translation')
+
+    child.reload.update!(label: 'Updated Label', is_published: true, parent_id: @page.id)
+
+    assert_nil child.reload[:content_cache]
+    assert_equal 'Cached Page', @page.reload[:content_cache]
+    assert_equal 'Cached Translation', comfy_cms_translations(:default).reload[:content_cache]
+  end
+
+  def test_site_content_cache_invalidation_rolls_back_with_publication_change
+    child = comfy_cms_pages(:child)
+    Comfy::Cms::Page.update_all(content_cache: 'Cached Page')
+    Comfy::Cms::Translation.update_all(content_cache: 'Cached Translation')
+
+    Comfy::Cms::Page.transaction(requires_new: true) do
+      child.update!(is_published: false)
+      assert_nil @page.reload[:content_cache]
+      assert_nil comfy_cms_translations(:default).reload[:content_cache]
+      raise ActiveRecord::Rollback
+    end
+
+    assert child.reload.is_published?
+    assert_equal 'Cached Page', @page.reload[:content_cache]
+    assert_equal 'Cached Translation', comfy_cms_translations(:default).reload[:content_cache]
+  end
+
+  def test_published_with_ancestors_requires_own_publication
+    assert @page.published_with_ancestors?
+
+    @page.is_published = false
+
+    refute @page.published_with_ancestors?
+    assert @page.reload.is_published?
+  end
+
+  def test_published_with_ancestors_requires_parent_publication
+    child = comfy_cms_pages(:child)
+    assert child.published_with_ancestors?
+    @page.update!(is_published: false)
+
+    refute child.reload.published_with_ancestors?
+    assert child.is_published?
+    assert_includes Comfy::Cms::Page.published, child
+  end
+
+  def test_published_with_ancestors_requires_grandparent_publication_in_all_environments
+    grandchild = @site.pages.create!(new_params(parent: comfy_cms_pages(:child)))
+    assert grandchild.published_with_ancestors?
+    @page.update!(is_published: false)
+
+    %w[development test production].each do |environment|
+      Rails.stubs(:env).returns(ActiveSupport::StringInquirer.new(environment))
+
+      refute grandchild.reload.published_with_ancestors?
+      assert grandchild.is_published?
+    end
+  end
+
+  def test_republishing_restores_effective_visibility_without_publishing_drafts
+    child = comfy_cms_pages(:child)
+    grandchild = @site.pages.create!(new_params(parent: child))
+    draft = @site.pages.create!(new_params(parent: child, slug: 'draft', is_published: false))
+
+    @page.update!(is_published: false)
+
+    [child, grandchild, draft].each do |page|
+      refute page.reload.published_with_ancestors?
+    end
+    assert child.is_published?
+    assert grandchild.is_published?
+    refute draft.is_published?
+
+    @page.update!(is_published: true)
+
+    assert child.reload.published_with_ancestors?
+    assert grandchild.reload.published_with_ancestors?
+    refute draft.reload.published_with_ancestors?
+    refute draft.is_published?
+  end
+
   def test_scope_published
     assert_equal 2, Comfy::Cms::Page.published.count
     comfy_cms_pages(:child).update_columns(is_published: false)

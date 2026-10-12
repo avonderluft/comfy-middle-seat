@@ -80,6 +80,8 @@ protected
                   @cms_site.pages.published.find_by!(full_path: full_path)
                 end
 
+    return nil unless Rails.env == 'development' || @cms_page.published_with_ancestors?
+
     @cms_page.translate!
     @cms_layout = @cms_page.layout
 

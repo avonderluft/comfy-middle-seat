@@ -41,6 +41,88 @@ class ContentTagsSiblingsTest < ActiveSupport::TestCase
     assert_equal html, tag.render
   end
 
+  def test_render_skips_unpublished_siblings
+    @second.update!(is_published: false)
+    @fourth.update!(is_published: false)
+    tag = ComfyMiddleSeat::Content::Tags::Siblings.new(context: @third)
+
+    assert_equal [comfy_cms_pages(:child), @first, @third, @fifth], tag.sibs
+    assert_includes tag.render, 'First'
+    assert_includes tag.render, 'Fifth'
+    refute_includes tag.render, 'Second'
+    refute_includes tag.render, 'Fourth'
+  end
+
+  def test_render_with_unpublished_context
+    @third.update!(is_published: false)
+    tag = ComfyMiddleSeat::Content::Tags::Siblings.new(
+      context: @third,
+      params: [{ 'style' => 'font-weight: bold' }]
+    )
+
+    assert_empty tag.sibs
+    assert_equal '', tag.render
+  end
+
+  def test_render_with_unpublished_parent
+    @page.update!(is_published: false)
+
+    %w[test production staging].each do |environment|
+      Rails.stubs(:env).returns(ActiveSupport::StringInquirer.new(environment))
+      tag = ComfyMiddleSeat::Content::Tags::Siblings.new(context: @third.reload)
+
+      assert_empty tag.sibs
+      assert_equal '', tag.render
+    end
+  end
+
+  def test_render_with_unpublished_grandparent
+    @second.update!(parent: @first)
+    @third.update!(parent: @first)
+    @fourth.update!(parent: @first)
+    @page.update!(is_published: false)
+    tag = ComfyMiddleSeat::Content::Tags::Siblings.new(context: @third.reload)
+
+    assert_empty tag.sibs
+    assert_equal '', tag.render
+  end
+
+  def test_render_in_development_with_unpublished_ancestry_and_siblings
+    [@page, @second, @third, @fourth].each { |page| page.update!(is_published: false) }
+    Rails.stubs(:env).returns(ActiveSupport::StringInquirer.new('development'))
+    @third.expects(:published_with_ancestors?).never
+    tag = ComfyMiddleSeat::Content::Tags::Siblings.new(context: @third)
+
+    assert_includes tag.render, 'Second'
+    assert_includes tag.render, 'Fourth'
+  end
+
+  def test_checks_shared_ancestry_once
+    Comfy::Cms::Page.any_instance.expects(:published_with_ancestors?).once.returns(true)
+    tag = ComfyMiddleSeat::Content::Tags::Siblings.new(context: @third)
+
+    assert_includes tag.render, 'Second'
+    assert_includes tag.render, 'Fourth'
+  end
+
+  def test_translation_render
+    @layout.update!(content: '{{ cms:siblings }}')
+    translation = @third.translations.create!(locale: 'fr', label: 'Translated Third')
+
+    assert_equal ComfyMiddleSeat::Content::Tags::Siblings.new(context: @third).render,
+                 translation.content_cache
+    assert_includes translation.content_cache, 'Second'
+    assert_includes translation.content_cache, 'Fourth'
+  end
+
+  def test_translation_render_with_unpublished_ancestor
+    @page.update!(is_published: false)
+    @layout.update!(content: '{{ cms:siblings }}')
+    translation = @third.reload.translations.create!(locale: 'fr', label: 'Translated Third')
+
+    assert_equal '', translation.content_cache
+  end
+
   def test_render_with_no_siblings
     tag = ComfyMiddleSeat::Content::Tags::Siblings.new(
       context: @page,

@@ -34,7 +34,7 @@ Comfy Middle Seat is best suited to Rails applications that render their own web
 - Revision history with comparison, preview, and restore workflows.
 - Page translations and multilingual publishing.
 - Multi-site publishing from one installation.
-- Controls to publish or unpublish child pages together.
+- Publish individual pages or whole branches, with ancestor-aware visibility.
 
 ### For Rails developers
 
@@ -114,6 +114,14 @@ A Site defines a hostname, path, and language. Layouts define page structure and
 
 When an editor creates a Page using this Layout, the admin automatically presents fields for `title` and `content`. Content tags can also provide Markdown, files, images, dates, numbers, checkboxes, snippets, partials, helpers, navigation, and other reusable content.
 
+### Publishing pages
+
+A page is publicly visible only when it and all its ancestors are published. Unpublishing a parent hides its branch without changing descendants’ individual publication settings. Republishing the parent restores only descendants whose full ancestor chain is published; drafts stay unpublished. Translations must also satisfy their own publication settings.
+
+The Page index toggle changes only that page. The **Child pages** menu’s **Publish descendants** and **Unpublish descendants** actions change all descendants, not the current page or its ancestors. The admin marks published pages hidden by an unpublished ancestor.
+
+Development mode continues to show unpublished pages for preview. Check public visibility in test, staging, or production mode.
+
 ## Compatibility and requirements
 
 | Component | Support |
@@ -142,6 +150,17 @@ Useful starting points:
 When adapting upstream examples, use the `comfy_middle_seat` gem, `config/initializers/comfy_middle_seat.rb`, and the `ComfyMiddleSeat` Ruby namespace.
 
 ## Upgrading
+
+### Ancestor-aware publishing (unreleased)
+
+Review branches with unpublished ancestors: their descendants will no longer be publicly accessible. No database migration is required. After deploying, clear existing rendered content once from the Rails console so cached navigation follows the new rule:
+
+```ruby
+Comfy::Cms::Page.update_all(content_cache: nil)
+Comfy::Cms::Translation.update_all(content_cache: nil)
+```
+
+Content is regenerated on demand. Subsequent publication and parent changes refresh the affected site’s caches automatically.
 
 ### From Comfortable Media Surfer
 

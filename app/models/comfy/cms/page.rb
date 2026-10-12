@@ -27,6 +27,9 @@ class Comfy::Cms::Page < ActiveRecord::Base
                     :assign_full_path
   before_create     :assign_position
   after_save        :sync_child_full_paths!
+  after_save        :clear_site_content_cache!,
+                    if: -> { is_published_previously_changed? || parent_id_previously_changed? }
+  after_destroy     :clear_site_content_cache!
   after_find        :unescape_slug_and_path
 
   # -- Validations -------------------------------------------------------------
@@ -89,6 +92,16 @@ class Comfy::Cms::Page < ActiveRecord::Base
   end
 
   # -- Instance Methods --------------------------------------------------------
+  def published_with_ancestors?
+    is_published? && ancestors.all?(&:is_published?)
+  end
+
+  def clear_site_content_cache!
+    pages = Comfy::Cms::Page.where(site_id: site_id)
+    pages.update_all(content_cache: nil)
+    Comfy::Cms::Translation.where(page_id: pages.select(:id)).update_all(content_cache: nil)
+  end
+
   # For previewing purposes sometimes we need to have full_path set. This
   # full path take care of the pages and its childs but not of the site path
   def full_path

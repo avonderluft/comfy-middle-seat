@@ -12,6 +12,16 @@ This changelog follows the project's lineage: **Comfortable Mexican Sofa → Com
 
 ## [Unreleased]
 
+### Changed
+
+- Hide pages beneath unpublished ancestors without changing their publication settings.
+- Show inherited page visibility and clarify descendant publishing actions.
+- Gray out descendant publishing actions when no changes are needed.
+
+### Fixed
+
+- Refresh page and translation navigation when branch visibility changes.
+
 ## [v4.0.2] - 2026-09-21
 
 ### Changed

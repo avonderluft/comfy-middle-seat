@@ -24,16 +24,21 @@ class ComfyMiddleSeat::Content::Tags::Breadcrumbs < ComfyMiddleSeat::Content::Ta
     @style = ''
     @style = "<style>#breadcrumbs {#{@locals['style']}}</style>" if @locals['style']
 
-    @links = '<div id="breadcrumbs">'
-    context.ancestors.reverse.each do |a|
-      next if Rails.env == 'production' && !a.is_published
+    page = context.is_a?(Comfy::Cms::Translation) ? context.page : context
+    @visible = Rails.env.development? || page.published_with_ancestors?
+    @links = ''
+    return unless @visible
 
+    @links = '<div id="breadcrumbs">'
+    page.ancestors.reverse.each do |a|
       @links += "<a href=#{a.url(relative: true)}>#{a.label}</a> &raquo; "
     end
     @links += "#{context.label}</div>"
   end
 
   def content
+    return '' unless @visible
+
     "#{@style}#{@links}"
   end
 end

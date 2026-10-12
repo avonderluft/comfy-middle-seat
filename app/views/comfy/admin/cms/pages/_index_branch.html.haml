@@ -5,6 +5,7 @@
 - has_children    = children.present? || page.children_count.to_i.positive?
 - has_siblings    = siblings.size > 1
 - branch_open     = page_branch_open?(page)
+- publicly_visible = page_publicly_visible?(page)
 
 %li{id: dom_id(page), data: {id: page.id}}
   .row
@@ -25,10 +26,12 @@
 
       .item-content
         .item-title
-          - published_css_class = page.is_published? ? "published" : "draft"
+          - published_css_class = publicly_visible ? "published" : "draft"
           = link_to page.label, edit_comfy_admin_cms_site_page_path(@site, page), class: published_css_class
         .item-meta
           = link_to page.url, page.url, target: "_blank"
+          - if page.is_published? && !publicly_visible
+            .publication-status= t('.hidden_by_ancestor', default: 'Hidden by unpublished ancestor')
 
     .col-md-2.item-categories.d-flex.align-items-center
       = render "comfy/admin/cms/categories/categories", object: page

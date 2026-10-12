@@ -29,28 +29,32 @@ class ComfyMiddleSeat::Content::Tags::Siblings < ComfyMiddleSeat::Content::Tag
     @exclude = []
     @exclude = @locals['exclude'].split(',') if @locals['exclude']
     @links = ''
-    # ActiveRecord_Associations_CollectionProxy
-    @sibs = context.self_and_siblings.order(:position).to_ary
-    unless Rails.env == 'development'
-      @sibs.delete_if { |sib| !sib.is_published }
-    end
+    @page = context.is_a?(Comfy::Cms::Translation) ? context.page : context
+    preview = Rails.env.development?
+    @visible = preview || @page.published_with_ancestors?
+    @sibs = []
+    return unless @visible
+
+    @sibs = @page.self_and_siblings.order(:position).to_ary
+    @sibs.select!(&:is_published?) unless preview
     @sibs.delete_if { |sib| @exclude.include? sib.slug }
   end
 
   def content
+    return '' unless @visible
+
     if @sibs.count > 1
       @links = '<div id="siblings">'
       prevp = false
       @sibs.each do |sib|
         sib_idx = @sibs.index(sib)
-        next if sib.slug == context.slug
-        next if Rails.env == 'production' && !sib.is_published
-        next unless @sibs.index(context) # current page is excluded
+        next if sib.slug == @page.slug
+        next unless @sibs.index(@page) # current page is excluded
 
-        if sib_idx == @sibs.index(context) - 1
+        if sib_idx == @sibs.index(@page) - 1
           @links += "<a href=#{sib.url(relative: true)}>#{sib.label}</a> &laquo;&nbsp;<em>Previous</em> &bull; "
           prevp = true
-        elsif sib_idx == @sibs.index(context) + 1
+        elsif sib_idx == @sibs.index(@page) + 1
           @links += '&bull;' unless prevp
           @links += "<em>Next</em>&nbsp;&raquo; <a href=#{sib.url(relative: true)}>#{sib.label}</a>"
         end

@@ -8,7 +8,7 @@ class Comfy::Admin::Cms::PagesController < Comfy::Admin::Cms::BaseController
 
   include ::Comfy::ReorderAction
 
-  helper_method :page_branch_open?
+  helper_method :page_branch_open?, :page_publicly_visible?, :descendant_publication_states
 
   self.reorder_action_resource = ::Comfy::Cms::Page
 
@@ -120,7 +120,6 @@ class Comfy::Admin::Cms::PagesController < Comfy::Admin::Cms::BaseController
 
   def toggle_publication
     @page.update!(is_published: !@page.is_published?)
-    update_family
     status = @page.is_published? ? 'published' : 'unpublished'
     flash[:success] = I18n.t("comfy.admin.cms.pages.#{status}", default: "Page #{status}")
     redirect_to comfy_admin_cms_site_pages_path(@site, params.permit(:q, :categories))
@@ -136,12 +135,27 @@ class Comfy::Admin::Cms::PagesController < Comfy::Admin::Cms::BaseController
 
 protected
 
+  # Query one tree level at a time; mixed flags already enable both actions.
+  def descendant_publication_states(page)
+    states = []
+    parent_ids = [page.id]
+    while parent_ids.present? && states.size < 2
+      descendants = @site.pages.where(parent_id: parent_ids).pluck(:id, :is_published)
+      states |= descendants.map(&:last)
+      parent_ids = descendants.map(&:first)
+    end
+    states
+  end
+
   def update_children_publication(is_published, message)
     descendant_ids = @page.descendants.map(&:id)
-    @site.pages
-      .where(id: descendant_ids)
-      .update_all(is_published: is_published, updated_at: Time.current)
-    default = is_published ? 'Child pages published' : 'Child pages unpublished'
+    @page.class.transaction do
+      @site.pages
+        .where(id: descendant_ids)
+        .update_all(is_published: is_published, updated_at: Time.current)
+      @page.clear_site_content_cache!
+    end
+    default = is_published ? 'Descendant pages published' : 'Descendant pages unpublished'
     flash[:success] = I18n.t("comfy.admin.cms.pages.#{message}", default: default)
     redirect_to action: :edit, id: @page
   end
@@ -188,6 +202,20 @@ protected
     end
 
     pages_by_parent
+  end
+
+  # Reuse loaded tree nodes and memoize shared ancestors for filtered results.
+  def page_publicly_visible?(page)
+    @page_visibility ||= {}
+    return @page_visibility[page.id] if @page_visibility.key?(page.id)
+
+    @visibility_pages ||= (Array(@pages) + [@page] + (@pages_by_parent || {}).values.flatten)
+      .compact.index_by(&:id)
+    @page_visibility[page.id] = page.is_published? && (
+      page.parent_id.nil? || page_publicly_visible?(
+        @visibility_pages[page.parent_id] ||= @site.pages.find(page.parent_id)
+      )
+    )
   end
 
   def page_branch_open?(page)

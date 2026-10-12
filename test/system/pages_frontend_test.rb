@@ -7,6 +7,27 @@ class PagesFrontendTest < ApplicationSystemTestCase
     @site = comfy_cms_sites(:default)
   end
 
+  def test_harbor_admin_colors_and_button_states
+    visit_p comfy_admin_cms_site_pages_path(@site)
+    assert_selector '#cms-left', style: { 'background-color' => 'rgb(23, 43, 58)' }
+
+    create_button = find_link('Create New Page')
+    assert_matches_style create_button, 'background-color' => 'rgb(15, 118, 110)', 'color' => 'rgb(255, 255, 255)'
+    create_button.hover
+    assert_matches_style create_button, 'background-color' => 'rgb(11, 94, 87)'
+
+    page.execute_script('document.querySelector(".page-header .btn").focus()')
+    assert_selector '.page-header .btn:focus'
+    refute_equal 'none', create_button.style('box-shadow')['box-shadow']
+
+    child = comfy_cms_pages(:child)
+    within "#comfy_cms_page_#{child.id} > .row" do
+      add_button = find_link('Add Child Page')
+      add_button.hover
+      assert_matches_style add_button, 'background-color' => 'rgb(224, 242, 239)', 'white-space' => 'nowrap'
+    end
+  end
+
   def test_new_identifier
     visit_p new_comfy_admin_cms_site_page_path(@site)
     fill_in 'Label', with: 'Test Page'
@@ -65,21 +86,70 @@ class PagesFrontendTest < ApplicationSystemTestCase
     assert cms_page.reload.is_published?
   end
 
+  def test_published_descendant_hidden_by_ancestor
+    root = comfy_cms_pages(:default)
+    child = comfy_cms_pages(:child)
+    root.update!(is_published: false)
+
+    visit_p comfy_admin_cms_site_pages_path(@site)
+    within "#comfy_cms_page_#{child.id} > .row" do
+      assert_text 'Hidden by unpublished ancestor'
+      assert_link 'Unpublish'
+      assert_selector '.item-title a.draft', text: child.label
+    end
+
+    visit_p edit_comfy_admin_cms_site_page_path(@site, child)
+    assert_selector '.publication-status', text: 'Publish its ancestors to make this page visible.'
+
+    visit_p comfy_admin_cms_site_pages_path(@site)
+    within "#comfy_cms_page_#{root.id} > .row" do
+      click_link 'Publish'
+    end
+    within "#comfy_cms_page_#{child.id} > .row" do
+      assert_no_selector '.publication-status'
+      assert_selector '.item-title a.published', text: child.label
+    end
+    assert child.reload.is_published?
+  end
+
   def test_publish_and_unpublish_children
     child = comfy_cms_pages(:child)
     visit_p edit_comfy_admin_cms_site_page_path(@site, comfy_cms_pages(:default))
 
-    accept_confirm('Unpublish all child pages?') do
-      click_link 'Unpublish children'
+    assert_no_link 'Unpublish descendants'
+    click_button 'Child pages'
+    assert_selector '#child-pages-menu[aria-expanded=true]'
+    assert_button 'Publish descendants', disabled: true
+    assert_no_link 'Publish descendants'
+    disabled_action = find_button('Publish descendants', disabled: true)
+    refute_equal find_link('Unpublish descendants').style('color'), disabled_action.style('color')
+    assert_matches_style disabled_action, 'pointer-events' => 'none'
+    page.execute_script('document.querySelector("#child-pages-actions button:disabled").click()')
+    assert child.reload.is_published?
+    assert_current_path edit_comfy_admin_cms_site_page_path(@site, comfy_cms_pages(:default))
+    dismiss_confirm('Unpublish all descendant pages?') do
+      click_link 'Unpublish descendants'
     end
-    assert_text 'Child pages unpublished'
+    assert child.reload.is_published?
+
+    click_button 'Child pages'
+    accept_confirm('Unpublish all descendant pages?') do
+      click_link 'Unpublish descendants'
+    end
+    assert_text 'Descendant pages unpublished'
     refute child.reload.is_published?
 
-    accept_confirm('Publish all child pages?') do
-      click_link 'Publish children'
+    click_button 'Child pages'
+    assert_button 'Unpublish descendants', disabled: true
+    assert_no_link 'Unpublish descendants'
+    accept_confirm('Publish all descendant pages?') do
+      click_link 'Publish descendants'
     end
-    assert_text 'Child pages published'
+    assert_text 'Descendant pages published'
     assert child.reload.is_published?
+    click_button 'Child pages'
+    assert_button 'Publish descendants', disabled: true
+    assert_link 'Unpublish descendants'
   end
 
   def test_change_to_invalid_fragment_and_back

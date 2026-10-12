@@ -14,6 +14,22 @@ class Comfy::Admin::Cms::PagesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert assigns(:pages)
     assert_template :index
+    assert_index_publication_status(@page, published: true)
+    assert_index_publication_status(comfy_cms_pages(:child), published: true)
+  end
+
+  def test_get_index_distinguishes_hidden_pages_from_unpublished_pages
+    child = comfy_cms_pages(:child)
+    draft = create_page('Draft', parent: @page, is_published: false)
+    @page.update!(is_published: false)
+
+    r :get, comfy_admin_cms_site_pages_path(@site)
+
+    assert_response :success
+    assert_index_publication_status(@page, published: false)
+    assert_index_publication_status(child, published: true, hidden: true)
+    assert_index_publication_status(draft, published: false)
+    assert child.reload.is_published?
   end
 
   def test_get_index_with_no_pages
@@ -214,14 +230,108 @@ class Comfy::Admin::Cms::PagesControllerTest < ActionDispatch::IntegrationTest
   end
 
   def test_get_edit
+    create_page('Draft Grandchild', parent: comfy_cms_pages(:child), is_published: false)
+
     r :get, edit_comfy_admin_cms_site_page_path(site_id: @site, id: @page)
     assert_response :success
     assert assigns(:page)
     assert_template :edit
     assert_select "form[action='/admin/sites/#{@site.id}/pages/#{@page.id}']"
     assert_select "select[data-url='/admin/sites/#{@site.id}/pages/#{@page.id}/form_fragments']"
-    assert_select "a[href='#{publish_children_comfy_admin_cms_site_page_path(@site, @page)}']", 'Publish children'
-    assert_select "a[href='#{unpublish_children_comfy_admin_cms_site_page_path(@site, @page)}']", 'Unpublish children'
+    assert_select 'button#child-pages-menu.btn-outline-secondary[data-toggle=dropdown]', 'Child pages'
+    assert_select '#child-pages-actions.dropdown-menu-right' do
+      publish_path = publish_children_comfy_admin_cms_site_page_path(@site, @page)
+      assert_select "a.dropdown-item[href='#{publish_path}'][data-method=patch]", 'Publish descendants' do |links|
+        assert_equal 'Publish all descendant pages?', links.first['data-confirm']
+      end
+      unpublish_path = unpublish_children_comfy_admin_cms_site_page_path(@site, @page)
+      assert_select "a.dropdown-item[href='#{unpublish_path}'][data-method=patch]", 'Unpublish descendants' do |links|
+        assert_equal 'Unpublish all descendant pages?', links.first['data-confirm']
+      end
+    end
+    assert_no_select '.publication-status'
+    assert_select "input[type=checkbox][name='page[is_published]'][checked]"
+  end
+
+  def test_get_edit_explains_hidden_page_without_changing_its_publication_setting
+    child = comfy_cms_pages(:child)
+    create_page('Grandchild', parent: child)
+    @page.update!(is_published: false)
+
+    r :get, edit_comfy_admin_cms_site_page_path(@site, child)
+
+    assert_response :success
+    assert_select '.publication-status[role=status]', %r{Hidden by unpublished ancestor\. Publish its ancestors to make this page visible\.}
+    assert_descendant_visibility_notice
+    assert_select "input[type=checkbox][name='page[is_published]'][checked]"
+    assert child.reload.is_published?
+  end
+
+  def test_get_edit_explains_unpublished_page_and_preserved_descendant_settings
+    child = comfy_cms_pages(:child)
+    @page.update!(is_published: false)
+
+    r :get, edit_comfy_admin_cms_site_page_path(@site, @page)
+
+    assert_response :success
+    assert_select '.publication-status[role=status]', %r{This page is unpublished\.}
+    assert_descendant_visibility_notice
+    assert_select "input[type=checkbox][name='page[is_published]']:not([checked])"
+    refute @page.reload.is_published?
+    assert child.reload.is_published?
+  end
+
+  def test_get_edit_disables_publish_when_all_descendants_are_published
+    child = comfy_cms_pages(:child)
+    create_page('Grandchild', parent: child)
+    @page.update!(is_published: false)
+
+    r :get, edit_comfy_admin_cms_site_page_path(@site, @page)
+
+    assert_response :success
+    assert_select '#child-pages-actions' do
+      assert_select 'button.dropdown-item.disabled[disabled][aria-disabled=true]', 'Publish descendants'
+      assert_select 'a', text: 'Publish descendants', count: 0
+      assert_select 'a[data-method=patch]', 'Unpublish descendants'
+    end
+  end
+
+  def test_get_edit_disables_unpublish_when_all_descendants_are_unpublished
+    child = comfy_cms_pages(:child)
+    child.update!(is_published: false)
+    create_page('Draft Grandchild', parent: child, is_published: false)
+
+    r :get, edit_comfy_admin_cms_site_page_path(@site, @page)
+
+    assert_response :success
+    assert_select '#child-pages-actions' do
+      assert_select 'button.dropdown-item.disabled[disabled][aria-disabled=true]', 'Unpublish descendants'
+      assert_select 'a', text: 'Unpublish descendants', count: 0
+      assert_select 'a[data-method=patch]', 'Publish descendants'
+    end
+  end
+
+  def test_get_edit_enables_both_actions_for_published_grandchild_below_draft_child
+    child = comfy_cms_pages(:child)
+    child.update!(is_published: false)
+    create_page('Published Grandchild', parent: child)
+
+    r :get, edit_comfy_admin_cms_site_page_path(@site, @page)
+
+    assert_response :success
+    assert_select '#child-pages-actions' do
+      assert_select 'a[data-method=patch]', 'Publish descendants'
+      assert_select 'a[data-method=patch]', 'Unpublish descendants'
+      assert_select '[disabled]', count: 0
+    end
+  end
+
+  def test_get_edit_without_children_hides_child_pages_menu
+    r :get, edit_comfy_admin_cms_site_page_path(@site, comfy_cms_pages(:child))
+
+    assert_response :success
+    assert_select '#child-pages-menu', count: 0
+    assert_select '#child-pages-actions', count: 0
   end
 
   def test_get_edit_page_with_date
@@ -662,6 +772,66 @@ class Comfy::Admin::Cms::PagesControllerTest < ActionDispatch::IntegrationTest
     assert_equal [great_grandchild], assigns(:pages_by_parent).fetch(grandchild.id)
   end
 
+  def test_index_reuses_loaded_ancestors_without_loading_closed_descendants
+    child = comfy_cms_pages(:child)
+    grandchildren = 4.times.map { |i| create_page("Grandchild #{i}", parent: child) }
+    closed_descendant = create_page('Closed Descendant', parent: grandchildren.first)
+    toggle_page(child)
+    @page.update!(is_published: false)
+
+    queries = capture_page_lookup_queries do
+      r :get, comfy_admin_cms_site_pages_path(@site)
+    end
+
+    assert_response :success
+    assert_empty queries, queries.join("\n")
+    grandchildren.each do |page|
+      assert_index_publication_status(page, published: true, hidden: true)
+    end
+    assert_no_select "#comfy_cms_page_#{closed_descendant.id}"
+    refute assigns(:pages_by_parent).key?(grandchildren.first.id)
+  end
+
+  def test_search_memoizes_shared_ancestry_for_hidden_results
+    child = comfy_cms_pages(:child)
+    results = 4.times.map { |i| create_page("Search Result #{i}", parent: child) }
+    @page.update!(is_published: false)
+
+    queries = capture_page_lookup_queries do
+      r :get, comfy_admin_cms_site_pages_path(@site), params: { q: 'Search Result' }
+    end
+
+    assert_response :success
+    assert_equal results, assigns(:pages)
+    assert_empty assigns(:pages_by_parent)
+    assert_equal 2, queries.size, queries.join("\n")
+    results.each do |page|
+      assert_index_publication_status(page, published: true, hidden: true)
+    end
+    assert_no_select "#comfy_cms_page_#{child.id}"
+    assert_no_select 'ul.list.sortable'
+  end
+
+  def test_lazy_expansion_shows_hidden_status_and_preserves_closed_branches
+    child = comfy_cms_pages(:child)
+    grandchild = create_page('Grandchild', parent: child)
+    draft = create_page('Draft', parent: child, is_published: false)
+    closed_descendant = create_page('Closed Descendant', parent: grandchild)
+    @page.update!(is_published: false)
+
+    toggle_page(child)
+
+    html = response.body.match(%r{childrenList\.innerHTML = '(.*)';})[1]
+      .gsub('\\n', "\n").gsub('\\/', '/').gsub('\\"', '"').gsub("\\'", "'")
+    assert_select Nokogiri::HTML.fragment(html), 'li' do
+      assert_index_publication_status(grandchild, published: true, hidden: true)
+      assert_index_publication_status(draft, published: false)
+      assert_no_select "#comfy_cms_page_#{closed_descendant.id}"
+    end
+    assert_equal [grandchild, draft], assigns(:pages_by_parent).fetch(child.id)
+    refute assigns(:pages_by_parent).key?(grandchild.id)
+  end
+
   def test_toggle_publication
     assert @page.is_published?
 
@@ -679,6 +849,41 @@ class Comfy::Admin::Cms::PagesControllerTest < ActionDispatch::IntegrationTest
     assert_response :redirect
     assert_equal 'Page published', flash[:success]
     assert @page.reload.is_published?
+  end
+
+  def test_toggle_publication_preserves_descendant_flags_without_saving_family
+    child = comfy_cms_pages(:child)
+    published = create_page('Published Grandchild', parent: child)
+    draft = create_page('Draft Grandchild', parent: child, is_published: false)
+    sibling = create_page('Sibling', parent: @page)
+    flags = @site.pages.where.not(id: child.id).pluck(:id, :is_published).to_h
+    timestamps = [@page, sibling, published, draft].to_h { |page| [page.id, page.reload.updated_at] }
+    Comfy::Admin::Cms::PagesController.any_instance.expects(:update_family).never
+
+    r :patch, toggle_publication_comfy_admin_cms_site_page_path(@site, child)
+
+    assert_response :redirect
+    refute child.reload.is_published?
+    refute published.reload.published_with_ancestors?
+    assert_equal flags, @site.pages.where.not(id: child.id).pluck(:id, :is_published).to_h
+
+    r :patch, toggle_publication_comfy_admin_cms_site_page_path(@site, child)
+
+    assert_response :redirect
+    assert child.reload.is_published?
+    assert published.reload.published_with_ancestors?
+    refute draft.reload.published_with_ancestors?
+    assert_equal flags, @site.pages.where.not(id: child.id).pluck(:id, :is_published).to_h
+    assert_equal timestamps, @site.pages.where(id: timestamps.keys).pluck(:id, :updated_at).to_h
+  end
+
+  def test_toggle_publication_clears_site_page_and_translation_caches
+    records, foreign_records = seed_publication_caches
+
+    r :patch, toggle_publication_comfy_admin_cms_site_page_path(@site, comfy_cms_pages(:child))
+
+    assert_response :redirect
+    assert_publication_caches_cleared(records, foreign_records)
   end
 
   def test_toggle_publication_refreshes_parent_and_sibling_navigation
@@ -717,15 +922,32 @@ class Comfy::Admin::Cms::PagesControllerTest < ActionDispatch::IntegrationTest
       is_published: false
     )
     @page.update_column(:is_published, false)
+    records, foreign_records = seed_publication_caches
 
     r :patch, publish_children_comfy_admin_cms_site_page_path(@site, @page)
 
     assert_response :redirect
     assert_redirected_to edit_comfy_admin_cms_site_page_path(@site, @page)
-    assert_equal 'Child pages published', flash[:success]
+    assert_equal 'Descendant pages published', flash[:success]
     refute @page.reload.is_published?
     assert child.reload.is_published?
     assert grandchild.reload.is_published?
+    assert_publication_caches_cleared(records, foreign_records)
+    refute child.published_with_ancestors?
+    refute grandchild.published_with_ancestors?
+
+    r :get, comfy_admin_cms_site_pages_path(@site), params: { q: 'Grandchild' }
+    assert_response :success
+    assert_index_publication_status(grandchild, published: true, hidden: true)
+
+    r :patch, toggle_publication_comfy_admin_cms_site_page_path(@site, @page)
+    assert_response :redirect
+    assert child.reload.published_with_ancestors?
+    assert grandchild.reload.published_with_ancestors?
+
+    r :get, comfy_admin_cms_site_pages_path(@site), params: { q: 'Grandchild' }
+    assert_response :success
+    assert_index_publication_status(grandchild, published: true)
   end
 
   def test_unpublish_children
@@ -738,14 +960,69 @@ class Comfy::Admin::Cms::PagesControllerTest < ActionDispatch::IntegrationTest
       is_published: true
     )
 
+    records, foreign_records = seed_publication_caches
+
     r :patch, unpublish_children_comfy_admin_cms_site_page_path(@site, @page)
 
     assert_response :redirect
     assert_redirected_to edit_comfy_admin_cms_site_page_path(@site, @page)
-    assert_equal 'Child pages unpublished', flash[:success]
+    assert_equal 'Descendant pages unpublished', flash[:success]
     assert @page.reload.is_published?
     refute child.reload.is_published?
     refute grandchild.reload.is_published?
+    assert_publication_caches_cleared(records, foreign_records)
+  end
+
+  def test_publish_children_only_changes_descendant_flags_but_clears_site_caches
+    child = comfy_cms_pages(:child)
+    grandchild = create_page('Grandchild', parent: child, is_published: false)
+    sibling = create_page('Unrelated Draft', parent: @page, is_published: false)
+    child.update!(is_published: false)
+    @page.update!(is_published: false)
+    records, foreign_records = seed_publication_caches
+
+    r :patch, publish_children_comfy_admin_cms_site_page_path(@site, child)
+
+    assert_response :redirect
+    assert_redirected_to edit_comfy_admin_cms_site_page_path(@site, child)
+    assert_equal 'Descendant pages published', flash[:success]
+    assert grandchild.reload.is_published?
+    refute grandchild.published_with_ancestors?
+    refute child.reload.is_published?
+    refute @page.reload.is_published?
+    refute sibling.reload.is_published?
+    assert_publication_caches_cleared(records, foreign_records)
+
+    r :patch, toggle_publication_comfy_admin_cms_site_page_path(@site, child)
+    assert_response :redirect
+    refute grandchild.reload.published_with_ancestors?
+
+    r :patch, toggle_publication_comfy_admin_cms_site_page_path(@site, @page)
+    assert_response :redirect
+    assert grandchild.reload.published_with_ancestors?
+    refute sibling.reload.is_published?
+  end
+
+  def test_bulk_publication_rolls_back_flags_and_caches_when_translation_cache_clear_fails
+    child = comfy_cms_pages(:child)
+    grandchild = create_page('Grandchild', parent: child)
+    records, foreign_records = seed_publication_caches
+    original_attributes = @site.pages.pluck(:id, :is_published, :updated_at)
+    Comfy::Cms::Translation.expects(:where)
+      .with(page_id: kind_of(ActiveRecord::Relation))
+      .raises(RuntimeError, 'Translation cache clear failed')
+
+    error = assert_raises(RuntimeError) do
+      r :patch, unpublish_children_comfy_admin_cms_site_page_path(@site, @page)
+    end
+
+    assert_equal 'Translation cache clear failed', error.message
+    assert_equal original_attributes, @site.pages.pluck(:id, :is_published, :updated_at)
+    assert child.reload.is_published?
+    assert grandchild.reload.is_published?
+    (records + foreign_records).each do |record|
+      assert_equal 'cached navigation', record.reload.read_attribute(:content_cache)
+    end
   end
 
   def test_reorder_does_not_update_page_from_another_site
@@ -808,6 +1085,51 @@ class Comfy::Admin::Cms::PagesControllerTest < ActionDispatch::IntegrationTest
   end
 
 private
+
+  def assert_index_publication_status(page, published:, hidden: false)
+    row = "#comfy_cms_page_#{page.id} > .row"
+    css_class = published && !hidden ? 'published' : 'draft'
+    assert_select "#{row} .item-title a.#{css_class}", page.label
+    assert_select "#{row} .publication-status", count: hidden ? 1 : 0, text: 'Hidden by unpublished ancestor'
+    assert_select "#{row} a[data-method=patch]", published ? 'Unpublish' : 'Publish'
+  end
+
+  def assert_descendant_visibility_notice
+    assert_select '.publication-status', %r{Descendants are visible only when they and all their ancestors are published\.}
+    assert_select '.publication-status', %r{Their publication settings are preserved when an ancestor is unpublished\.}
+  end
+
+  def capture_page_lookup_queries(&)
+    queries = []
+    subscriber = ->(_name, _start, _finish, _id, payload) do
+      sql = payload[:sql]
+      queries << sql if sql.match?(%r{\ASELECT .* FROM "comfy_cms_pages".*"comfy_cms_pages"\."id" =})
+    end
+    ActiveSupport::Notifications.subscribed(subscriber, 'sql.active_record', &)
+    queries
+  end
+
+  def seed_publication_caches
+    child = comfy_cms_pages(:child)
+    child_translation = child.translations.create!(locale: 'fr', label: 'Child Translation')
+    foreign_site = Comfy::Cms::Site.create!(identifier: 'foreign', hostname: 'foreign.example.com')
+    foreign_layout = foreign_site.layouts.create!(identifier: 'foreign')
+    foreign_page = foreign_site.pages.create!(label: 'Foreign', layout: foreign_layout)
+    foreign_translation = foreign_page.translations.create!(locale: 'fr', label: 'Foreign Translation')
+    records = @site.pages.to_a + [comfy_cms_translations(:default), child_translation]
+    foreign_records = [foreign_page, foreign_translation]
+    (records + foreign_records).each { |record| record.update_column(:content_cache, 'cached navigation') }
+    [records, foreign_records]
+  end
+
+  def assert_publication_caches_cleared(records, foreign_records)
+    records.each do |record|
+      assert_nil record.reload.read_attribute(:content_cache), "#{record.class} #{record.id} retained stale content"
+    end
+    foreign_records.each do |record|
+      assert_equal 'cached navigation', record.reload.read_attribute(:content_cache)
+    end
+  end
 
   def create_page(label, parent:, **attributes)
     @site.pages.create!({

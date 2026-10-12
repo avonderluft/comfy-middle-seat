@@ -27,15 +27,20 @@ class ComfyMiddleSeat::Content::Tags::Children < ComfyMiddleSeat::Content::Tag
     @exclude = []
     @exclude = @locals['exclude'].split(',').map(&:strip) if @locals['exclude']
     @list = ''
-    # ActiveRecord_Associations_CollectionProxy
-    @page_children = context.children.order(:position).to_ary
-    unless Rails.env == 'development'
-      @page_children.delete_if { |child| !child.is_published }
-    end
+    page = context.is_a?(Comfy::Cms::Translation) ? context.page : context
+    preview = Rails.env.development?
+    @visible = preview || page.published_with_ancestors?
+    @page_children = []
+    return unless @visible
+
+    @page_children = page.children.order(:position).to_ary
+    @page_children.select!(&:is_published?) unless preview
     @page_children.delete_if { |child| @exclude.include? child.slug }
   end
 
   def content
+    return '' unless @visible
+
     if @page_children.any?
       @list = "<ul id=\"children\">\n"
       @page_children.each do |c|

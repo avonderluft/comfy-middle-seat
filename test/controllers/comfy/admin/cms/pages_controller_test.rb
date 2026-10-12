@@ -681,6 +681,31 @@ class Comfy::Admin::Cms::PagesControllerTest < ActionDispatch::IntegrationTest
     assert @page.reload.is_published?
   end
 
+  def test_toggle_publication_refreshes_parent_and_sibling_navigation
+    child = comfy_cms_pages(:child)
+    sibling = create_page('Sibling', parent: @page)
+    @layout.update!(content: '{{ cms:children }} {{ cms:siblings }}')
+
+    assert_includes @page.reload.content_cache, child.label
+    assert_includes sibling.reload.content_cache, child.label
+
+    r :patch, toggle_publication_comfy_admin_cms_site_page_path(@site, child)
+
+    assert_response :redirect
+    refute child.reload.is_published?
+    assert_nil @page.reload.read_attribute(:content_cache)
+    assert_nil sibling.reload.read_attribute(:content_cache)
+    refute_includes @page.content_cache, child.label
+    refute_includes sibling.content_cache, child.label
+
+    r :patch, toggle_publication_comfy_admin_cms_site_page_path(@site, child)
+
+    assert_response :redirect
+    assert child.reload.is_published?
+    assert_includes @page.reload.content_cache, child.label
+    assert_includes sibling.reload.content_cache, child.label
+  end
+
   def test_publish_children
     child = comfy_cms_pages(:child)
     child.update_column(:is_published, false)

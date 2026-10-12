@@ -120,6 +120,7 @@ class Comfy::Admin::Cms::PagesController < Comfy::Admin::Cms::BaseController
 
   def toggle_publication
     @page.update!(is_published: !@page.is_published?)
+    update_family
     status = @page.is_published? ? 'published' : 'unpublished'
     flash[:success] = I18n.t("comfy.admin.cms.pages.#{status}", default: "Page #{status}")
     redirect_to comfy_admin_cms_site_pages_path(@site, params.permit(:q, :categories))

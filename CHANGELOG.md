@@ -12,15 +12,33 @@ This changelog follows the project's lineage: **Comfortable Mexican Sofa → Com
 
 ## [Unreleased]
 
+## [v4.1.0] - 2026-10-12
+
 ### Changed
 
+- Refresh the admin with the Harbor navy and teal theme.
 - Hide pages beneath unpublished ancestors without changing their publication settings.
-- Show inherited page visibility and clarify descendant publishing actions.
+- Show when a page is hidden by an unpublished ancestor.
+- Group descendant publishing actions in the Child pages menu.
 - Gray out descendant publishing actions when no changes are needed.
 
 ### Fixed
 
-- Refresh page and translation navigation when branch visibility changes.
+- Refresh page and translation navigation when publication changes.
+
+## [v4.0.4] - 2026-10-10
+
+No functional changes from v4.0.3.
+
+## [v4.0.3] - 2026-10-10
+
+### Added
+
+- Publish or unpublish pages directly from the Page index.
+
+### Fixed
+
+- Keep Add Child Page buttons on one line.
 
 ## [v4.0.2] - 2026-09-21
 
@@ -220,7 +238,10 @@ First release of `comfortable_media_surfer`. This new gem is a revival of [Comfo
 
 - Rebranded **ComfortableMexicanSofa** as **ComfortableMediaSurfer** in order to publish new gem (database table names and schema have not changed).
 
-[Unreleased]: https://github.com/avonderluft/comfy-middle-seat/compare/v4.0.2...master
+[Unreleased]: https://github.com/avonderluft/comfy-middle-seat/compare/v4.1.0...master
+[v4.1.0]: https://github.com/avonderluft/comfy-middle-seat/compare/v4.0.4...v4.1.0
+[v4.0.4]: https://github.com/avonderluft/comfy-middle-seat/compare/ea2bb99c0398e1f4d6e850a25e0c13afc577c3ad...v4.0.4
+[v4.0.3]: https://github.com/avonderluft/comfy-middle-seat/compare/v4.0.2...ea2bb99c0398e1f4d6e850a25e0c13afc577c3ad
 [v4.0.2]: https://github.com/avonderluft/comfy-middle-seat/compare/v4.0.1...v4.0.2
 [v4.0.1]: https://github.com/avonderluft/comfy-middle-seat/compare/v4.0.0...v4.0.1
 [v4.0.0]: https://github.com/avonderluft/comfy-middle-seat/compare/v3.2.1...v4.0.0

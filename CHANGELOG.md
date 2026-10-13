@@ -12,16 +12,21 @@ This changelog follows the project's lineage: **Comfortable Mexican Sofa → Com
 
 ## [Unreleased]
 
+## [v4.2.0] - 2026-10-13
+
 ### Changed
 
 - Keep Page editing actions together in a sticky top toolbar.
 - Save edits and publish or unpublish a page with one button.
-- Shorten publication notices and show save hints as button tooltips.
-- Auto-dismiss success and informational notices; keep warnings and errors visible.
+- Show unpublished status below the heading and save hints as button tooltips.
+- Simplify the save confirmation to “Page updated.”
+- Fade success and informational notices after five seconds; pause on hover or focus.
+- Keep warnings and errors visible and respect reduced-motion preferences.
 
 ### Fixed
 
 - Keep editing buttons aligned with the page heading above publication status.
+- Keep editing controls usable after Preview.
 - Restore dismissal of admin flash notices.
 - Keep Add Child Layout on one line when space allows.
 
@@ -251,7 +256,8 @@ First release of `comfortable_media_surfer`. This new gem is a revival of [Comfo
 
 - Rebranded **ComfortableMexicanSofa** as **ComfortableMediaSurfer** in order to publish new gem (database table names and schema have not changed).
 
-[Unreleased]: https://github.com/avonderluft/comfy-middle-seat/compare/v4.1.0...master
+[Unreleased]: https://github.com/avonderluft/comfy-middle-seat/compare/v4.2.0...master
+[v4.2.0]: https://github.com/avonderluft/comfy-middle-seat/compare/v4.1.0...v4.2.0
 [v4.1.0]: https://github.com/avonderluft/comfy-middle-seat/compare/v4.0.4...v4.1.0
 [v4.0.4]: https://github.com/avonderluft/comfy-middle-seat/compare/ea2bb99c0398e1f4d6e850a25e0c13afc577c3ad...v4.0.4
 [v4.0.3]: https://github.com/avonderluft/comfy-middle-seat/compare/v4.0.2...ea2bb99c0398e1f4d6e850a25e0c13afc577c3ad

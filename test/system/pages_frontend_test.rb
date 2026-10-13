@@ -59,7 +59,8 @@ class PagesFrontendTest < ApplicationSystemTestCase
     assert_equal 'Saved unpublished page', cms_page.reload.label
     refute cms_page.is_published?
     assert_equal 'Saved toolbar content', cms_page.fragments.find_by!(identifier: 'content').content
-    assert_selector '.page-editor-toolbar > .page-publication-state', exact_text: 'Unpublished. Descendants hidden, with their publication settings unchanged.'
+    assert_selector '.page-editor-toolbar > .page-publication-state',
+                    exact_text: 'Unpublished. Descendants hidden, with their publication settings unchanged.'
     assert_no_selector '.publication-status'
     assert_no_text 'Save and publish page'
     assert_equal 'Save and publish page', find_button('Publish', exact: true)['title']
@@ -255,7 +256,8 @@ class PagesFrontendTest < ApplicationSystemTestCase
     end
 
     visit_p edit_comfy_admin_cms_site_page_path(@site, child)
-    assert_selector '.publication-status', exact_text: 'Hidden by unpublished ancestor. Descendants hidden, with their publication settings unchanged.'
+    assert_selector '.publication-status',
+                    exact_text: 'Hidden by unpublished ancestor. Descendants hidden, with their publication settings unchanged.'
 
     visit_p comfy_admin_cms_site_pages_path(@site)
     within "#comfy_cms_page_#{root.id} > .row" do

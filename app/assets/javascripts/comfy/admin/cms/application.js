@@ -4,6 +4,7 @@ import ujs from "@rails/ujs";
 window.jQuery = window.$ = jQuery;
 ujs.start();
 
+import "bootstrap/js/src/alert";
 import "bootstrap/js/src/tab";
 import "bootstrap/js/src/collapse";
 import "bootstrap/js/src/dropdown";
@@ -20,6 +21,7 @@ import "./draft_forms";
 import "./file_link";
 import "./file_upload";
 import "./files_modal";
+import "./flash_notices";
 import "./page_fragments";
 import "./sortable_list";
 import "./slugify";

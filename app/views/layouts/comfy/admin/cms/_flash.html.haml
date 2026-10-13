@@ -1,4 +1,4 @@
 - flash.to_hash.except('cms_saved_draft_key').each do |type, message|
-  .alert{:class => "alert-#{type}"}
+  .alert.fade.show{class: "alert-#{type}", data: {cms_flash: true}, role: %w[success info].include?(type) ? 'status' : 'alert'}
     %button.close{:type => 'button', :class => "close", :data => {:dismiss => 'alert'}} &times;
     = message

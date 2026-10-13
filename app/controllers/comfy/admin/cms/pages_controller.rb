@@ -64,12 +64,28 @@ class Comfy::Admin::Cms::PagesController < Comfy::Admin::Cms::BaseController
   end
 
   def update
-    @page.save!
-    update_family
+    publication_action = params[:publication_action].presence_in(%w[publish unpublish])
+    original_publication = @page.is_published_in_database
+    @page.is_published = publication_action == 'publish' if publication_action
+
+    @page.class.transaction do
+      @page.save!
+      update_family
+    end
     acknowledge_draft_save
-    flash[:success] = I18n.t('comfy.admin.cms.pages.updated')
+    flash[:success] = case publication_action
+                      when 'publish'
+                        I18n.t('comfy.admin.cms.pages.saved_and_published', default: 'Page saved and published')
+                      when 'unpublish'
+                        I18n.t('comfy.admin.cms.pages.saved_and_unpublished', default: 'Page saved and unpublished')
+                      else
+                        I18n.t('comfy.admin.cms.pages.updated')
+                      end
     redirect_to action: :edit, id: @page
-  rescue ActiveRecord::RecordInvalid
+  rescue ActiveRecord::RecordInvalid => e
+    # Keep submitted edits and errors, but show the publication state that was actually saved.
+    @page.is_published = original_publication if publication_action
+    @page.errors.add(:base, e.message) unless e.record == @page
     flash.now[:danger] = I18n.t('comfy.admin.cms.pages.update_failure')
     render action: :edit
   end

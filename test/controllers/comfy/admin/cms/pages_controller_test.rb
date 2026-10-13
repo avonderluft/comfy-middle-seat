@@ -140,6 +140,7 @@ class Comfy::Admin::Cms::PagesControllerTest < ActionDispatch::IntegrationTest
     assert_equal @layout, assigns(:page).layout
     assert_template :new
     assert_select "form[action='/admin/sites/#{@site.id}/pages']"
+    assert_select "input[type=checkbox][name='page[is_published]']"
     assert_select "select[data-url='/admin/sites/#{@site.id}/pages/0/form_fragments']"
 
     assert_select "textarea[name='page[fragments_attributes][0][content]']"
@@ -250,7 +251,7 @@ class Comfy::Admin::Cms::PagesControllerTest < ActionDispatch::IntegrationTest
       end
     end
     assert_no_select '.publication-status'
-    assert_select "input[type=checkbox][name='page[is_published]'][checked]"
+    assert_editor_publication_state(published: true)
   end
 
   def test_get_edit_explains_hidden_page_without_changing_its_publication_setting
@@ -261,9 +262,9 @@ class Comfy::Admin::Cms::PagesControllerTest < ActionDispatch::IntegrationTest
     r :get, edit_comfy_admin_cms_site_page_path(@site, child)
 
     assert_response :success
-    assert_select '.publication-status[role=status]', %r{Hidden by unpublished ancestor\. Publish its ancestors to make this page visible\.}
+    assert_select '.publication-status[role=status]', %r{Hidden by unpublished ancestor\.}
     assert_descendant_visibility_notice
-    assert_select "input[type=checkbox][name='page[is_published]'][checked]"
+    assert_editor_publication_state(published: true, hidden: true)
     assert child.reload.is_published?
   end
 
@@ -274,9 +275,9 @@ class Comfy::Admin::Cms::PagesControllerTest < ActionDispatch::IntegrationTest
     r :get, edit_comfy_admin_cms_site_page_path(@site, @page)
 
     assert_response :success
-    assert_select '.publication-status[role=status]', %r{This page is unpublished\.}
-    assert_descendant_visibility_notice
-    assert_select "input[type=checkbox][name='page[is_published]']:not([checked])"
+    assert_no_select '.publication-status'
+    assert_select '.page-editor-toolbar > .page-publication-state[role=status]', count: 1
+    assert_editor_publication_state(published: false)
     refute @page.reload.is_published?
     assert child.reload.is_published?
   end
@@ -500,9 +501,222 @@ class Comfy::Admin::Cms::PagesControllerTest < ActionDispatch::IntegrationTest
       @page.reload
       assert_response :redirect
       assert_redirected_to action: :edit, id: @page
-      assert_equal 'Page, siblings, and parent updated', flash[:success]
+      assert_equal 'Page updated', flash[:success]
       assert_equal 'Updated Label', @page.label
     end
+  end
+
+  %w[publish unpublish].each do |publication_action| # rubocop:disable Metrics/BlockLength
+    define_method("test_update_#{publication_action}_saves_edits_and_only_own_publication_flag") do
+      published = publication_action == 'publish'
+      @page.update!(is_published: !published)
+      create_page('Draft Grandchild', parent: comfy_cms_pages(:child), is_published: false)
+      other_flags = @site.pages.where.not(id: @page.id).pluck(:id, :is_published)
+      fragment = comfy_cms_fragments(:default)
+      draft_key = "comfy-cms:draft:v1:site:#{@site.id}:page:#{@page.id}"
+      submitted = {
+        publication_action: publication_action,
+        cms_draft_key: draft_key,
+        page: {
+          label: 'Saved toolbar edits',
+          is_published: !published,
+          fragments_attributes: [{ identifier: fragment.identifier, content: 'Saved toolbar content' }]
+        }
+      }
+
+      # Repeating an explicit action must not toggle the flag back, even with a stale form value.
+      2.times do
+        assert_no_difference 'Comfy::Cms::Fragment.count' do
+          r :put, comfy_admin_cms_site_page_path(@site, @page), params: submitted
+        end
+
+        assert_redirected_to edit_comfy_admin_cms_site_page_path(@site, @page)
+        assert_equal "Page saved and #{published ? 'published' : 'unpublished'}", flash[:success]
+        assert_equal draft_key, flash[:cms_saved_draft_key]
+        assert_equal published, @page.reload.is_published?
+        assert_equal 'Saved toolbar edits', @page.label
+        assert_equal 'Saved toolbar content', fragment.reload.content
+        assert_equal other_flags, @site.pages.where.not(id: @page.id).pluck(:id, :is_published)
+      end
+    end
+
+    define_method("test_update_#{publication_action}_validation_failure_preserves_edits_and_saved_status") do
+      original_publication = publication_action == 'unpublish'
+      @page.update!(is_published: original_publication)
+      original_attributes = @page.reload.attributes
+      fragment = comfy_cms_fragments(:default)
+      original_content = fragment.content
+
+      assert_no_difference ['Comfy::Cms::Fragment.count', 'Comfy::Cms::Revision.count'] do
+        r :put, comfy_admin_cms_site_page_path(@site, @page), params: {
+          publication_action: publication_action,
+          cms_draft_key: "comfy-cms:draft:v1:site:#{@site.id}:page:#{@page.id}",
+          page: {
+            label: 'Unsaved toolbar edits',
+            target_page_id: @page.id,
+            fragments_attributes: [{ identifier: fragment.identifier, content: 'Unsaved toolbar content' }]
+          }
+        }
+      end
+
+      assert_response :success
+      assert_template :edit
+      assert_equal 'Failed to update page', flash[:danger]
+      assert_nil flash[:cms_saved_draft_key]
+      assert_equal original_attributes, @page.reload.attributes
+      assert_equal original_content, fragment.reload.content
+      edited_page = assigns(:page)
+      assert_equal 'Unsaved toolbar edits', edited_page.label
+      assert_equal 'Unsaved toolbar content', edited_page.fragments.find { |item| item.identifier == fragment.identifier }.content
+      assert_has_errors_on edited_page, :target_page_id
+      assert_equal original_publication, edited_page.is_published?
+      assert_select "input[name='page[label]'][value='Unsaved toolbar edits']"
+      assert_select "textarea[name='page[fragments_attributes][0][content]']", 'Unsaved toolbar content'
+      assert_editor_publication_state(published: original_publication)
+    end
+
+    define_method("test_update_preview_ignores_#{publication_action}_without_saving_or_acknowledging_draft") do
+      original_publication = publication_action == 'unpublish'
+      @page.update!(is_published: original_publication)
+      original_attributes = @page.reload.attributes
+      fragment = comfy_cms_fragments(:default)
+      original_content = fragment.content
+      Comfy::Admin::Cms::PagesController.any_instance.expects(:update_family).never
+
+      assert_no_difference ['Comfy::Cms::Fragment.count', 'Comfy::Cms::Revision.count'] do
+        r :put, comfy_admin_cms_site_page_path(@site, @page), params: {
+          preview: 'Preview',
+          publication_action: publication_action,
+          cms_draft_key: "comfy-cms:draft:v1:site:#{@site.id}:page:#{@page.id}",
+          page: {
+            label: 'Preview toolbar edits',
+            fragments_attributes: [{ identifier: fragment.identifier, content: 'Preview toolbar content' }]
+          }
+        }
+      end
+
+      assert_response :success
+      assert_match %r{Preview toolbar content}, response.body
+      assert_equal 'Preview toolbar edits', assigns(:cms_page).label
+      assert_equal original_publication, assigns(:cms_page).is_published?
+      assert_equal original_attributes, @page.reload.attributes
+      assert_equal original_content, fragment.reload.content
+      assert_nil flash[:cms_saved_draft_key]
+      assert_nil flash[:success]
+    end
+
+    define_method("test_update_#{publication_action}_rolls_back_page_and_fragments_when_family_is_invalid") do
+      child = comfy_cms_pages(:child)
+      original_publication = publication_action == 'unpublish'
+      child.update!(is_published: original_publication)
+      fragment = child.fragments.create!(identifier: 'content', content: 'Original child content')
+      @page.update_column(:label, '')
+      original_attributes = child.reload.attributes
+
+      assert_no_difference ['Comfy::Cms::Fragment.count', 'Comfy::Cms::Revision.count'] do
+        r :put, comfy_admin_cms_site_page_path(@site, child), params: {
+          publication_action: publication_action,
+          cms_draft_key: "comfy-cms:draft:v1:site:#{@site.id}:page:#{child.id}",
+          page: {
+            label: 'Unsaved child edits',
+            fragments_attributes: [{ identifier: 'content', content: 'Unsaved child content' }]
+          }
+        }
+      end
+
+      assert_response :success
+      assert_template :edit
+      assert_equal 'Failed to update page', flash[:danger]
+      assert_nil flash[:cms_saved_draft_key]
+      assert_equal original_attributes, child.reload.attributes
+      assert_equal 'Original child content', fragment.reload.content
+      assert_equal 'Unsaved child edits', assigns(:page).label
+      assert_equal 'Unsaved child content', assigns(:page).fragments.find { |item| item.identifier == 'content' }.content
+      assert_has_errors_on assigns(:page), :base
+      assert_editor_publication_state(published: original_publication)
+    end
+  end
+
+  [true, false].each do |published|
+    define_method("test_normal_update_preserves_#{published ? 'published' : 'unpublished'}_flag_and_acknowledges_draft") do
+      @page.update!(is_published: published)
+      fragment = comfy_cms_fragments(:default)
+      draft_key = "comfy-cms:draft:v1:site:#{@site.id}:page:#{@page.id}"
+
+      r :put, comfy_admin_cms_site_page_path(@site, @page), params: {
+        cms_draft_key: draft_key,
+        page: {
+          label: 'Normal update edits',
+          fragments_attributes: [{ identifier: fragment.identifier, content: 'Normal update content' }]
+        }
+      }
+
+      assert_redirected_to edit_comfy_admin_cms_site_page_path(@site, @page)
+      assert_equal 'Page updated', flash[:success]
+      assert_equal draft_key, flash[:cms_saved_draft_key]
+      assert_equal published, @page.reload.is_published?
+      assert_equal 'Normal update edits', @page.label
+      assert_equal 'Normal update content', fragment.reload.content
+    end
+
+    define_method("test_normal_update_accepts_explicit_is_published_#{published}") do
+      @page.update!(is_published: !published)
+
+      r :put, comfy_admin_cms_site_page_path(@site, @page), params: {
+        page: { label: 'API edits', is_published: published ? '1' : '0' }
+      }
+
+      assert_redirected_to edit_comfy_admin_cms_site_page_path(@site, @page)
+      assert_equal 'Page updated', flash[:success]
+      assert_equal published, @page.reload.is_published?
+      assert_equal 'API edits', @page.label
+    end
+  end
+
+  def test_update_publish_below_unpublished_ancestor_preserves_family_flags_and_hidden_status
+    child = comfy_cms_pages(:child)
+    grandchild = create_page('Draft Grandchild', parent: child, is_published: false)
+    sibling = create_page('Draft Sibling', parent: @page, is_published: false)
+    @page.update!(is_published: false)
+    child.update!(is_published: false)
+
+    r :put, comfy_admin_cms_site_page_path(@site, child), params: {
+      publication_action: 'publish',
+      page: {
+        label: 'Published but hidden',
+        fragments_attributes: [{ identifier: 'content', content: 'Hidden content' }]
+      }
+    }
+
+    assert_redirected_to edit_comfy_admin_cms_site_page_path(@site, child)
+    assert_equal 'Page saved and published', flash[:success]
+    assert child.reload.is_published?
+    refute child.published_with_ancestors?
+    assert_equal 'Published but hidden', child.label
+    assert_equal 'Hidden content', child.fragments.find_by!(identifier: 'content').content
+    refute @page.reload.is_published?
+    refute grandchild.reload.is_published?
+    refute sibling.reload.is_published?
+
+    r :get, edit_comfy_admin_cms_site_page_path(@site, child)
+
+    assert_response :success
+    assert_editor_publication_state(published: true, hidden: true)
+    assert_select '.publication-status', %r{Hidden by unpublished ancestor}
+  end
+
+  def test_update_ignores_unknown_publication_action
+    @page.update!(is_published: false)
+
+    r :put, comfy_admin_cms_site_page_path(@site, @page), params: {
+      publication_action: 'toggle',
+      page: { label: 'Normal update edits' }
+    }
+
+    assert_redirected_to edit_comfy_admin_cms_site_page_path(@site, @page)
+    assert_equal 'Page updated', flash[:success]
+    refute @page.reload.is_published?
+    assert_equal 'Normal update edits', @page.label
   end
 
   def test_update_with_layout_change
@@ -520,7 +734,7 @@ class Comfy::Admin::Cms::PagesControllerTest < ActionDispatch::IntegrationTest
       @page.reload
       assert_response :redirect
       assert_redirected_to action: :edit, id: @page
-      assert_equal 'Page, siblings, and parent updated', flash[:success]
+      assert_equal 'Page updated', flash[:success]
       assert_equal 'Updated Label', @page.label
       identifiers = @page.fragments.collect(&:identifier)
       assert_equal %w[boolean content datetime file header], identifiers.sort
@@ -551,13 +765,15 @@ class Comfy::Admin::Cms::PagesControllerTest < ActionDispatch::IntegrationTest
   end
 
   def test_update_failure
-    r :put, comfy_admin_cms_site_page_path(site_id: @site, id: @page), params: { page: {
-      label: ''
-    } }
+    r :put, comfy_admin_cms_site_page_path(site_id: @site, id: @page), params: {
+      cms_draft_key: "comfy-cms:draft:v1:site:#{@site.id}:page:#{@page.id}",
+      page: { label: '' }
+    }
     assert_response :success
     assert_template :edit
     assert assigns(:page)
     assert_equal 'Failed to update page', flash[:danger]
+    assert_nil flash[:cms_saved_draft_key]
   end
 
   def test_destroy_rejects_root_page
@@ -1086,6 +1302,18 @@ class Comfy::Admin::Cms::PagesControllerTest < ActionDispatch::IntegrationTest
 
 private
 
+  def assert_editor_publication_state(published:, hidden: false)
+    status = published ? 'Published' : 'Unpublished. Descendants hidden, with their publication settings unchanged.'
+    status = 'Hidden by unpublished ancestor' if hidden
+    assert_select '.page-publication-state', text: status
+    assert_no_select "input[name='page[is_published]']"
+    assert_select 'form .page-editor-toolbar' do
+      action = published ? 'unpublish' : 'publish'
+      assert_select "button[type=submit][name=publication_action][value=#{action}]", count: 1
+      assert_select '[name=publication_action]', count: 1
+    end
+  end
+
   def assert_index_publication_status(page, published:, hidden: false)
     row = "#comfy_cms_page_#{page.id} > .row"
     css_class = published && !hidden ? 'published' : 'draft'
@@ -1095,8 +1323,7 @@ private
   end
 
   def assert_descendant_visibility_notice
-    assert_select '.publication-status', %r{Descendants are visible only when they and all their ancestors are published\.}
-    assert_select '.publication-status', %r{Their publication settings are preserved when an ancestor is unpublished\.}
+    assert_select '.publication-status', %r{Descendants hidden, with their publication settings unchanged\.}
   end
 
   def capture_page_lookup_queries(&)

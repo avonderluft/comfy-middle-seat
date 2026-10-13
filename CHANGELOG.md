@@ -12,6 +12,19 @@ This changelog follows the project's lineage: **Comfortable Mexican Sofa → Com
 
 ## [Unreleased]
 
+### Changed
+
+- Keep Page editing actions together in a sticky top toolbar.
+- Save edits and publish or unpublish a page with one button.
+- Shorten publication notices and show save hints as button tooltips.
+- Auto-dismiss success and informational notices; keep warnings and errors visible.
+
+### Fixed
+
+- Keep editing buttons aligned with the page heading above publication status.
+- Restore dismissal of admin flash notices.
+- Keep Add Child Layout on one line when space allows.
+
 ## [v4.1.0] - 2026-10-12
 
 ### Changed

@@ -123,7 +123,7 @@ en:
         pages:
           created: Page created, siblings, and parent updated
           creation_failure: Failed to create page
-          updated: Page, siblings, and parent updated
+          updated: Page updated
           update_failure: Failed to update page
           children_published: Descendant pages published
           children_unpublished: Descendant pages unpublished

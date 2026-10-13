@@ -34,6 +34,162 @@ class PagesFrontendTest < ApplicationSystemTestCase
     assert_equal 'test-page', find_field('Slug').value
   end
 
+  def test_edit_toolbar_saves_and_changes_publication
+    cms_page = comfy_cms_pages(:default)
+    comfy_cms_layouts(:default).update!(content: '{{ cms:textarea content }}')
+    visit_p edit_comfy_admin_cms_site_page_path(@site, cms_page)
+
+    assert_no_field 'Published'
+    assert_no_selector '.form-actions'
+    assert_no_text 'Save and unpublish page'
+    assert_equal 'Save and unpublish page', find_button('Unpublish', exact: true)['title']
+    assert_selector '#page-publication-hint[hidden]', visible: :hidden
+    within '.page-editor-toolbar' do
+      assert_button 'Preview'
+      assert_button 'Update Page'
+      assert_button 'Unpublish'
+      assert_link 'Cancel'
+      assert_selector '.page-publication-state', text: 'Published'
+    end
+    fill_in 'Label', with: 'Saved unpublished page'
+    page.execute_script('document.querySelector(".CodeMirror").CodeMirror.setValue("Saved toolbar content")')
+    click_button 'Unpublish', exact: true
+
+    assert_text 'Page saved and unpublished'
+    assert_equal 'Saved unpublished page', cms_page.reload.label
+    refute cms_page.is_published?
+    assert_equal 'Saved toolbar content', cms_page.fragments.find_by!(identifier: 'content').content
+    assert_selector '.page-editor-toolbar > .page-publication-state', exact_text: 'Unpublished. Descendants hidden, with their publication settings unchanged.'
+    assert_no_selector '.publication-status'
+    assert_no_text 'Save and publish page'
+    assert_equal 'Save and publish page', find_button('Publish', exact: true)['title']
+
+    fill_in 'Label', with: 'Updated without publishing'
+    click_button 'Update Page'
+    assert_text 'Page updated'
+    assert_equal 'Updated without publishing', cms_page.reload.label
+    refute cms_page.is_published?
+    find('.alert-success button[data-dismiss="alert"]').click
+    assert_no_selector '.alert-success'
+    assert_selector '.page-publication-state', exact_text: 'Unpublished. Descendants hidden, with their publication settings unchanged.'
+    assert_no_selector '.publication-status'
+
+    fill_in 'Label', with: 'Saved published page'
+    click_button 'Publish', exact: true
+    assert_text 'Page saved and published'
+    assert_equal 'Saved published page', cms_page.reload.label
+    assert cms_page.is_published?
+    assert_button 'Unpublish', exact: true
+    assert_selector '.page-publication-state', text: 'Published'
+    click_link 'Cancel'
+    visit_p edit_comfy_admin_cms_site_page_path(@site, cms_page)
+    assert_no_selector '.modal', text: 'Unsaved draft found', wait: 0.5
+  end
+
+  def test_failed_toolbar_publication_preserves_edits_and_saved_status
+    cms_page = comfy_cms_pages(:default)
+    cms_page.update!(is_published: false)
+    visit_p edit_comfy_admin_cms_site_page_path(@site, cms_page)
+    fill_in 'Label', with: ''
+    click_button 'Publish', exact: true
+
+    assert_text 'Failed to update page'
+    refute cms_page.reload.is_published?
+    assert_field 'Label', with: ''
+    assert_selector '.page-publication-state', text: 'Unpublished'
+    assert_button 'Publish', exact: true
+
+    fill_in 'Label', with: 'Corrected published page'
+    click_button 'Publish', exact: true
+    assert_text 'Page saved and published'
+    assert cms_page.reload.is_published?
+  end
+
+  def test_toolbar_preview_and_cancel_preserve_unsaved_draft_without_saving
+    cms_page = comfy_cms_pages(:default)
+    comfy_cms_layouts(:default).update!(content: '{{ cms:textarea content }} {{ cms:wysiwyg rich_content }}')
+    original_label = cms_page.label
+    path = edit_comfy_admin_cms_site_page_path(@site, cms_page)
+    visit_p path
+    fill_in 'Label', with: 'Unsaved toolbar draft'
+    page.execute_script(<<~JAVASCRIPT)
+      document.querySelector('.CodeMirror').CodeMirror.setValue('Toolbar preview content');
+      document.querySelector('.redactor-editor').innerHTML = '<p>Toolbar rich preview</p>';
+    JAVASCRIPT
+
+    preview_window = window_opened_by { click_button 'Preview' }
+    within_window(preview_window) do
+      assert_text 'Toolbar preview content'
+      assert_text 'Toolbar rich preview'
+    end
+    preview_window.close
+    assert_equal original_label, cms_page.reload.label
+    assert cms_page.is_published?
+    refute_equal 'Toolbar preview content', cms_page.fragments.find_by!(identifier: 'content').content
+    assert_button 'Update Page', disabled: false
+    assert_button 'Unpublish', disabled: false
+    click_link 'Cancel'
+    assert_current_path comfy_admin_cms_site_pages_path(@site)
+    assert_equal original_label, cms_page.reload.label
+
+    visit_p path
+    assert_selector '.modal', text: 'Unsaved draft found'
+    click_button 'Restore draft'
+    assert_field 'Label', with: 'Unsaved toolbar draft'
+    assert_selector '.CodeMirror-code', text: 'Toolbar preview content'
+    assert_selector '.redactor-editor', text: 'Toolbar rich preview'
+  end
+
+  def test_edit_toolbar_stays_visible_and_wraps_on_small_screens
+    cms_page = comfy_cms_pages(:default)
+    cms_page.update!(is_published: false)
+    layout = comfy_cms_layouts(:default)
+    layout.update!(content: (1..24).map { |i| "{{ cms:text field_#{i} }}" }.join("\n"))
+    visit_p edit_comfy_admin_cms_site_page_path(@site, cms_page)
+
+    [[1280, 800], [1200, 800], [1024, 800], [375, 812]].each do |width, height|
+      page.current_window.resize_to(width, height)
+      page.execute_script('window.scrollTo(0, 600)')
+      assert_selector '.page-editor-toolbar', style: { 'position' => 'sticky' }
+      bounds = page.evaluate_script(<<~JAVASCRIPT)
+        (() => {
+          const toolbar = document.querySelector('.page-editor-toolbar');
+          const rect = toolbar.getBoundingClientRect();
+          const heading = toolbar.querySelector('h2').getBoundingClientRect();
+          const actions = toolbar.querySelector('.page-editor-actions').getBoundingClientRect();
+          const status = toolbar.querySelector('.page-publication-state').getBoundingClientRect();
+          return {
+            top: rect.top, bottom: rect.bottom,
+            headingCenter: heading.top + heading.height / 2,
+            actionsCenter: actions.top + actions.height / 2,
+            headingBottom: heading.bottom, actionsBottom: actions.bottom,
+            statusTop: status.top,
+            stickyTop: parseFloat(getComputedStyle(toolbar).top),
+            scrollY: window.scrollY,
+            overflowing: document.documentElement.scrollWidth > window.innerWidth
+          };
+        })()
+      JAVASCRIPT
+      assert_operator bounds['scrollY'], :>, 0
+      assert_in_delta bounds['stickyTop'], bounds['top'], 1
+      assert_operator bounds['bottom'], :<, height
+      refute bounds['overflowing']
+      assert_operator bounds['statusTop'], :>=, bounds['headingBottom']
+      assert_operator bounds['statusTop'], :>=, bounds['actionsBottom']
+      assert_in_delta bounds['headingCenter'], bounds['actionsCenter'], 1 if width >= 768
+      within '.page-editor-toolbar' do
+        assert_button 'Update Page'
+        assert_link 'Cancel'
+        all('.btn').each { |button| assert_matches_style button, 'white-space' => 'nowrap' }
+      end
+      click_button 'Child pages'
+      assert_link 'Unpublish descendants'
+      click_button 'Child pages'
+    end
+  ensure
+    page.current_window.resize_to(1200, 800)
+  end
+
   def test_lazy_tree_opens_and_reopens_without_duplicate_pages
     child = comfy_cms_pages(:child)
     grandchild = @site.pages.create!(
@@ -99,7 +255,7 @@ class PagesFrontendTest < ApplicationSystemTestCase
     end
 
     visit_p edit_comfy_admin_cms_site_page_path(@site, child)
-    assert_selector '.publication-status', text: 'Publish its ancestors to make this page visible.'
+    assert_selector '.publication-status', exact_text: 'Hidden by unpublished ancestor. Descendants hidden, with their publication settings unchanged.'
 
     visit_p comfy_admin_cms_site_pages_path(@site)
     within "#comfy_cms_page_#{root.id} > .row" do
@@ -305,6 +461,9 @@ class PagesFrontendTest < ApplicationSystemTestCase
     fill_in 'Label', with: ''
     click_button 'Update Page'
     assert_text 'Failed to update page'
+    find('.alert-danger button[data-dismiss="alert"]').click
+    assert_no_selector '.alert-danger'
+    assert_field 'Label', with: ''
 
     click_link 'Cancel'
     visit_p path
@@ -314,7 +473,7 @@ class PagesFrontendTest < ApplicationSystemTestCase
 
     fill_in 'Label', with: 'Recovered valid page'
     click_button 'Update Page'
-    assert_text 'Page, siblings, and parent updated'
+    assert_text 'Page updated'
 
     click_link 'Cancel'
     visit_p path

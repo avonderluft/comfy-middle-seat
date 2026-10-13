@@ -42,6 +42,36 @@ body#comfy
   #cms-main
     .page-header
       color: $harbor-navy
+    .page-editor-toolbar
+      position: sticky
+      top: 0
+      z-index: 1000
+      display: grid
+      grid-template-columns: max-content minmax(0, 1fr)
+      align-items: center
+      gap: .5rem 1rem
+      padding: .75rem 0
+      background-color: $body-bg
+      .page-editor-heading h2
+        margin-bottom: 0
+      .page-publication-state
+        grid-column: 1 / -1
+      .page-editor-actions
+        display: flex
+        flex-wrap: wrap
+        align-items: center
+        justify-content: flex-end
+        gap: .5rem
+        min-width: 0
+
+      @media (max-width: map-get($grid-breakpoints, lg))
+        top: 3rem
+      @include media-breakpoint-down(sm)
+        grid-template-columns: minmax(0, 1fr)
+        .page-editor-actions
+          justify-content: flex-start
+    .layout-actions .btn-group
+      max-width: 100%
     ul.list
       li .row
         @include transition(background-color .15s ease-in-out)

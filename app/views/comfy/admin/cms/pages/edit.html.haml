@@ -3,32 +3,50 @@
   = render "comfy/admin/cms/revisions/sidebar", record: @page, link: link
   = render "comfy/admin/cms/translations/sidebar"
 
-.page-header.d-flex.justify-content-between.align-items-center
-  %h2= t('.title')
-  - if @page.children.exists?
-    - publication_states = descendant_publication_states(@page)
-    .dropdown
-      %button#child-pages-menu.btn.btn-sm.btn-outline-secondary.dropdown-toggle.text-nowrap{type: 'button', data: {toggle: 'dropdown'}, aria: {haspopup: 'true', expanded: 'false', controls: 'child-pages-actions'}}
-        = t('.child_pages', default: 'Child pages')
-      #child-pages-actions.dropdown-menu.dropdown-menu-right{aria: {labelledby: 'child-pages-menu'}}
-        - if publication_states.include?(false)
-          = link_to t('.publish_descendants', default: 'Publish descendants'), publish_children_comfy_admin_cms_site_page_path(@site, @page), method: :patch, data: {confirm: t('.publish_descendants_confirmation', default: 'Publish all descendant pages?')}, class: 'dropdown-item'
-        - else
-          %button.dropdown-item.disabled{type: 'button', disabled: true, aria: {disabled: 'true'}}= t('.publish_descendants', default: 'Publish descendants')
-        - if publication_states.include?(true)
-          = link_to t('.unpublish_descendants', default: 'Unpublish descendants'), unpublish_children_comfy_admin_cms_site_page_path(@site, @page), method: :patch, data: {confirm: t('.unpublish_descendants_confirmation', default: 'Unpublish all descendant pages?')}, class: 'dropdown-item'
-        - else
-          %button.dropdown-item.disabled{type: 'button', disabled: true, aria: {disabled: 'true'}}= t('.unpublish_descendants', default: 'Unpublish descendants')
-
-- unless @page.published_with_ancestors?
-  .alert.alert-info.publication-status{role: 'status'}
-    - if @page.is_published?
-      = t('.hidden_by_ancestor', default: 'Hidden by unpublished ancestor. Publish its ancestors to make this page visible.')
-    - else
-      = t('.unpublished_notice', default: 'This page is unpublished.')
-    = t('.branch_visibility_notice', default: 'Descendants are visible only when they and all their ancestors are published. Their publication settings are preserved when an ancestor is unpublished.')
-
 - draft_data = cms_draft_form_data('site', @site.id, 'page', @page.id, record: @page)
 = comfy_form_with model: @page, scope: :page, url: {action: :update}, html: {multipart: true, data: draft_data} do |form|
   = hidden_field_tag :cms_draft_key, draft_data[:cms_draft_key]
+  .page-header.page-editor-toolbar
+    .page-editor-heading
+      %h2= t('.title')
+
+    .page-editor-actions
+      = submit_tag t('comfy.admin.cms.pages.form.preview'), name: 'preview', formtarget: 'comfy-cms-preview', id: nil, class: 'btn btn-sm btn-outline-secondary text-nowrap', data: {disable_with: false}
+      = submit_tag t('comfy.admin.cms.pages.form.update'), class: 'btn btn-sm btn-primary text-nowrap', data: {disable_with: false}
+      - publication_action = @page.is_published? ? 'unpublish' : 'publish'
+      - publication_label = @page.is_published? ? t('.unpublish', default: 'Unpublish') : t('.publish', default: 'Publish')
+      - publication_hint = @page.is_published? ? t('.save_and_unpublish_hint', default: 'Save and unpublish page') : t('.save_and_publish_hint', default: 'Save and publish page')
+      = button_tag publication_label, name: 'publication_action', value: publication_action, class: 'btn btn-sm btn-outline-secondary text-nowrap', title: publication_hint, aria: {describedby: 'page-publication-hint'}
+      - if @page.children.exists?
+        - publication_states = descendant_publication_states(@page)
+        .dropdown
+          %button#child-pages-menu.btn.btn-sm.btn-outline-secondary.dropdown-toggle.text-nowrap{type: 'button', data: {toggle: 'dropdown'}, aria: {haspopup: 'true', expanded: 'false', controls: 'child-pages-actions'}}
+            = t('.child_pages', default: 'Child pages')
+          #child-pages-actions.dropdown-menu.dropdown-menu-right{aria: {labelledby: 'child-pages-menu'}}
+            - if publication_states.include?(false)
+              = link_to t('.publish_descendants', default: 'Publish descendants'), publish_children_comfy_admin_cms_site_page_path(@site, @page), method: :patch, data: {confirm: t('.publish_descendants_confirmation', default: 'Publish all descendant pages?')}, class: 'dropdown-item'
+            - else
+              %button.dropdown-item.disabled{type: 'button', disabled: true, aria: {disabled: 'true'}}= t('.publish_descendants', default: 'Publish descendants')
+            - if publication_states.include?(true)
+              = link_to t('.unpublish_descendants', default: 'Unpublish descendants'), unpublish_children_comfy_admin_cms_site_page_path(@site, @page), method: :patch, data: {confirm: t('.unpublish_descendants_confirmation', default: 'Unpublish all descendant pages?')}, class: 'dropdown-item'
+            - else
+              %button.dropdown-item.disabled{type: 'button', disabled: true, aria: {disabled: 'true'}}= t('.unpublish_descendants', default: 'Unpublish descendants')
+            .dropdown-divider
+            .px-4.py-1.small.text-muted= t('.descendants_hint', default: 'Changes descendants only; does not save this page’s edits.')
+      = link_to t('comfy.admin.cms.pages.form.cancel'), comfy_admin_cms_site_pages_path(@site), class: 'btn btn-sm btn-link text-nowrap'
+    .page-publication-state.small.text-muted{role: 'status'}
+      - if !@page.is_published?
+        = t('.unpublished_notice', default: 'Unpublished.')
+        = t('.branch_visibility_notice', default: 'Descendants hidden, with their publication settings unchanged.')
+      - elsif !@page.published_with_ancestors?
+        = t('.hidden_status', default: 'Hidden by unpublished ancestor')
+      - else
+        = t('.published', default: 'Published')
+    %span#page-publication-hint{hidden: true}= publication_hint
+
+  - if @page.is_published? && !@page.published_with_ancestors?
+    .alert.alert-info.publication-status{role: 'status'}
+      = t('.hidden_by_ancestor', default: 'Hidden by unpublished ancestor.')
+      = t('.branch_visibility_notice', default: 'Descendants hidden, with their publication settings unchanged.')
+
   = render form

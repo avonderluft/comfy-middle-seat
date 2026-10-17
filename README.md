@@ -118,7 +118,9 @@ When an editor creates a Page using this Layout, the admin automatically present
 
 In HTML and Markdown code editors, type a shortcut and press **Tab** to insert a CMS tag. The parameter placeholder is selected so you can replace it immediately. For example, `;md` inserts `{{ cms:markdown content }}` with `content` selected.
 
-Press **Ctrl+Space** for a searchable list; type a prefix, then use the arrow keys and **Enter** or **Tab** to choose. **Escape** closes the list. Full names such as `;markdown` also work. One **Undo** reverses the expansion without removing the shortcut.
+Type **`;;` then Tab**, or press **Ctrl+Space**, for a searchable shortcut list. Search by shortcut or tag name: `c` prioritizes comment, children, and other `c` shortcuts; `p fl` finds `page_file_link`. Exact and prefix matches appear before fuzzy matches.
+
+Use the arrow keys and **Enter** or **Tab** to choose. The tag replaces the entire trigger and search text. **Escape** closes the list without changing your text. Full names such as `;markdown` also work for direct expansion. One **Undo** reverses the expansion without removing what you typed.
 
 | Shortcut | Inserts | Selected placeholder |
 | --- | --- | --- |

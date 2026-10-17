@@ -66,16 +66,18 @@ class CmsTagCompletionsFrontendTest < ApplicationSystemTestCase
     prepare_editor ''
     type_keys [:control, ' ']
     assert_selector '.CodeMirror-hints', count: 1
-    expected = TAGS.map { |shortcut, name, _body, _placeholder| "#{name == 'note' ? 'comment' : name} (;#{shortcut})" }
+    descriptions = { 'as' => 'asset (CSS)', 'css' => 'asset (CSS)', 'js' => 'asset (JavaScript)',
+                     'com' => 'comment (block)', 'nt' => 'comment (note)' }
+    expected = TAGS.map { |shortcut, name, _body, _placeholder| ";#{shortcut} #{descriptions.fetch(shortcut, name)}" }
     assert_equal expected.sort, all('.CodeMirror-hint').map(&:text).sort
     type_keys :escape
     assert_no_selector '.CodeMirror-hints'
     assert_equal '', editor_value
 
     [
-      ['mark', ['markdown (;md)'], :enter, '{{ cms:markdown content }}', 'content'],
-      [';md', ['markdown (;md)'], :tab, '{{ cms:markdown content }}', 'content'],
-      [';page_f', ['page_file_link (;pfl)'], :enter, '{{ cms:page_file_link attachment, as: link }}', 'attachment']
+      ['mark', [';md markdown'], :enter, '{{ cms:markdown content }}', 'content'],
+      [';md', [';md markdown'], :tab, '{{ cms:markdown content }}', 'content'],
+      [';page_f', [';pfl page_file_link'], :enter, '{{ cms:page_file_link attachment, as: link }}', 'attachment']
     ].each do |prefix, labels, accept_key, expected_tag, placeholder|
       prepare_editor 'Before '
       type_keys prefix, [:control, ' ']
@@ -90,7 +92,7 @@ class CmsTagCompletionsFrontendTest < ApplicationSystemTestCase
     prepare_editor ''
     type_keys ';f', [:control, ' ']
     assert_selector '.CodeMirror-hints', count: 1
-    assert_equal ['file (;fi)', 'file_link (;fl)', 'files (;fs)'], all('.CodeMirror-hint').map(&:text).sort
+    assert_equal [';fi file', ';fs files', ';fl file_link', ';pfl page_file_link'], all('.CodeMirror-hint').map(&:text)
     type_keys :escape
     assert_no_selector '.CodeMirror-hints'
     assert_equal ';f', editor_value
@@ -118,7 +120,7 @@ class CmsTagCompletionsFrontendTest < ApplicationSystemTestCase
     type_keys [:control, ' ']
     assert_selector '.CodeMirror-hints', count: 1
     type_keys ';md'
-    assert_selector '.CodeMirror-hint', count: 1, text: 'markdown (;md)'
+    assert_selector '.CodeMirror-hint', count: 1, text: ';md markdown'
     type_keys :enter
     assert_equal '{{ cms:markdown content }}', editor_value
     assert_equal 'content', editor_selection
@@ -127,6 +129,87 @@ class CmsTagCompletionsFrontendTest < ApplicationSystemTestCase
     type_keys ';com', :tab
     assert_equal "<div>\n  {{ cms:comment }}\n  Comment here\n  {{ cms:endcomment }}", editor_value
     assert_equal 'Comment here', editor_selection
+  end
+
+  def test_selector_filters_prefixes_before_fuzzy_matches_and_accepts_keyboard_selection
+    visit_layout
+    prepare_editor 'Before '
+    type_keys ';;', :tab
+    assert_selector '.CodeMirror-hint', count: TAGS.length
+    assert_equal 'Before ;;', editor_value
+
+    type_keys 'c'
+    assert_selector '.CodeMirror-hint', count: 7
+    labels = all('.CodeMirror-hint').map(&:text)
+    assert_equal [';cb checkbox', ';css asset (CSS)', ';cr breadcrumbs', ';ch children',
+                  ';com comment (block)', ';nt comment (note)'], labels.first(6)
+    type_keys 'omment'
+    assert_selector '.CodeMirror-hint', count: 3
+    assert_equal [';com comment (block)', ';nt comment (note)', ';ec endcomment'], all('.CodeMirror-hint').map(&:text)
+    type_keys :down, :enter
+    assert_no_selector '.CodeMirror-hints'
+    assert_equal 'Before {{ cms:comment "Note" }}', editor_value
+    assert_equal 'Note', editor_selection
+    type_keys [:control, 'z']
+    assert_equal 'Before ;;comment', editor_value
+  end
+
+  def test_selector_supports_spaced_fuzzy_queries_backspace_and_escape
+    visit_layout
+    prepare_editor '<p>'
+    type_keys ';;', :tab
+    assert_selector '.CodeMirror-hint', count: TAGS.length
+    type_keys 'p fl'
+    assert_selector '.CodeMirror-hint', count: 1
+    assert_selector '.CodeMirror-hint-active', text: ';pfl page_file_link'
+    type_keys :tab
+    assert_no_selector '.CodeMirror-hints'
+    assert_equal '<p>{{ cms:page_file_link attachment, as: link }}', editor_value
+    assert_equal 'attachment', editor_selection
+
+    prepare_editor ''
+    type_keys ';;', :tab
+    assert_selector '.CodeMirror-hints'
+    type_keys 'zzzz'
+    assert_no_selector '.CodeMirror-hints'
+    type_keys :backspace, :backspace, :backspace, :backspace
+    assert_selector '.CodeMirror-hint', count: TAGS.length
+    type_keys 'ch'
+    assert_selector '.CodeMirror-hint-active', text: ';ch children'
+    type_keys :escape
+    assert_no_selector '.CodeMirror-hints'
+    assert_equal ';;ch', editor_value
+
+    prepare_editor ''
+    type_keys [:control, ' ']
+    assert_selector '.CodeMirror-hints'
+    type_keys 'p fl'
+    assert_selector '.CodeMirror-hint', count: 1
+    assert_selector '.CodeMirror-hint-active', text: ';pfl page_file_link'
+    type_keys :enter
+    assert_no_selector '.CodeMirror-hints'
+    assert_equal '{{ cms:page_file_link attachment, as: link }}', editor_value
+  end
+
+  def test_selector_matches_nonconsecutive_letters_and_prioritizes_exact_aliases
+    visit_layout
+    prepare_editor ''
+    type_keys ';;', :tab
+    type_keys 'brd'
+    assert_selector '.CodeMirror-hint', count: 1
+    assert_selector '.CodeMirror-hint-active', text: ';cr breadcrumbs'
+    type_keys :enter
+    assert_no_selector '.CodeMirror-hints'
+    assert_equal '{{ cms:breadcrumbs }}', editor_value
+    assert_equal '', editor_selection
+
+    prepare_editor ''
+    type_keys ';;', :tab
+    type_keys 'end'
+    assert_equal [';end end', ';ec endcomment'], all('.CodeMirror-hint').map(&:text)
+    type_keys :tab
+    assert_no_selector '.CodeMirror-hints'
+    assert_equal '{{ cms:end }}', editor_value
   end
 
   def test_unsafe_tab_triggers_pass_through_and_other_keys_keep_their_normal_behavior
@@ -146,6 +229,10 @@ class CmsTagCompletionsFrontendTest < ApplicationSystemTestCase
       [';unknown', 8, nil],
       ['word;md', 7, nil],
       ['(;md', 4, nil],
+      ['word;;', 6, nil],
+      ['(;;', 3, nil],
+      [';;', 2, 0],
+      ['{{ cms:markdown ;;', 18, nil],
       [';mdsuffix', 3, nil],
       [';md', 3, 0],
       ['{{ cms:markdown ;md', 19, nil],
@@ -202,6 +289,10 @@ class CmsTagCompletionsFrontendTest < ApplicationSystemTestCase
       type_keys [:control, ' ']
       assert_no_selector '.CodeMirror-hints'
       refute_includes editor_value, '{{ cms:'
+      prepare_editor ''
+      type_keys ';;', :tab
+      assert_no_selector '.CodeMirror-hints'
+      assert_includes editor_value, ';;'
     end
 
     fill_in 'Layout Name', with: ';md'
@@ -234,7 +325,13 @@ class CmsTagCompletionsFrontendTest < ApplicationSystemTestCase
     assert_no_selector '.CodeMirror-hints'
 
     prepare_editor "# Heading\n\n"
-    type_keys ';sn', :tab
+    type_keys ';;', :tab
+    assert_selector '.CodeMirror-hints'
+    type_keys 'snippet'
+    assert_selector '.CodeMirror-hint', count: 1
+    assert_selector '.CodeMirror-hint-active', text: ';sn snippet'
+    type_keys :enter
+    assert_no_selector '.CodeMirror-hints'
     assert_equal 'identifier', editor_selection
     type_keys 'saved_snippet'
     expected = "# Heading\n\n{{ cms:snippet saved_snippet }}"
@@ -281,6 +378,11 @@ private
     # Session#send_keys clicks the hidden CodeMirror input and fails Cuprite's
     # overlap check. Dispatch real browser keys directly to the focused input.
     page.driver.browser.keyboard.type(*keys)
+    # show-hint refreshes its list on the next animation frame.
+    page.evaluate_async_script <<~JAVASCRIPT
+      const done = arguments[0];
+      requestAnimationFrame(() => requestAnimationFrame(() => done(true)));
+    JAVASCRIPT
   end
 
   def editor_value

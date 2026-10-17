@@ -51,7 +51,7 @@ for (const completion of completions) {
   }
 }
 
-const completionContext = (editor, requireSemicolon = false) => {
+const completionContext = (editor, requireSemicolon = false, start = null) => {
   if (editor.getOption("readOnly") || editor.somethingSelected() ||
       editor.listSelections().length !== 1) return null;
 
@@ -59,14 +59,23 @@ const completionContext = (editor, requireSemicolon = false) => {
   const line = editor.getLine(to.line);
   if (/\w/.test(line.charAt(to.ch))) return null;
 
-  const match = /(?:^|[\s>])(;?\w*)$/.exec(line.slice(0, to.ch));
+  if (start && (start.line !== to.line || start.ch > to.ch)) return null;
+  // Keep the menu's original start so spaces in a fuzzy query are not lost.
+  const match = start
+    ? /^(;{0,2}[\w ]*)$/.exec(line.slice(start.ch, to.ch))
+    : /(?:^|[\s>])(;;[\w ]*|;?\w*)$/.exec(line.slice(0, to.ch));
   if (!match || (requireSemicolon && !match[1].startsWith(";"))) return null;
 
-  const from = CodeMirror.Pos(to.line, to.ch - match[1].length);
+  const from = start || CodeMirror.Pos(to.line, to.ch - match[1].length);
   const before = editor.getRange(CodeMirror.Pos(0, 0), from);
   if (before.lastIndexOf("{{") > before.lastIndexOf("}}")) return null;
 
-  return { from, to, query: match[1].replace(/^;/, "").toLowerCase() };
+  return {
+    from,
+    to,
+    selector: match[1].startsWith(";;"),
+    query: match[1].replace(/^;{1,2}/, "").toLowerCase().replace(/ /g, ""),
+  };
 };
 
 const insertCompletion = (editor, completion, from, to) => {
@@ -89,23 +98,58 @@ const insertCompletion = (editor, completion, from, to) => {
   });
 };
 
-const hints = (editor) => {
-  const context = completionContext(editor);
+const matchRank = (alias, query) => {
+  if (alias === query) return 0;
+  if (alias.startsWith(query)) return 1;
+  if (alias.includes(query)) return 2;
+
+  let position = 0;
+  for (const character of query) {
+    position = alias.indexOf(character, position);
+    if (position === -1) return Infinity;
+    position += 1;
+  }
+  return 3;
+};
+
+const displayNames = {
+  as: "asset (CSS)",
+  css: "asset (CSS)",
+  js: "asset (JavaScript)",
+  com: "comment (block)",
+  nt: "comment (note)",
+};
+
+const hints = (editor, start) => {
+  const context = completionContext(editor, false, start);
   if (!context) return null;
 
   return {
     from: context.from,
     to: context.to,
     list: completions
-      .filter((completion) => completion.aliases.some((alias) => alias.startsWith(context.query)))
       .map((completion) => ({
+        completion,
+        rank: Math.min(...completion.aliases.map((alias) => matchRank(alias, context.query))),
+      }))
+      .filter(({ rank }) => Number.isFinite(rank))
+      .sort((a, b) => a.rank - b.rank)
+      .map(({ completion }) => ({
         text: completion.text,
-        displayText: `${completion.name} (;${completion.shortcut})`,
+        displayText: `;${completion.shortcut} ${displayNames[completion.shortcut] || completion.name}`,
         hint(cm, data) {
           insertCompletion(cm, completion, data.from, data.to);
         },
       })),
   };
+};
+
+const showCompletions = (editor, context) => {
+  editor.showHint({
+    hint: (cm) => hints(cm, context.from),
+    completeSingle: false,
+    closeCharacters: /[\t\r\n()[\]{}:>,]/,
+  });
 };
 
 export const cmsTagCompletionKeys = (mode) => {
@@ -114,19 +158,20 @@ export const cmsTagCompletionKeys = (mode) => {
   return {
     Tab(editor) {
       const context = completionContext(editor, true);
+      if (context?.selector) {
+        showCompletions(editor, context);
+        return;
+      }
       const completion = context && byAlias.get(context.query);
       if (!completion) return CodeMirror.Pass;
 
       insertCompletion(editor, completion, context.from, context.to);
     },
     "Ctrl-Space"(editor) {
-      if (!completionContext(editor)) return CodeMirror.Pass;
+      const context = completionContext(editor);
+      if (!context) return CodeMirror.Pass;
 
-      editor.showHint({
-        hint: hints,
-        completeSingle: false,
-        closeCharacters: /[\s()[\]{}:>,]/,
-      });
+      showCompletions(editor, context);
     },
   };
 };

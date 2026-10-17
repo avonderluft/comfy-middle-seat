@@ -15,6 +15,7 @@ This changelog follows the project's lineage: **Comfortable Mexican Sofa → Com
 ### Added
 
 - Add CMS comment blocks and short notes to hide content without processing enclosed tags.
+- Expand CMS tags with editor shortcuts and searchable completion.
 
 ## [v4.2.0] - 2026-10-13
 

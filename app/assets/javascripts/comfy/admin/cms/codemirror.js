@@ -1,5 +1,6 @@
 import jQuery from "jquery";
 import CodeMirror from "codemirror";
+import { cmsTagCompletionKeys } from "./cms_tag_completions";
 import "codemirror/mode/markdown/markdown";
 import "codemirror/mode/htmlmixed/htmlmixed";
 
@@ -12,6 +13,7 @@ import "codemirror/mode/htmlmixed/htmlmixed";
       )) {
         const codemirror = CodeMirror.fromTextArea(textarea, {
           mode: textarea.dataset.cmsCmMode,
+          extraKeys: cmsTagCompletionKeys(textarea.dataset.cmsCmMode),
           tabSize: 2,
           lineWrapping: true,
           autoCloseTags: true,
@@ -52,6 +54,7 @@ import "codemirror/mode/htmlmixed/htmlmixed";
     },
     dispose() {
       for (const codemirror of codeMirrorInstances) {
+        codemirror.closeHint();
         codemirror.toTextArea();
       }
       codeMirrorInstances.length = 0;

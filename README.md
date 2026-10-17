@@ -114,6 +114,46 @@ A Site defines a hostname, path, and language. Layouts define page structure and
 
 When an editor creates a Page using this Layout, the admin automatically presents fields for `title` and `content`. Content tags can also provide Markdown, files, images, dates, numbers, checkboxes, snippets, partials, helpers, navigation, and other reusable content.
 
+### Editor shortcuts
+
+In HTML and Markdown code editors, type a shortcut and press **Tab** to insert a CMS tag. The parameter placeholder is selected so you can replace it immediately. For example, `;md` inserts `{{ cms:markdown content }}` with `content` selected.
+
+Press **Ctrl+Space** for a searchable list; type a prefix, then use the arrow keys and **Enter** or **Tab** to choose. **Escape** closes the list. Full names such as `;markdown` also work. One **Undo** reverses the expansion without removing the shortcut.
+
+| Shortcut | Inserts | Selected placeholder |
+| --- | --- | --- |
+| `;md` | `markdown` | `content` |
+| `;tx` | `text` | `field` |
+| `;ta` | `textarea` | `content` |
+| `;wys` | `wysiwyg` | `content` |
+| `;da` | `date` | `field` |
+| `;dt` | `datetime` | `field` |
+| `;num` | `number` | `field` |
+| `;cb` | `checkbox` | `field` |
+| `;fi` | `file`, as a link | `attachment` |
+| `;fs` | `files`, as links | `attachments` |
+| `;im` | `image` | `image label` |
+| `;au` | `audio` | `path/to/audio` |
+| `;fl` | `file_link`, as a link | `file_id` |
+| `;pfl` | `page_file_link`, as a link | `attachment` |
+| `;sn` | `snippet` | `identifier` |
+| `;as`, `;css` | CSS `asset` tag | `layout_identifier` |
+| `;js` | JavaScript `asset` tag | `layout_identifier` |
+| `;hlp` | `helper` | `method_name` |
+| `;par` | `partial` | `path/to/partial` |
+| `;tpl` | `template` | `path/to/template` |
+| `;cr` | `breadcrumbs` | — |
+| `;ch` | `children` | — |
+| `;si` | `siblings` | — |
+| `;com` | Complete multiline comment block | `Comment here` |
+| `;nt` | `comment "Note"` (also `;note`) | `Note` |
+| `;ec` | `endcomment` | — |
+| `;end` | `end` | — |
+
+Placeholders are examples: replace them with your field names, identifiers, paths, or IDs. `;asset` inserts the CSS version; `;comment` inserts a full comment block.
+
+Shortcuts work at the start of a line, after whitespace, or after `>`, outside an existing CMS tag. Unrecognized shortcuts retain normal Tab behavior. CSS, JavaScript, ordinary text fields, and visual editors are unchanged. Saved content uses the standard `{{ cms:... }}` syntax.
+
 ### CMS comments
 
 Use a quoted note for a short comment:

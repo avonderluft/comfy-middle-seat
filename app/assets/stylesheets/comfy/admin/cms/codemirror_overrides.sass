@@ -12,6 +12,17 @@ body#comfy
     .CodeMirror-scroll
       min-height: 160px
 
+  .CodeMirror-hints
+    z-index: 1060
+    max-width: calc(100vw - 1rem)
+    border-color: $gray-400
+    background-color: $white
+    .CodeMirror-hint
+      color: $body-color
+    .CodeMirror-hint-active
+      background-color: $primary
+      color: $white
+
   .CodeMirror-focused
     border-color: rgba(82, 168, 236, 0.8)
     outline: 0

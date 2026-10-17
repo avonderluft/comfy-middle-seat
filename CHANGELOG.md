@@ -12,11 +12,13 @@ This changelog follows the project's lineage: **Comfortable Mexican Sofa → Com
 
 ## [Unreleased]
 
+## [v4.3.0] - 2026-10-17
+
 ### Added
 
-- Add CMS comment blocks and short notes to hide content without processing enclosed tags.
-- Expand CMS tags with editor shortcuts and searchable completion.
-- Open the shortcut selector with `;;` + Tab and filter with fuzzy search.
+- Hide content with CMS comment blocks and add short inline notes.
+- Insert CMS tags with editor shortcuts and selected parameter placeholders.
+- Find shortcuts with `;;` + Tab or Ctrl+Space and fuzzy search.
 
 ## [v4.2.0] - 2026-10-13
 
@@ -262,7 +264,8 @@ First release of `comfortable_media_surfer`. This new gem is a revival of [Comfo
 
 - Rebranded **ComfortableMexicanSofa** as **ComfortableMediaSurfer** in order to publish new gem (database table names and schema have not changed).
 
-[Unreleased]: https://github.com/avonderluft/comfy-middle-seat/compare/v4.2.0...master
+[Unreleased]: https://github.com/avonderluft/comfy-middle-seat/compare/v4.3.0...master
+[v4.3.0]: https://github.com/avonderluft/comfy-middle-seat/compare/v4.2.0...v4.3.0
 [v4.2.0]: https://github.com/avonderluft/comfy-middle-seat/compare/v4.1.0...v4.2.0
 [v4.1.0]: https://github.com/avonderluft/comfy-middle-seat/compare/v4.0.4...v4.1.0
 [v4.0.4]: https://github.com/avonderluft/comfy-middle-seat/compare/ea2bb99c0398e1f4d6e850a25e0c13afc577c3ad...v4.0.4

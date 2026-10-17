@@ -120,6 +120,161 @@ class ContentRendererTest < ActiveSupport::TestCase
     assert_equal expected, @template.tokenize("{{cms:test}}\n{{cms:test}}")
   end
 
+  def test_comment_block_skips_all_content_before_tag_parsing
+    source = <<~CONTENT
+      before{{ cms:comment }}
+      Private note, <script>hidden()</script>, <%= hidden_helper %>
+      {{cms:unknown invalid: [}}
+      {{cms:markdown}}
+      {{cms:partial}}
+      {{cms:end}}
+      {{cms:unterminated
+      {{ cms:endcomment }}after
+    CONTENT
+    ComfyMiddleSeat::Content::ParamsParser.expects(:new).never
+    ComfyMiddleSeat::Content::Tags::Markdown.expects(:new).never
+    ComfyMiddleSeat::Content::Tags::Partial.expects(:new).never
+
+    assert_equal "beforeafter\n", render_string(source)
+    ComfyMiddleSeat.config.allow_erb = true
+    assert_equal "beforeafter\n", render_string(source)
+    assert_includes source, 'Private note'
+  end
+
+  def test_short_comments_are_quoted_and_do_not_parse_their_contents
+    notes = [
+      '{{cms:comment "Private note"}}',
+      "{{ cms:comment 'Private note' }}",
+      '{{cms:comment ""}}',
+      '{{cms:comment "Ignore {{cms:unknown}} and {{cms:endcomment}} here"}}',
+      '{{cms:comment "Say \\"hello\\" and use \\\\ paths"}}',
+      '{{cms:comment “Smart quotes”}}',
+      '{{cms:comment ‘Smart quotes’}}',
+      "{{cms:comment \"Multiple\nlines\"}}"
+    ]
+    notes.each do |note|
+      assert_equal 'beforeafter', render_string("before#{note}after"), note
+    end
+  end
+
+  def test_comment_blocks_support_nesting_and_quoted_notes
+    source = <<~CONTENT
+      before{{cms:comment}}
+      Outer note
+      {{cms:comment "A literal {{cms:endcomment}} is not a closing delimiter"}}
+      {{cms:comment}}Inner note{{cms:endcomment}}
+      Still hidden
+      {{cms:endcomment}}after
+    CONTENT
+    assert_equal "beforeafter\n", render_string(source)
+  end
+
+  def test_comment_blocks_do_not_interfere_with_regular_blocks
+    tokens = @template.tokenize('a {{cms:test_block}}b{{cms:comment}}{{cms:end}}{{cms:test_block}}{{cms:endcomment}}c{{cms:end}} d')
+    nodes = @template.nodes(tokens)
+
+    assert_equal 3, nodes.length
+    assert_instance_of TestBlockTag, nodes[1]
+    assert_equal 'bc', nodes[1].nodes.join
+  end
+
+  def test_comments_preserve_surrounding_whitespace_and_tag_source
+    source = "a\n{{cms:comment}}private{{cms:endcomment}}\n{{ cms:text content }}"
+    tokens = @template.tokenize(source)
+
+    assert_equal ["a\n", "\n", { tag_class: 'text', tag_params: 'content', source: '{{ cms:text content }}' }], tokens
+    assert_equal "a\n\ncontent", @template.render(@template.nodes(tokens))
+    assert_equal "a\n\n{{ cms:text content }}", @template.strip_comments(source)
+  end
+
+  def test_strip_comments_preserves_trailing_whitespace_for_formatters
+    ["{{cms:text content}}\n\n", "\n\n", "<p>Text</p>\n"].each do |source|
+      assert_equal source, @template.strip_comments(source)
+    end
+    assert_equal "\n\n", @template.strip_comments("{{cms:comment \"note\"}}\n\n")
+    assert_equal "\n\n", @template.strip_comments("{{cms:comment}}hidden{{cms:endcomment}}\n\n")
+  end
+
+  def test_adjacent_comments_and_empty_blocks
+    assert_equal 'ab', render_string('a{{cms:comment}}{{cms:endcomment}}{{cms:comment "note"}}b')
+    assert_empty @template.tokenize('{{cms:comment}}{{cms:endcomment}}')
+  end
+
+  def test_unclosed_comment_blocks_raise_clear_errors
+    ['{{cms:comment}}hidden', '{{cms:comment}}{{cms:comment}}hidden{{cms:endcomment}}'].each do |source|
+      error = assert_raises ComfyMiddleSeat::Content::Renderer::SyntaxError do
+        @template.tokenize(source)
+      end
+      assert_equal 'Unclosed CMS comment: expected {{cms:endcomment}}', error.message
+    end
+  end
+
+  def test_orphan_comment_closing_tag_raises_clear_error
+    error = assert_raises ComfyMiddleSeat::Content::Renderer::SyntaxError do
+      @template.tokenize('before{{cms:endcomment}}after')
+    end
+    assert_equal 'Unexpected {{cms:endcomment}} without {{cms:comment}}', error.message
+  end
+
+  def test_malformed_short_comments_raise_clear_errors
+    [
+      '{{cms:comment unquoted note}}',
+      '{{cms:comment "unclosed note}}',
+      '{{cms:comment "note" extra}}',
+      '{{cms:comment "one" "two"}}',
+      '{{cms:comment "note"',
+      '{{cms:comment'
+    ].each do |source|
+      error = assert_raises ComfyMiddleSeat::Content::Renderer::SyntaxError do
+        @template.tokenize(source)
+      end
+      assert_match 'Invalid CMS comment:', error.message
+    end
+  end
+
+  def test_comment_closing_tag_rejects_parameters
+    error = assert_raises ComfyMiddleSeat::Content::Renderer::SyntaxError do
+      @template.tokenize('{{cms:comment}}hidden{{cms:endcomment extra}}')
+    end
+    assert_match 'Invalid CMS comment closing tag:', error.message
+  end
+
+  def test_comment_prefix_does_not_consume_other_tag_names
+    assert_equal 'commentary', @template.tokenize('{{cms:commentary content}}').first[:tag_class]
+    assert_equal 'endcomment_extra', @template.tokenize('{{cms:endcomment_extra}}').first[:tag_class]
+  end
+
+  def test_comment_in_snippet_output_is_not_rendered_or_evaluated
+    comfy_cms_snippets(:default).update_column(:content, 'before{{cms:comment}}{{cms:snippet default}}{{cms:endcomment}}after')
+    assert_equal 'beforeafter', render_string('{{cms:snippet default}}')
+  end
+
+  def test_markdown_comments_are_removed_before_formatting
+    source = <<~CONTENT
+      {{cms:comment "Internal note"}}
+      {{cms:comment}}
+      [link]: https://hidden.example.com
+      {{cms:markdown}}
+      {{cms:endcomment}}
+      Visible [link]
+    CONTENT
+    comfy_cms_fragments(:default).update_column(:content, source)
+    comfy_cms_snippets(:default).update_columns(content: source, markdown: true)
+
+    assert_equal "\n<p>Visible [link]</p>\n", render_string('{{cms:markdown content}}')
+    assert_equal "\n<p>Visible [link]</p>\n", render_string('{{cms:snippet default}}')
+    assert_equal source, comfy_cms_fragments(:default).reload.content
+    assert_equal source, comfy_cms_snippets(:default).reload.content
+  end
+
+  def test_comments_in_translation_fragment_content
+    translation = comfy_cms_translations(:default)
+    translation.fragments.find_by!(identifier: 'content').update!(content: 'before{{cms:comment "Note"}}after')
+    renderer = ComfyMiddleSeat::Content::Renderer.new(translation)
+
+    assert_equal 'beforeafter', render_string('{{cms:text content}}', renderer)
+  end
+
   def test_nodes
     tokens = @template.tokenize('test')
     nodes = @template.nodes(tokens)

@@ -5,7 +5,10 @@
 #
 class ComfyMiddleSeat::Content::Tags::Markdown < ComfyMiddleSeat::Content::Tags::Fragment
   def render
-    renderable ? Kramdown::Document.new(content.to_s).to_html : ''
+    return '' unless renderable
+
+    source = ComfyMiddleSeat::Content::Renderer.new(context).strip_comments(content)
+    Kramdown::Document.new(source).to_html
   end
 
   def form_field(object_name, view, index)

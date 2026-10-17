@@ -56,6 +56,49 @@ class CmsLayoutTest < ActiveSupport::TestCase
     assert_equal expected, layout_b.content_tokens
   end
 
+  def test_content_tokens_with_cms_comments_preserve_layout_source
+    source = 'before{{cms:comment}}hidden {{cms:text hidden}}{{cms:endcomment}}' \
+             '{{cms:comment "short note"}}{{cms:textarea content}}after'
+    @layout.update!(content: source)
+
+    tokens = @layout.reload.content_tokens
+
+    assert_equal [
+      { tag_class: 'textarea', tag_params: 'content', source: '{{cms:textarea content}}' }
+    ], tokens.grep(Hash)
+    assert_equal 'beforeafter', tokens.grep(String).join
+    assert_equal source, @layout.content
+    assert_equal source, @layout.reload.content
+  end
+
+  def test_content_tokens_nested_ignore_commented_content_slots
+    parent_source = '<parent>{{cms:comment}}{{cms:text content}}' \
+                    '{{cms:comment}}{{cms:markdown content}}{{cms:endcomment}}' \
+                    '{{cms:endcomment}}<active>{{cms:textarea content}}</active></parent>'
+    child_source = '<child>{{cms:comment}}{{cms:text hidden}}{{cms:endcomment}}' \
+                   '{{cms:textarea content}}</child>'
+    parent = Comfy::Cms::Layout.new(content: parent_source)
+    child = Comfy::Cms::Layout.new(content: child_source, parent: parent)
+    renderer = ComfyMiddleSeat::Content::Renderer.new(@page)
+
+    assert_equal '<parent><active><child>content</child></active></parent>',
+                 renderer.render(renderer.nodes(child.content_tokens))
+    assert_equal parent_source, parent.content
+    assert_equal child_source, child.content
+  end
+
+  def test_content_tokens_nested_with_only_commented_content_slot
+    parent = Comfy::Cms::Layout.new(
+      content: 'parent{{cms:comment}}{{cms:text content}}{{cms:endcomment}}'
+    )
+    child = Comfy::Cms::Layout.new(content: 'child {{cms:textarea content}}', parent: parent)
+
+    assert_equal [
+      'child ',
+      { tag_class: 'textarea', tag_params: 'content', source: '{{cms:textarea content}}' }
+    ], child.content_tokens
+  end
+
   def test_content_tokens_nested_with_fragment_subclass_tag
     layout_a = Comfy::Cms::Layout.new(content: 'a {{cms:markdown content}} b')
     layout_b = Comfy::Cms::Layout.new(content: 'c {{cms:text content}} d')

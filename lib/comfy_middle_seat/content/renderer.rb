@@ -22,6 +22,9 @@ class ComfyMiddleSeat::Content::Renderer
 
   # tags are in this format: {{ cms:tag_class params }}
   TAG_REGEX = %r{\{\{\s*?cms:(?<class>\w+)(?<params>.*?)\}\}}
+  COMMENT_START_REGEX = %r{\{\{\s*cms:(?<comment>comment|endcomment)(?=\s|\}\}|\z)}
+  TOKEN_REGEX = %r{#{COMMENT_START_REGEX}|#{TAG_REGEX}}
+  COMMENT_NOTE_REGEX = %r{(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|“(?:\\.|[^”\\])*”|‘(?:\\.|[^’\\])*’)\s*\}\}}m
 
   class << self
     # @return [Hash<String, Class<ComfyMiddleSeat::Content::Tag>>]
@@ -73,21 +76,33 @@ class ComfyMiddleSeat::Content::Renderer
 
   # Splitting text with tags into tokens we can process down the line
   # @return [Array<String, {Symbol => String}>]
-  def tokenize(string)
+  def tokenize(string, preserve_whitespace: false)
     tokens = []
     ss = StringScanner.new(string.to_s)
-    while (string = ss.scan_until(TAG_REGEX))
+    while (string = ss.scan_until(TOKEN_REGEX))
       text = string.sub(ss[0], '')
       tokens << text unless text.empty?
-      tokens << {
-        tag_class: ss[:class],
-        tag_params: ss[:params].strip,
-        source: ss[0]
-      }
+      case ss[:comment]
+      when 'comment'
+        skip_comment(ss)
+      when 'endcomment'
+        raise SyntaxError, 'Unexpected {{cms:endcomment}} without {{cms:comment}}'
+      else
+        tokens << {
+          tag_class: ss[:class],
+          tag_params: ss[:params].strip,
+          source: ss[0]
+        }
+      end
     end
     text = ss.rest
-    tokens << text if text.present?
+    tokens << text if text.present? || (preserve_whitespace && !text.empty?)
     tokens
+  end
+
+  # Remove comments before formatters such as Markdown can transform their contents.
+  def strip_comments(string)
+    tokenize(string, preserve_whitespace: true).map { |token| token.is_a?(Hash) ? token[:source] : token }.join
   end
 
   # Constructing node tree for content. It's a list of strings and tags with
@@ -142,5 +157,35 @@ class ComfyMiddleSeat::Content::Renderer
     end
 
     nodes.flatten
+  end
+
+private
+
+  # Comments are lexical: their contents must never become tag instances or form fields.
+  def skip_comment(scanner)
+    return unless comment_block?(scanner)
+
+    depth = 1
+    while scanner.scan_until(COMMENT_START_REGEX)
+      if scanner[:comment] == 'comment'
+        depth += 1 if comment_block?(scanner)
+      else
+        unless scanner.skip(%r{\s*\}\}})
+          raise SyntaxError, 'Invalid CMS comment closing tag: use {{cms:endcomment}} without parameters'
+        end
+
+        depth -= 1
+        return if depth.zero?
+      end
+    end
+    raise SyntaxError, 'Unclosed CMS comment: expected {{cms:endcomment}}'
+  end
+
+  def comment_block?(scanner)
+    scanner.skip(%r{\s*})
+    return true if scanner.skip(%r{\}\}})
+    return false if scanner.skip(COMMENT_NOTE_REGEX)
+
+    raise SyntaxError, 'Invalid CMS comment: use {{cms:comment "note"}} or {{cms:comment}}...{{cms:endcomment}}'
   end
 end

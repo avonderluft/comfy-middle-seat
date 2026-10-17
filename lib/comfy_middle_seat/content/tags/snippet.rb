@@ -18,7 +18,8 @@ class ComfyMiddleSeat::Content::Tags::Snippet < ComfyMiddleSeat::Content::Tag
 
   def content
     if snippet.markdown
-      Kramdown::Document.new(snippet.content.to_s).to_html
+      source = ComfyMiddleSeat::Content::Renderer.new(context).strip_comments(snippet.content)
+      Kramdown::Document.new(source).to_html
     else
       snippet.content
     end

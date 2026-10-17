@@ -49,6 +49,36 @@ class Comfy::Cms::ContentControllerTest < ActionDispatch::IntegrationTest
     assert_equal true,            json_response['is_published']
   end
 
+  %i[html json].each do |format|
+    define_method "test_show_with_cms_comments_as_#{format}" do
+      layout_source = '<main>{{cms:comment}}layout secret {{cms:markdown hidden}}' \
+                      '{{cms:comment}}{{cms:unknown}}{{cms:endcomment}}' \
+                      '{{cms:markdown}}{{cms:end}}{{cms:endcomment}}' \
+                      '{{cms:comment "layout note"}}{{cms:textarea content}}' \
+                      '{{cms:snippet default}}</main>'
+      fragment_source = 'visible{{cms:comment}}fragment secret {{cms:snippet missing}}' \
+                        '{{cms:endcomment}}{{cms:comment "fragment note"}} content'
+      snippet_source = "{{cms:comment 'snippet note'}}<aside>snippet" \
+                       '{{cms:comment}}snippet secret {{cms:helper unknown}}' \
+                       '{{cms:endcomment}}</aside>'
+      snippet = comfy_cms_snippets(:default)
+      snippet.update!(content: snippet_source)
+      @layout.update!(content: layout_source)
+      @page.update!(fragments_attributes: [{ identifier: 'content', content: fragment_source }])
+      ComfyMiddleSeat::Content::Tags::Markdown.expects(:new).never
+      ComfyMiddleSeat::Content::Tags::Helper.expects(:new).never
+
+      get comfy_cms_render_page_path(cms_path: ''), as: format
+
+      assert_response :success
+      rendered_content = format == :json ? JSON.parse(response.body).fetch('content') : response.body
+      assert_equal '<main>visible content<aside>snippet</aside></main>', rendered_content
+      assert_equal layout_source, @layout.reload.content
+      assert_equal snippet_source, snippet.reload.content
+      assert_equal fragment_source, @page.fragments.find_by!(identifier: 'content').content
+    end
+  end
+
   def test_show_as_json_with_options
     ComfyMiddleSeat.config.page_to_json_options = {
       include: { fragments: { only: :identifier } },

@@ -114,6 +114,28 @@ A Site defines a hostname, path, and language. Layouts define page structure and
 
 When an editor creates a Page using this Layout, the admin automatically presents fields for `title` and `content`. Content tags can also provide Markdown, files, images, dates, numbers, checkboxes, snippets, partials, helpers, navigation, and other reusable content.
 
+### CMS comments
+
+Use a quoted note for a short comment:
+
+```html
+{{cms:comment "Replace this banner in December"}}
+```
+
+Use a block to hide a section, including any CMS tags inside it:
+
+```html
+{{cms:comment}}
+Internal note: this section is not ready.
+{{cms:markdown old_content}}
+{{cms:snippet seasonal_banner}}
+{{cms:endcomment}}
+```
+
+Comments produce no rendered output and do not create editor fields. Unlike HTML comments, enclosed CMS tags are not processed. Source text and existing field values remain stored; removing a comment restores normal processing.
+
+Blocks may be nested and must end with `{{cms:endcomment}}`, not `{{cms:end}}`. Short notes accept single or double quotes, with backslash-escaped quotes. Unclosed blocks and malformed comment tags raise a clear syntax error. Comments work in layouts, snippets, and rendered fragment content, including Markdown. They are not a place for secrets: original source remains available to editors and may be exposed by APIs that include raw content.
+
 ### Publishing pages
 
 A page is publicly visible only when it and all its ancestors are published. Unpublishing a parent hides its branch without changing descendants’ individual publication settings. Republishing the parent restores only descendants whose full ancestor chain is published; drafts stay unpublished. Translations must also satisfy their own publication settings.

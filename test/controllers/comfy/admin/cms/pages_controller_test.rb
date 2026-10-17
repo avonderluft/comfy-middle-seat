@@ -160,6 +160,37 @@ class Comfy::Admin::Cms::PagesControllerTest < ActionDispatch::IntegrationTest
     assert_select "input[type='hidden'][name='page[fragments_attributes][1][tag]'][value='markdown']"
   end
 
+  def test_get_new_with_cms_comments_only_renders_visible_fragment_fields
+    source = '{{cms:comment}}hidden {{cms:markdown hidden}}' \
+             '{{cms:comment}}{{cms:text nested_hidden}}{{cms:endcomment}}' \
+             '{{cms:unknown}}{{cms:markdown}}{{cms:end}}{{cms:endcomment}}' \
+             '{{cms:comment "short note"}}{{cms:textarea content}}' \
+             "{{cms:comment 'another note'}}{{cms:text visible}}"
+    @layout.update_column(:content, source)
+    ComfyMiddleSeat::Content::Tags::Markdown.expects(:new).never
+
+    r :get, new_comfy_admin_cms_site_page_path(site_id: @site)
+
+    assert_response :success
+    assert_no_select 'div.alert-danger'
+    assert_equal %w[content visible], assigns(:page).fragment_nodes.map(&:identifier)
+    assert_select "textarea[name='page[fragments_attributes][0][content]']"
+    assert_select "input[name='page[fragments_attributes][1][content]']"
+    assert_select "input[type='hidden'][name$='[identifier]']", count: 2
+    assert_no_select "input[type='hidden'][value='hidden']"
+    assert_no_select "input[type='hidden'][value='nested_hidden']"
+    assert_equal source, @layout.reload.content
+  end
+
+  def test_get_new_with_unclosed_cms_comment
+    @layout.update_column(:content, '{{cms:comment}}{{cms:unknown}}{{cms:end}}')
+
+    r :get, new_comfy_admin_cms_site_page_path(site_id: @site)
+
+    assert_response :success
+    assert_select 'div.alert-danger', 'Unclosed CMS comment: expected {{cms:endcomment}}'
+  end
+
   def test_get_new_with_non_renderable_fragment
     @layout.update_column(:content, '{{cms:text a}}{{cms:text b, render: false}}')
     r :get, new_comfy_admin_cms_site_page_path(site_id: @site)
@@ -814,6 +845,32 @@ class Comfy::Admin::Cms::PagesControllerTest < ActionDispatch::IntegrationTest
     assert assigns(:page)
     assert_equal 1, assigns(:page).fragment_nodes.size
     assert_template 'comfy/admin/cms/fragments/_form_fragments'
+  end
+
+  def test_get_form_fragments_with_cms_comments
+    @layout.update_column(:content,
+                          '{{cms:comment}}{{cms:text hidden}}{{cms:endcomment}}{{cms:textarea content}}')
+
+    r :get, form_fragments_comfy_admin_cms_site_page_path(site_id: @site, id: @page), xhr: true, params: {
+      layout_id: @layout.id
+    }
+
+    assert_response :success
+    assert_equal ['content'], assigns(:page).fragment_nodes.map(&:identifier)
+    assert_select "textarea[name='page[fragments_attributes][0][content]']", 'content'
+    assert_no_select "input[type='hidden'][value='hidden']"
+    assert_no_select 'div.alert-danger'
+  end
+
+  def test_get_form_fragments_with_unclosed_cms_comment
+    @layout.update_column(:content, '{{cms:comment}}unfinished')
+
+    r :get, form_fragments_comfy_admin_cms_site_page_path(site_id: @site, id: @page), xhr: true, params: {
+      layout_id: @layout.id
+    }
+
+    assert_response :success
+    assert_select 'div.alert-danger', 'Unclosed CMS comment: expected {{cms:endcomment}}'
   end
 
   def test_get_form_fragments_for_new_page

@@ -39,6 +39,9 @@ jobs:
           ruby-version: ${{ matrix.ruby-version }}
           bundler-cache: true
 
+      - name: Install image processors
+        run: sudo apt-get update && sudo apt-get install -y imagemagick libvips-dev
+
       - name: Update CMS gem
         run: bundle update comfy_middle_seat
 

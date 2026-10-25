@@ -9,12 +9,8 @@ require_relative 'mixins/file_content'
 # `as`      - url (default) | link | image - how file gets rendered out
 # `class`   - any html classes that you want on the result link or image tag. For example "class1 class2"
 #
-# - variant_attrs are not functional, perhaps due to some change in ImageMagick
-# - Simply use a class in your CSS / SASS to style your image display
-# `label`   - attach label attribute to link or image tag
-# `resize`  - imagemagick option. For example: "100x50>"
-# `gravity` - imagemagick option. For example: "center"
-# `crop`    - imagemagick option. For example: "100x50+0+0"
+# Image sizing: resize_to_limit, resize_to_fit, resize_to_fill, resize_and_pad ("100x50").
+# Legacy resize/gravity/crop expressions remain supported for MiniMagick.
 #
 class ComfyMiddleSeat::Content::Tags::FileLink < ComfyMiddleSeat::Content::Tag
   include ComfyMiddleSeat::Content::Tags::Mixins::FileContent
@@ -28,7 +24,7 @@ class ComfyMiddleSeat::Content::Tags::FileLink < ComfyMiddleSeat::Content::Tag
     @identifier     = params[0]
     @as             = options['as'] || 'url'
     @class          = options['class']
-    @variant_attrs  = options.slice('resize', 'gravity', 'crop') # broken for ImageMagick
+    @variant_attrs  = options.slice(*ComfyMiddleSeat::Content::ImageTransformations::OPTIONS)
 
     return if @identifier.present?
 

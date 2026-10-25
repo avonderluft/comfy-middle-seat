@@ -46,6 +46,10 @@ ComfyMiddleSeat.configure do |config|
   # object you want to keep. Set it to 0 if you wish to turn this feature off.
   #   config.revisions_limit = 25
 
+  # Maximum requested width or height for image resizing in CMS tags.
+  # Values above this limit raise an error rather than being silently reduced.
+  #   config.max_image_dimension = 4096
+
   # Locale definitions. If you want to define your own locale merge
   # {:locale => 'Locale Title'} with this.
   #   config.locales = {:en => 'English', :es => 'Español'}

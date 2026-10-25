@@ -15,6 +15,7 @@ class ConfigurationTest < ActiveSupport::TestCase
     assert_equal false, config.enable_seeds
     assert_equal File.expand_path('db/cms_seeds', Rails.root), config.seeds_path
     assert_equal 25, config.revisions_limit
+    assert_equal 4096, config.max_image_dimension
     %w[en es].each { |k| assert_includes config.locales.keys, k }
     assert_nil config.admin_locale
     assert_nil config.admin_cache_sweeper

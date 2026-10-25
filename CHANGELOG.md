@@ -12,6 +12,16 @@ This changelog follows the project's lineage: **Comfortable Mexican Sofa → Com
 
 ## [Unreleased]
 
+### Added
+
+- Resize, crop, and pad images with ImageMagick or Vips.
+- Validate image dimensions with a configurable size limit.
+
+### Fixed
+
+- Restore supported legacy image resizing and modernize admin thumbnails.
+- Keep original file links for images that cannot be resized.
+
 ## [v4.3.0] - 2026-10-17
 
 ### Added

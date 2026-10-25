@@ -178,6 +178,62 @@ Comments produce no rendered output and do not create editor fields. Unlike HTML
 
 Blocks may be nested and must end with `{{cms:endcomment}}`, not `{{cms:end}}`. Short notes accept single or double quotes, with backslash-escaped quotes. Unclosed blocks and malformed comment tags raise a clear syntax error. Comments work in layouts, snippets, and rendered fragment content, including Markdown. They are not a place for secrets: original source remains available to editors and may be exposed by APIs that include raw content.
 
+### Image resizing
+
+Resize images from the media library or page attachments without changing the originals:
+
+```liquid
+{{ cms:image "Homepage banner", resize_to_limit: "1600x600" }}
+{{ cms:file card_photo, as: image, resize_to_fill: "600x400" }}
+{{ cms:image "Product photo", resize_and_pad: "500x500" }}
+```
+
+The same options work with `file`, `files`, `image`, `file_link`, and `page_file_link`:
+
+| Option | Result |
+| --- | --- |
+| `resize_to_limit` | Fit within the dimensions; never enlarge. |
+| `resize_to_fit` | Fit within the dimensions; allow enlargement. |
+| `resize_to_fill` | Fill the exact dimensions with a centered crop. |
+| `resize_and_pad` | Fit the whole image into the exact dimensions with padding. |
+
+Specify one operation and positive dimensions as `"WIDTHxHEIGHT"`. Invalid values, conflicting operations, and dimensions above the configured limit raise an error. Padding uses the processor's defaults; its color/transparency can differ between processors and image formats. Sizing options are ignored for missing attachments and files that Active Storage cannot transform, such as PDFs and SVGs under its default configuration. Missing attachments render nothing; non-transformable files retain their original URLs.
+
+The default maximum requested width or height is 4096 pixels. Change it in `config/initializers/comfy_middle_seat.rb`:
+
+```ruby
+ComfyMiddleSeat.configure do |config|
+  config.max_image_dimension = 6000
+end
+```
+
+This limits requested tag dimensions, not upload sizes or all intermediate processing memory. Admin thumbnails use fixed sizes.
+
+The CMS respects your application's Active Storage processor. Use ImageMagick with `:mini_magick`, or install libvips and add `ruby-vips` to your application's Gemfile, then configure:
+
+```ruby
+# config/application.rb, inside your application class
+config.active_storage.variant_processor = :vips
+```
+
+Restart after changing processors. No processor switch is required to use the new options; the gem retains its existing MiniMagick dependency for compatibility.
+
+#### Existing image tags
+
+- `resize: "400x300"` translates to `resize_to_fit`; `resize: "400x300>"` translates to `resize_to_limit`. Both work with either processor.
+- Supported legacy combinations of `resize`, `gravity`, and `crop` retain their operation order under MiniMagick. Resize accepts `WxH` with an optional `>`, `<`, `!`, or `^` suffix; crop requires `WxH+X+Y` (signed offsets). Offset-free crops are rejected because ImageMagick treats them as tiling, not a single crop. Gravity accepts the standard compass positions and `center`.
+- Other legacy geometry, including percentages and one-dimensional sizes, raises an actionable error. Replace it with an explicit two-dimensional operation. The size limit applies to legacy dimensions too.
+- Complex legacy expressions are not silently approximated on Vips. Convert them before switching processors; do not mix legacy and modern options in a tag.
+
+After upgrading, clear rendered page and translation caches once so image links use the new transformations:
+
+```ruby
+Comfy::Cms::Page.update_all(content_cache: nil)
+Comfy::Cms::Translation.update_all(content_cache: nil)
+```
+
+No database migration or re-upload is needed. New variants are generated on demand and may increase storage use temporarily; originals and old variants are not deleted. Purge any external page/CDN HTML caches separately. Clear rendered caches again after changing the sizing policy. Active Storage's variant keys do not include the processor: switching processors reuses existing variants with the same options, even after clearing page caches. To regenerate those images with the new processor, invalidate the affected derived variants separately, preserving the original uploads, and clear any cached derivative files on your CDN.
+
 ### Publishing pages
 
 A page is publicly visible only when it and all its ancestors are published. Unpublishing a parent hides its branch without changing descendants’ individual publication settings. Republishing the parent restores only descendants whose full ancestor chain is published; drafts stay unpublished. Translations must also satisfy their own publication settings.
@@ -194,7 +250,7 @@ Development mode continues to show unpublished pages for preview. Check public v
 | Rails | CI tests 7.2, 8.0, and 8.1 |
 | Node.js | 18 or newer for asset compilation |
 | File storage | Active Storage |
-| Image processing | ImageMagick |
+| Image processing | ImageMagick or libvips (via Active Storage) |
 
 Pagination is provided by [Kaminari](https://github.com/amatsuda/kaminari). The admin uses Bootstrap, CodeMirror, and Redactor.
 

@@ -79,9 +79,25 @@ class Comfy::Admin::Cms::FilesControllerTest < ActionDispatch::IntegrationTest
     }
     assert_response :success
     assert_equal [{
-      'thumb' => url_for(@file.attachment.variant(combine_options: Comfy::Cms::File::VARIANT_SIZE[:redactor])),
+      'thumb' => url_for(@file.attachment.variant(resize_to_fill: [100, 75])),
       'image' => url_for(@file.attachment),
       'title' => @file.label
+    }], JSON.parse(response.body)
+  end
+
+  def test_get_index_with_redactor_non_variable_image
+    file = @site.files.create!(file: fixture_file_upload('image.svg', 'image/svg+xml'))
+    refute file.attachment.variable?
+
+    r :get, comfy_admin_cms_site_files_path(site_id: @site), params: {
+      source: 'redactor', type: 'image', q: 'image.svg'
+    }
+
+    assert_response :success
+    assert_equal [{
+      'thumb' => url_for(file.attachment),
+      'image' => url_for(file.attachment),
+      'title' => file.label
     }], JSON.parse(response.body)
   end
 

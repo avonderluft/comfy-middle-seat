@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
+require_relative '../../image_transformations'
+
 # A mixin for tags that returns the file as their content.
 module ComfyMiddleSeat::Content::Tags::Mixins
   module FileContent
     # @param [ActiveStorage::Blob] file
     # @param ["link", "image", "url"] as
-    # @param [{String => String}] variant_attrs ImageMagick variant attributes
+    # @param [{String => String}] variant_attrs Modern or legacy image options
     # @param [String] label alt text for `as: "image"`, link text for `as: "link"`
     # @return [String]
     def content(file: self.file, as: self.as, variant_attrs: self.variant_attrs, label: self.label)
@@ -14,8 +16,9 @@ module ComfyMiddleSeat::Content::Tags::Mixins
       url_helpers = Rails.application.routes.url_helpers
 
       attachment_url =
-        if variant_attrs.present? && file.image?
-          variant = file.variant(combine_options: variant_attrs)
+        if variant_attrs.present? && file.variable?
+          transformations = ComfyMiddleSeat::Content::ImageTransformations.normalize(variant_attrs)
+          variant = file.variant(transformations)
           url_helpers.rails_representation_path(variant, only_path: true)
         else
           url_helpers.rails_blob_path(file, only_path: true)

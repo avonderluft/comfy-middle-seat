@@ -79,6 +79,7 @@ class ActiveSupport::TestCase
       config.enable_seeds         = false
       config.seeds_path           = TEST_SEEDS_PATH
       config.revisions_limit      = 25
+      config.max_image_dimension  = 4096
       config.locales              = {
         'en' => 'English',
         'es' => 'Español'

@@ -84,6 +84,9 @@ class ComfyMiddleSeat::Configuration
   # For example: include fragments into json data with `config.page_to_json_options = { include: [:fragments] }`
   attr_accessor :page_to_json_options
 
+  # Maximum requested width or height for image transformations in CMS tags.
+  attr_accessor :max_image_dimension
+
   # Configuration defaults
   def initialize
     @cms_title              = 'ComfyMiddleSeat CMS Engine'
@@ -99,6 +102,7 @@ class ComfyMiddleSeat::Configuration
     @enable_seeds           = false
     @seeds_path             = File.expand_path('db/cms_seeds', Rails.root)
     @revisions_limit        = 25
+    @max_image_dimension    = 4096
     @locales                = {
       'ar' => 'عربي',
       'ca' => 'Català',

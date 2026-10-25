@@ -8,9 +8,8 @@ require_relative 'mixins/file_content'
 #
 # `as`      - url (default) | link | image - render out link or image tag
 # `label`   - attach label attribute to link or image tag
-# `resize`  - imagemagic option. For example: "100x50>"
-# `gravity` - imagemagic option. For example: "center"
-# `crop`    - imagemagic option. For example: "100x50+0+0"
+# Image sizing: resize_to_limit, resize_to_fit, resize_to_fill, resize_and_pad ("100x50").
+# Legacy resize/gravity/crop expressions remain supported for MiniMagick.
 # `class`   - any html classes that you want on the result link or image tag. For example "class1 class2"
 #
 class ComfyMiddleSeat::Content::Tags::File < ComfyMiddleSeat::Content::Tags::Fragment
@@ -28,7 +27,7 @@ class ComfyMiddleSeat::Content::Tags::File < ComfyMiddleSeat::Content::Tags::Fra
     @as             = options['as'] || 'url'
     @label          = options['label']
     @class          = options['class']
-    @variant_attrs  = options.slice('resize', 'gravity', 'crop')
+    @variant_attrs  = options.slice(*ComfyMiddleSeat::Content::ImageTransformations::OPTIONS)
   end
 
   def form_field(object_name, view, index)

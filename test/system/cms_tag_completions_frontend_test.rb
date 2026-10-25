@@ -61,6 +61,26 @@ class CmsTagCompletionsFrontendTest < ApplicationSystemTestCase
     end
   end
 
+  def test_descriptive_aliases_expand_and_find_the_existing_shortcuts
+    visit_layout
+    [
+      ['layout_asset', 'asset layout_identifier, type: css, as: tag', 'layout_identifier', ';as asset (CSS)'],
+      ['render_partial', 'partial "path/to/partial"', 'path/to/partial', ';par partial'],
+      ['render_template', 'template "path/to/template"', 'path/to/template', ';tpl template']
+    ].each do |name, body, placeholder, label|
+      assert_expansion name, body, placeholder
+      prepare_editor ''
+      type_keys ';;', :tab
+      type_keys name
+      assert_selector '.CodeMirror-hint', count: 1
+      assert_selector '.CodeMirror-hint-active', text: label
+      type_keys :enter
+      assert_no_selector '.CodeMirror-hints'
+      assert_equal "{{ cms:#{body} }}", editor_value
+      assert_equal placeholder, editor_selection
+    end
+  end
+
   def test_hint_menu_lists_filters_accepts_and_dismisses_without_duplicate_tags
     visit_layout
     prepare_editor ''
@@ -206,7 +226,7 @@ class CmsTagCompletionsFrontendTest < ApplicationSystemTestCase
     prepare_editor ''
     type_keys ';;', :tab
     type_keys 'end'
-    assert_equal [';end end', ';ec endcomment'], all('.CodeMirror-hint').map(&:text)
+    assert_equal [';end end', ';ec endcomment', ';par partial', ';tpl template'], all('.CodeMirror-hint').map(&:text)
     type_keys :tab
     assert_no_selector '.CodeMirror-hints'
     assert_equal '{{ cms:end }}', editor_value

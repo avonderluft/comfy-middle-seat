@@ -37,6 +37,6 @@ class ComfyMiddleSeat::Content::Tags::Template < ComfyMiddleSeat::Content::Tag
   end
 end
 
-ComfyMiddleSeat::Content::Renderer.register_tag(
-  :template, ComfyMiddleSeat::Content::Tags::Template
-)
+%i[template render_template].each do |name|
+  ComfyMiddleSeat::Content::Renderer.register_tag(name, ComfyMiddleSeat::Content::Tags::Template)
+end

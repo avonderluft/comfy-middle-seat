@@ -64,6 +64,67 @@ class ContentTagsPartialTest < ActiveSupport::TestCase
     assert_equal '<%= render partial: "safe/path", locals: {} %>', tag.render
   end
 
+  def test_renderer_aliases
+    renderer = ComfyMiddleSeat::Content::Renderer.new(@page)
+    assert_nil ComfyMiddleSeat.config.allowed_partials
+    assert_equal false, ComfyMiddleSeat.config.allow_erb
+
+    %w[partial render_partial].each do |name|
+      nodes = renderer.nodes(renderer.tokenize("{{ cms:#{name} path/to/partial }}"))
+      assert_instance_of ComfyMiddleSeat::Content::Tags::Partial, nodes.first
+      assert_equal 'path/to/partial', nodes.first.path
+      assert_equal ({}), nodes.first.locals
+      assert_equal '<%= render partial: "path/to/partial", locals: {} %>', renderer.render(nodes)
+    end
+  end
+
+  def test_renderer_aliases_with_locals
+    renderer = ComfyMiddleSeat::Content::Renderer.new(@page)
+    examples = [
+      ['path/to/partial, key: val', 'path/to/partial', { 'key' => 'val' }],
+      ['"layouts/embed_video", id:MYpbvXgpIzc', 'layouts/embed_video', { 'id' => 'MYpbvXgpIzc' }],
+      ["'layouts/sign' date: '12 April 1979'", 'layouts/sign', { 'date' => '12 April 1979' }]
+    ]
+
+    examples.each do |params, path, locals|
+      %w[partial render_partial].each do |name|
+        nodes = renderer.nodes(renderer.tokenize("{{ cms:#{name} #{params} }}"))
+        assert_instance_of ComfyMiddleSeat::Content::Tags::Partial, nodes.first
+        assert_equal path, nodes.first.path
+        assert_equal locals, nodes.first.locals
+        assert_equal "<%= render partial: #{path.inspect}, locals: #{locals} %>", renderer.render(nodes)
+      end
+    end
+  end
+
+  def test_renderer_aliases_with_whitelist
+    renderer = ComfyMiddleSeat::Content::Renderer.new(@page)
+    content = '<%= render partial: "safe/path", locals: {} %>'
+    assert_equal false, ComfyMiddleSeat.config.allow_erb
+
+    [[nil, content], [[], ''], [['safe/path'], content], [['other/path'], '']].each do |whitelist, expected|
+      ComfyMiddleSeat.config.allowed_partials = whitelist
+
+      %w[partial render_partial].each do |name|
+        nodes = renderer.nodes(renderer.tokenize("{{ cms:#{name} 'safe/path' }}"))
+        assert_equal expected, renderer.render(nodes), "#{name} with whitelist #{whitelist.inspect}"
+      end
+    end
+  end
+
+  def test_renderer_aliases_without_path
+    renderer = ComfyMiddleSeat::Content::Renderer.new(@page)
+
+    %w[partial render_partial].each do |name|
+      ['', '""', 'key: val'].each do |params|
+        error = assert_raises ComfyMiddleSeat::Content::Tag::Error do
+          renderer.nodes(renderer.tokenize("{{ cms:#{name} #{params} }}"))
+        end
+        assert_equal 'Missing path for partial tag', error.message
+      end
+    end
+  end
+
   def test_render_with_erb_injection
     tag = ComfyMiddleSeat::Content::Tags::Partial.new(
       context: @page,

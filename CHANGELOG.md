@@ -12,6 +12,14 @@ This changelog follows the project's lineage: **Comfortable Mexican Sofa → Com
 
 ## [Unreleased]
 
+### Added
+
+- Add `layout_asset`, `render_partial`, and `render_template` aliases; existing tags remain supported.
+
+### Changed
+
+- Generate layout asset links through Rails routes and HTML helpers.
+
 ## [v4.4.0] - 2026-10-25
 
 ### Added

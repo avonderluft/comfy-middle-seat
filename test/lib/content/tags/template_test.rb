@@ -51,6 +51,49 @@ class ContentTagsTemplateTest < ActiveSupport::TestCase
     assert_equal '', tag.render
   end
 
+  def test_renderer_aliases
+    renderer = ComfyMiddleSeat::Content::Renderer.new(@page)
+    assert_nil ComfyMiddleSeat.config.allowed_templates
+    assert_equal false, ComfyMiddleSeat.config.allow_erb
+
+    %w[template render_template].each do |name|
+      ['path/to/template', '"path/to/template"', "'path/to/template'"].each do |params|
+        nodes = renderer.nodes(renderer.tokenize("{{ cms:#{name} #{params} }}"))
+        assert_instance_of ComfyMiddleSeat::Content::Tags::Template, nodes.first
+        assert_equal 'path/to/template', nodes.first.path
+        assert_equal '<%= render template: "path/to/template" %>', renderer.render(nodes)
+      end
+    end
+  end
+
+  def test_renderer_aliases_with_whitelist
+    renderer = ComfyMiddleSeat::Content::Renderer.new(@page)
+    content = '<%= render template: "allowed/path" %>'
+    assert_equal false, ComfyMiddleSeat.config.allow_erb
+
+    [[nil, content], [[], ''], [['allowed/path'], content], [['other/path'], '']].each do |whitelist, expected|
+      ComfyMiddleSeat.config.allowed_templates = whitelist
+
+      %w[template render_template].each do |name|
+        nodes = renderer.nodes(renderer.tokenize("{{ cms:#{name} 'allowed/path' }}"))
+        assert_equal expected, renderer.render(nodes), "#{name} with whitelist #{whitelist.inspect}"
+      end
+    end
+  end
+
+  def test_renderer_aliases_without_path
+    renderer = ComfyMiddleSeat::Content::Renderer.new(@page)
+
+    %w[template render_template].each do |name|
+      ['', '""'].each do |params|
+        error = assert_raises ComfyMiddleSeat::Content::Tag::Error do
+          renderer.nodes(renderer.tokenize("{{ cms:#{name} #{params} }}"))
+        end
+        assert_equal 'Missing template path for template tag', error.message
+      end
+    end
+  end
+
   def test_render_with_erb_injection
     tag = ComfyMiddleSeat::Content::Tags::Template.new(
       context: @page,

@@ -114,6 +114,24 @@ A Site defines a hostname, path, and language. Layouts define page structure and
 
 When an editor creates a Page using this Layout, the admin automatically presents fields for `title` and `content`. Content tags can also provide Markdown, files, images, dates, numbers, checkboxes, snippets, partials, helpers, navigation, and other reusable content.
 
+### Descriptive tag aliases
+
+These names are interchangeable; existing tags remain supported:
+
+| Existing tag | Alias |
+| --- | --- |
+| `asset` | `layout_asset` |
+| `partial` | `render_partial` |
+| `template` | `render_template` |
+
+```liquid
+{{ cms:layout_asset main, type: css, as: tag }}
+{{ cms:render_partial "layouts/embed_video", id: MYpbvXgpIzc }}
+{{ cms:render_template "marketing/landing" }}
+```
+
+Aliases preserve all parameters, defaults, and existing allowlist behavior. No new allowlist requirement or content migration is introduced. Asset tags still require `type: css` or `type: js`; omitting the type does not default to CSS. Their URLs follow the configured Rails routes, not an independent manual override of `public_cms_path`. HTML attributes are preserved, though formatting may differ. Check for conflicts if your application already registers custom tags with these alias names.
+
 ### Editor shortcuts
 
 In HTML and Markdown code editors, type a shortcut and press **Tab** to insert a CMS tag. The parameter placeholder is selected so you can replace it immediately. For example, `;md` inserts `{{ cms:markdown content }}` with `content` selected.
@@ -152,7 +170,7 @@ Use the arrow keys and **Enter** or **Tab** to choose. The tag replaces the enti
 | `;ec` | `endcomment` | — |
 | `;end` | `end` | — |
 
-Placeholders are examples: replace them with your field names, identifiers, paths, or IDs. `;asset` inserts the CSS version; `;comment` inserts a full comment block.
+Placeholders are examples: replace them with your field names, identifiers, paths, or IDs. `;asset` inserts the CSS version; `;comment` inserts a full comment block. The descriptive aliases (`;layout_asset`, `;render_partial`, `;render_template`) also work for expansion and search, inserting the existing tag spellings.
 
 Shortcuts work at the start of a line, after whitespace, or after `>`, outside an existing CMS tag. Unrecognized shortcuts retain normal Tab behavior. CSS, JavaScript, ordinary text fields, and visual editors are unchanged. Saved content uses the standard `{{ cms:... }}` syntax.
 

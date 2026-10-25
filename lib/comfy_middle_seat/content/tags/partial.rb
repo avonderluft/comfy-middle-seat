@@ -42,6 +42,6 @@ class ComfyMiddleSeat::Content::Tags::Partial < ComfyMiddleSeat::Content::Tag
   end
 end
 
-ComfyMiddleSeat::Content::Renderer.register_tag(
-  :partial, ComfyMiddleSeat::Content::Tags::Partial
-)
+%i[partial render_partial].each do |name|
+  ComfyMiddleSeat::Content::Renderer.register_tag(name, ComfyMiddleSeat::Content::Tags::Partial)
+end

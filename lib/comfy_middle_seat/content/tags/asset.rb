@@ -30,28 +30,23 @@ class ComfyMiddleSeat::Content::Tags::Asset < ComfyMiddleSeat::Content::Tag
   def content
     return '' unless layout
 
-    base = ComfyMiddleSeat.config.public_cms_path || ''
-    unless base.ends_with?('/')
-      base += '/'
-    end
+    url_helpers = Rails.application.routes.url_helpers
+    options = { site_id: context.site.id, identifier: layout.identifier, cache_buster: layout.cache_buster, format: @type }
+    helpers = ActionController::Base.helpers
 
+    # These are CMS endpoints, not pipeline assets. Use HTML builders to avoid
+    # adding asset-host prefixes or applying asset-pipeline settings to the URL.
     case @type
     when 'css'
-      out = "#{base}cms-css/#{context.site.id}/#{@identifier}/#{layout.cache_buster}.css"
-      if @as == 'tag'
-        out = "<link href='#{out}' media='screen' rel='stylesheet' type='text/css' />"
-      end
-      out
+      path = url_helpers.comfy_cms_render_css_path(**options)
+      @as == 'tag' ? helpers.tag.link(href: path, media: 'screen', rel: 'stylesheet', type: 'text/css') : path
     when 'js'
-      out = "#{base}cms-js/#{context.site.id}/#{@identifier}/#{layout.cache_buster}.js"
-      if @as == 'tag'
-        out = "<script src='#{out}' type='text/javascript'></script>"
-      end
-      out
+      path = url_helpers.comfy_cms_render_js_path(**options)
+      @as == 'tag' ? helpers.content_tag(:script, '', src: path, type: 'text/javascript') : path
     end
   end
 end
 
-ComfyMiddleSeat::Content::Renderer.register_tag(
-  :asset, ComfyMiddleSeat::Content::Tags::Asset
-)
+%i[asset layout_asset].each do |name|
+  ComfyMiddleSeat::Content::Renderer.register_tag(name, ComfyMiddleSeat::Content::Tags::Asset)
+end

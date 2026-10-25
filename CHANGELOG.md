@@ -12,6 +12,8 @@ This changelog follows the project's lineage: **Comfortable Mexican Sofa → Com
 
 ## [Unreleased]
 
+## [v4.4.0] - 2026-10-25
+
 ### Added
 
 - Resize, crop, and pad images with ImageMagick or Vips.
@@ -21,6 +23,8 @@ This changelog follows the project's lineage: **Comfortable Mexican Sofa → Com
 
 - Restore supported legacy image resizing and modernize admin thumbnails.
 - Keep original file links for images that cannot be resized.
+
+**Upgrading:** Clear rendered page and translation caches. Review legacy sizing options and the new 4096-pixel limit; see [image resizing](README.md#image-resizing). No database migration is required.
 
 ## [v4.3.0] - 2026-10-17
 
@@ -274,7 +278,8 @@ First release of `comfortable_media_surfer`. This new gem is a revival of [Comfo
 
 - Rebranded **ComfortableMexicanSofa** as **ComfortableMediaSurfer** in order to publish new gem (database table names and schema have not changed).
 
-[Unreleased]: https://github.com/avonderluft/comfy-middle-seat/compare/v4.3.0...master
+[Unreleased]: https://github.com/avonderluft/comfy-middle-seat/compare/v4.4.0...master
+[v4.4.0]: https://github.com/avonderluft/comfy-middle-seat/compare/v4.3.0...v4.4.0
 [v4.3.0]: https://github.com/avonderluft/comfy-middle-seat/compare/v4.2.0...v4.3.0
 [v4.2.0]: https://github.com/avonderluft/comfy-middle-seat/compare/v4.1.0...v4.2.0
 [v4.1.0]: https://github.com/avonderluft/comfy-middle-seat/compare/v4.0.4...v4.1.0

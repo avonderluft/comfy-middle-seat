@@ -12,9 +12,12 @@ This changelog follows the project's lineage: **Comfortable Mexican Sofa → Com
 
 ## [Unreleased]
 
+## [v4.5.0] - 2026-10-25
+
 ### Added
 
 - Add `layout_asset`, `render_partial`, and `render_template` aliases; existing tags remain supported.
+- Find and expand the new aliases in editor completion.
 
 ### Changed
 
@@ -286,7 +289,8 @@ First release of `comfortable_media_surfer`. This new gem is a revival of [Comfo
 
 - Rebranded **ComfortableMexicanSofa** as **ComfortableMediaSurfer** in order to publish new gem (database table names and schema have not changed).
 
-[Unreleased]: https://github.com/avonderluft/comfy-middle-seat/compare/v4.4.0...master
+[Unreleased]: https://github.com/avonderluft/comfy-middle-seat/compare/v4.5.0...master
+[v4.5.0]: https://github.com/avonderluft/comfy-middle-seat/compare/v4.4.0...v4.5.0
 [v4.4.0]: https://github.com/avonderluft/comfy-middle-seat/compare/v4.3.0...v4.4.0
 [v4.3.0]: https://github.com/avonderluft/comfy-middle-seat/compare/v4.2.0...v4.3.0
 [v4.2.0]: https://github.com/avonderluft/comfy-middle-seat/compare/v4.1.0...v4.2.0

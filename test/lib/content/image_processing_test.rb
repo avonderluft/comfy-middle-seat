@@ -117,12 +117,14 @@ private
 
   def with_processor(processor)
     previous_processor = ActiveStorage.variant_processor
-    previous_transformer = ActiveStorage.variant_transformer
+    configurable_transformer = ActiveStorage.respond_to?(:variant_transformer)
+    previous_transformer = ActiveStorage.variant_transformer if configurable_transformer
     previous_max_dimension = ComfyMiddleSeat.config.max_image_dimension
     @variants = []
 
-    # Changing variant_processor alone leaves Rails' boot-time transformer selected.
-    ActiveStorage.variant_transformer = transformer_for(processor)
+    transformer = transformer_for(processor)
+    # Rails 8.1 caches the transformer at boot; older Rails selects it from variant_processor.
+    ActiveStorage.variant_transformer = transformer if configurable_transformer
     ActiveStorage.variant_processor = processor
     ComfyMiddleSeat.config.max_image_dimension = 4096
 
@@ -150,22 +152,24 @@ private
       purge_generated_images
     ensure
       ActiveStorage.variant_processor = previous_processor
-      ActiveStorage.variant_transformer = previous_transformer
+      ActiveStorage.variant_transformer = previous_transformer if configurable_transformer
       ComfyMiddleSeat.config.max_image_dimension = previous_max_dimension
     end
   end
 
   def transformer_for(processor)
-    return ActiveStorage::Transformers::ImageMagick if processor == :mini_magick
+    if processor == :vips
+      begin
+        require 'vips'
+      rescue LoadError => e
+        raise if ENV['CI']
 
-    begin
-      require 'vips'
-    rescue LoadError => e
-      raise if ENV['CI']
-
-      skip "Vips processing unavailable: #{e.message}"
+        skip "Vips processing unavailable: #{e.message}"
+      end
     end
-    ActiveStorage::Transformers::Vips
+    return unless ActiveStorage.respond_to?(:variant_transformer)
+
+    processor == :mini_magick ? ActiveStorage::Transformers::ImageMagick : ActiveStorage::Transformers::Vips
   end
 
   def purge_generated_images

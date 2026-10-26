@@ -65,6 +65,26 @@ ja:
           files: ファイル
 
 
+        tag_usage:
+          title: タグの使用状況
+          scope: 未公開のコンテンツを含む、このサイトの保存済みコンテンツすべてが対象です。実行時のレンダリングは行いません。
+          multisite: このサイトのみのレポートでは、複数サイト共通の許可リストに必要な情報を網羅できません。
+          partial: パーシャル
+          helper: ヘルパー
+          template: テンプレート
+          name: 名前
+          status: 現在の状態
+          sources: 参照元
+          used_in: 使用箇所
+          no_results: 該当するタグは見つかりませんでした。
+          incomplete: レポートは不完全です。一部のコンテンツを解析できませんでした。以下の警告を確認してください。
+          warnings: 解析の警告
+          config: 設定候補
+          review: 使用前に確認してください。この候補は自動的な許可やセキュリティの承認ではありません。設定は変更されていません。
+          explicitly_allowed: 明示的に許可
+          allowed_by_default: デフォルトで許可
+          blocked: ブロック
+
         search:
           submit: 検索
           clear: クリア

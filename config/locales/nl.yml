@@ -65,6 +65,26 @@ nl:
           files: Bestanden
 
 
+        tag_usage:
+          title: Taggebruik
+          scope: Alle opgeslagen inhoud van deze site, ook niet-gepubliceerde inhoud. Geen rendering tijdens uitvoering.
+          multisite: Dit rapport voor één site is niet volledig voor globale toelatingslijsten voor meerdere sites.
+          partial: Deeltemplates
+          helper: Hulpmethoden
+          template: Templates
+          name: Naam
+          status: Huidige status
+          sources: Bronnen
+          used_in: Gebruikt in
+          no_results: Geen overeenkomende tags gevonden.
+          incomplete: Onvolledig rapport. Sommige inhoud kon niet worden geanalyseerd; bekijk de onderstaande waarschuwingen.
+          warnings: Analysewaarschuwingen
+          config: Voorgestelde configuratie
+          review: Controleer vóór gebruik. Dit voorstel is geen automatische toestemming of beveiligingsgoedkeuring. Er is geen configuratie gewijzigd.
+          explicitly_allowed: Expliciet toegestaan
+          allowed_by_default: Standaard toegestaan
+          blocked: Geblokkeerd
+
         search:
           submit: Zoeken
           clear: Wissen

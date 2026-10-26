@@ -65,6 +65,26 @@ de:
           files: Dateien
 
 
+        tag_usage:
+          title: Tag-Verwendung
+          scope: Alle gespeicherten Inhalte dieser Site, auch unveröffentlichte. Kein Rendering zur Laufzeit.
+          multisite: Dieser Bericht für eine Site ist für globale Freigabelisten mehrerer Sites nicht vollständig.
+          partial: Partials
+          helper: Hilfsmethoden
+          template: Templates
+          name: Name
+          status: Aktueller Status
+          sources: Quellen
+          used_in: Verwendet in
+          no_results: Keine passenden Tags gefunden.
+          incomplete: Bericht unvollständig. Einige Inhalte konnten nicht analysiert werden; prüfen Sie die folgenden Warnungen.
+          warnings: Analysewarnungen
+          config: Konfigurationsvorschlag
+          review: Vor Verwendung prüfen. Dieser Vorschlag ist weder eine automatische Berechtigung noch eine Sicherheitsfreigabe. Es wurde keine Konfiguration geändert.
+          explicitly_allowed: Ausdrücklich erlaubt
+          allowed_by_default: Standardmäßig erlaubt
+          blocked: Blockiert
+
         search:
           submit: Suchen
           clear: Leeren

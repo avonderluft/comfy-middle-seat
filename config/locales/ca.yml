@@ -65,6 +65,26 @@ ca:
           files: Arxius
 
 
+        tag_usage:
+          title: Ús de les etiquetes
+          scope: Tot el contingut desat d’aquest lloc, inclòs el no publicat. Sense renderització en temps d’execució.
+          multisite: Aquest informe d’un sol lloc no és exhaustiu per a les llistes globals de permisos de múltiples llocs.
+          partial: Parcials
+          helper: Helpers
+          template: Plantilles
+          name: Nom
+          status: Estat actual
+          sources: Fonts
+          used_in: Utilitzat a
+          no_results: No s’han trobat etiquetes coincidents.
+          incomplete: Informe incomplet. No s’ha pogut analitzar part del contingut; reviseu els avisos següents.
+          warnings: Avisos de l’anàlisi
+          config: Configuració proposada
+          review: Reviseu-la abans d’utilitzar-la. Aquesta proposta no és un permís automàtic ni una aprovació de seguretat. No s’ha canviat cap configuració.
+          explicitly_allowed: Permès explícitament
+          allowed_by_default: Permès per defecte
+          blocked: Bloquejat
+
         search:
           submit: Cerca
           clear: Neteja

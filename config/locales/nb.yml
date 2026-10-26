@@ -65,6 +65,26 @@ nb:
           files: Filer
 
 
+        tag_usage:
+          title: Bruk av tagger
+          scope: Alt lagret innhold på dette nettstedet, også upublisert innhold. Ingen rendering under kjøring.
+          multisite: Denne rapporten for ett nettsted er ikke uttømmende for globale tillatelseslister på tvers av nettsteder.
+          partial: Delvisninger
+          helper: Hjelpemetoder
+          template: Maler
+          name: Navn
+          status: Gjeldende status
+          sources: Kilder
+          used_in: Brukt i
+          no_results: Ingen samsvarende tagger funnet.
+          incomplete: Rapporten er ufullstendig. Noe innhold kunne ikke analyseres; se advarslene nedenfor.
+          warnings: Analyseadvarsler
+          config: Foreslått konfigurasjon
+          review: Gjennomgå før bruk. Forslaget er ikke automatisk tillatelse eller sikkerhetsgodkjenning. Ingen konfigurasjon er endret.
+          explicitly_allowed: Uttrykkelig tillatt
+          allowed_by_default: Tillatt som standard
+          blocked: Blokkert
+
         search:
           submit: Søk
           clear: Tøm

@@ -65,6 +65,26 @@ cs:
           files: Soubory
 
 
+        tag_usage:
+          title: Použití značek
+          scope: Veškerý uložený obsah tohoto webu včetně nepublikovaného. Bez vykreslování za běhu.
+          multisite: Tento přehled jednoho webu není úplný pro globální seznamy povolení více webů.
+          partial: Dílčí šablony
+          helper: Pomocné metody
+          template: Šablony
+          name: Název
+          status: Aktuální stav
+          sources: Zdroje
+          used_in: Použito v
+          no_results: Nenalezeny žádné odpovídající značky.
+          incomplete: Přehled není úplný. Část obsahu se nepodařilo analyzovat; zkontrolujte upozornění níže.
+          warnings: Upozornění analýzy
+          config: Navržená konfigurace
+          review: Před použitím zkontrolujte. Návrh není automatickým povolením ani bezpečnostním schválením. Žádná konfigurace nebyla změněna.
+          explicitly_allowed: Výslovně povoleno
+          allowed_by_default: Povoleno ve výchozím nastavení
+          blocked: Blokováno
+
         search:
           submit: Hledat
           clear: Vymazat

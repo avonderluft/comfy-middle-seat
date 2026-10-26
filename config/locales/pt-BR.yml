@@ -65,6 +65,26 @@ pt-BR:
           files: Arquivos
 
 
+        tag_usage:
+          title: Uso de tags
+          scope: Todo o conteúdo salvo deste site, incluindo o não publicado. Sem renderização em tempo de execução.
+          multisite: Este relatório de um único site não é exaustivo para listas globais de permissões de vários sites.
+          partial: Parciais
+          helper: Helpers
+          template: Modelos
+          name: Nome
+          status: Estado atual
+          sources: Fontes
+          used_in: Usado em
+          no_results: Nenhuma tag correspondente encontrada.
+          incomplete: Relatório incompleto. Parte do conteúdo não pôde ser analisada; revise os avisos abaixo.
+          warnings: Avisos da análise
+          config: Configuração proposta
+          review: Revise antes de usar. Esta proposta não é uma permissão automática nem uma aprovação de segurança. Nenhuma configuração foi alterada.
+          explicitly_allowed: Permitido explicitamente
+          allowed_by_default: Permitido por padrão
+          blocked: Bloqueado
+
         search:
           submit: Pesquisar
           clear: Limpar

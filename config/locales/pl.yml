@@ -65,6 +65,26 @@ pl:
           files: Pliki
 
 
+        tag_usage:
+          title: Użycie znaczników
+          scope: Cała zapisana treść tej witryny, także nieopublikowana. Bez renderowania w czasie wykonania.
+          multisite: Ten raport jednej witryny nie jest wyczerpujący dla globalnych list dozwolonych elementów wielu witryn.
+          partial: Szablony częściowe
+          helper: Metody pomocnicze
+          template: Szablony
+          name: Nazwa
+          status: Aktualny stan
+          sources: Źródła
+          used_in: Użyto w
+          no_results: Nie znaleziono pasujących znaczników.
+          incomplete: Raport niekompletny. Nie udało się przeanalizować części treści; sprawdź poniższe ostrzeżenia.
+          warnings: Ostrzeżenia analizy
+          config: Proponowana konfiguracja
+          review: Sprawdź przed użyciem. Propozycja nie oznacza automatycznego zezwolenia ani zatwierdzenia bezpieczeństwa. Konfiguracja nie została zmieniona.
+          explicitly_allowed: Jawnie dozwolone
+          allowed_by_default: Domyślnie dozwolone
+          blocked: Zablokowane
+
         search:
           submit: Szukaj
           clear: Wyczyść

@@ -132,6 +132,29 @@ These names are interchangeable; existing tags remain supported:
 
 Aliases preserve all parameters, defaults, and existing allowlist behavior. No new allowlist requirement or content migration is introduced. Asset tags still require `type: css` or `type: js`; omitting the type does not default to CSS. Their URLs follow the configured Rails routes, not an independent manual override of `public_cms_path`. HTML attributes are preserved, though formatting may differ. Check for conflicts if your application already registers custom tags with these alias names.
 
+### Tag usage audit
+
+Open **Tag usage** in the admin navigation to list unique partials, helpers, and templates for the selected site. Expand **Used in** for source edit links. The report shows current permissions and candidate allowlists for review; it does not change permissions.
+
+For an application-wide inventory, use the Rake task:
+
+```sh
+bin/rails comfy:cms:tag_usage
+bin/rails comfy:cms:tag_usage SITE=default
+bin/rails comfy:cms:tag_usage FORMAT=json
+bin/rails comfy:cms:tag_usage FORMAT=config
+```
+
+`SITE` is a site identifier, not its numeric ID; omit it to scan all sites. `FORMAT` defaults to `text`. JSON includes source locations, scope, permissions, and warnings. Configuration output is a copyable initializer block. Both options can be combined.
+
+The scanner reads saved layouts, snippets, page fragments, and translation fragments, including unpublished content. Aliases share one entry; counts refer to distinct source fields, not runtime executions. CMS comments are excluded. No helpers, views, ERB, or pages are executed, and caches are not read or updated.
+
+**Review before applying candidate allowlists.** Discovered names—including currently blocked names—are not automatically safe. Allowlists are application-wide, so a single-site report is not sufficient for a multi-site installation. Replacing an allowlist blocks omitted names, including previously approved ones.
+
+Warnings identify malformed comments or parameters. They go to stderr, and an incomplete scan exits nonzero while still emitting the partial report. JSON includes the warnings too; generated configuration marks incomplete scans. Unknown sites and unsupported formats also exit nonzero.
+
+This is a source inventory, not runtime dependency analysis. It does not scan revisions, unsaved drafts, unimported seed files, layout CSS/JavaScript, application views, or dynamically generated tags. Restoring revisions or importing content can introduce new names; scan again afterward. Concurrent content edits are not a database snapshot, so rescan before changing permissions.
+
 ### Editor shortcuts
 
 In HTML and Markdown code editors, type a shortcut and press **Tab** to insert a CMS tag. The parameter placeholder is selected so you can replace it immediately. For example, `;md` inserts `{{ cms:markdown content }}` with `content` selected.

@@ -65,6 +65,26 @@ da:
           files: Filer
 
 
+        tag_usage:
+          title: Brug af tags
+          scope: Alt gemt indhold på dette websted, også upubliceret indhold. Ingen rendering under kørsel.
+          multisite: Denne rapport for ét websted er ikke udtømmende for globale tilladelseslister på tværs af websteder.
+          partial: Delvisninger
+          helper: Hjælpemetoder
+          template: Skabeloner
+          name: Navn
+          status: Aktuel status
+          sources: Kilder
+          used_in: Brugt i
+          no_results: Ingen matchende tags fundet.
+          incomplete: Rapporten er ufuldstændig. Noget indhold kunne ikke analyseres; gennemgå advarslerne nedenfor.
+          warnings: Analyseadvarsler
+          config: Foreslået konfiguration
+          review: Gennemgå før brug. Forslaget er ikke automatisk tilladelse eller sikkerhedsgodkendelse. Ingen konfiguration er ændret.
+          explicitly_allowed: Udtrykkeligt tilladt
+          allowed_by_default: Tilladt som standard
+          blocked: Blokeret
+
         search:
           submit: Søg
           clear: Ryd

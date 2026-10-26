@@ -65,6 +65,26 @@ hr:
           files: Datoteke
 
 
+        tag_usage:
+          title: Upotreba oznaka
+          scope: Sav spremljeni sadržaj ovog websitea, uključujući neobjavljeni. Bez prikazivanja tijekom izvršavanja.
+          multisite: Ovo izvješće za jedan website nije potpuno za globalne popise dopuštenja za više websiteova.
+          partial: Djelomični predlošci
+          helper: Pomoćne metode
+          template: Predlošci
+          name: Naziv
+          status: Trenutačni status
+          sources: Izvori
+          used_in: Koristi se u
+          no_results: Nisu pronađene odgovarajuće oznake.
+          incomplete: Izvješće je nepotpuno. Dio sadržaja nije bilo moguće analizirati; pregledajte upozorenja u nastavku.
+          warnings: Upozorenja analize
+          config: Predložena konfiguracija
+          review: Pregledajte prije upotrebe. Prijedlog nije automatsko dopuštenje ni sigurnosno odobrenje. Konfiguracija nije promijenjena.
+          explicitly_allowed: Izričito dopušteno
+          allowed_by_default: Dopušteno prema zadanim postavkama
+          blocked: Blokirano
+
         search:
           submit: Pretraži
           clear: Očisti

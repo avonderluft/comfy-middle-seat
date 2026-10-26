@@ -65,6 +65,26 @@ it:
           files: Files
 
 
+        tag_usage:
+          title: Utilizzo dei tag
+          scope: Tutti i contenuti salvati di questo sito, inclusi quelli non pubblicati. Nessun rendering durante l’esecuzione.
+          multisite: Questo rapporto per un solo sito non è esaustivo per gli elenchi globali di autorizzazione di più siti.
+          partial: Parziali
+          helper: Helper
+          template: Modelli
+          name: Nome
+          status: Stato attuale
+          sources: Fonti
+          used_in: Utilizzato in
+          no_results: Nessun tag corrispondente trovato.
+          incomplete: Rapporto incompleto. Alcuni contenuti non sono stati analizzati; controllare gli avvisi seguenti.
+          warnings: Avvisi dell’analisi
+          config: Configurazione proposta
+          review: Verificare prima dell’uso. La proposta non è un’autorizzazione automatica né un’approvazione di sicurezza. Nessuna configurazione è stata modificata.
+          explicitly_allowed: Esplicitamente consentito
+          allowed_by_default: Consentito per impostazione predefinita
+          blocked: Bloccato
+
         search:
           submit: Cerca
           clear: Pulisci

@@ -65,6 +65,26 @@ fi:
           files: Tiedostot
 
 
+        tag_usage:
+          title: Tagien käyttö
+          scope: Kaikki tämän sivuston tallennettu sisältö, myös julkaisematon. Ei suorituksenaikaista renderöintiä.
+          multisite: Tämä yhden sivuston raportti ei ole kattava usean sivuston yhteisiä sallittujen kohteiden luetteloita varten.
+          partial: Osanäkymät
+          helper: Apumetodit
+          template: Näkymäpohjat
+          name: Nimi
+          status: Nykyinen tila
+          sources: Lähteet
+          used_in: Käytössä kohteissa
+          no_results: Vastaavia tageja ei löytynyt.
+          incomplete: Raportti on puutteellinen. Osaa sisällöstä ei voitu analysoida; tarkista alla olevat varoitukset.
+          warnings: Analyysin varoitukset
+          config: Asetusehdotus
+          review: Tarkista ennen käyttöä. Ehdotus ei ole automaattinen lupa eikä turvallisuushyväksyntä. Asetuksia ei ole muutettu.
+          explicitly_allowed: Erikseen sallittu
+          allowed_by_default: Oletusarvoisesti sallittu
+          blocked: Estetty
+
         search:
           submit: Hae
           clear: Tyhjennä

@@ -1,0 +1,54 @@
+.page-header
+  %h2= t('comfy.admin.cms.tag_usage.title')
+
+%p= @site.label
+%p= t('comfy.admin.cms.tag_usage.scope')
+%p.text-muted= t('comfy.admin.cms.tag_usage.multisite')
+
+- unless @report[:complete]
+  .alert.alert-warning.tag-usage-incomplete{role: 'alert'}
+    = t('comfy.admin.cms.tag_usage.incomplete')
+
+- %w[partial helper template].each do |kind|
+  %section.mb-4{id: "tag-usage-#{kind}"}
+    %h3= t("comfy.admin.cms.tag_usage.#{kind}")
+    - entries = @report[:entries].select { |entry| entry[:kind] == kind }
+    - if entries.empty?
+      %p.text-muted= t('comfy.admin.cms.tag_usage.no_results')
+    - else
+      .table-responsive
+        %table.table.table-striped
+          %thead
+            %tr
+              %th{scope: 'col'}= t('comfy.admin.cms.tag_usage.name')
+              %th{scope: 'col'}= t('comfy.admin.cms.tag_usage.status')
+              %th{scope: 'col'}= t('comfy.admin.cms.tag_usage.sources')
+          %tbody
+            - entries.each do |entry|
+              %tr
+                %td
+                  %code= entry[:name]
+                %td= t("comfy.admin.cms.tag_usage.#{entry[:status]}")
+                %td
+                  %details
+                    %summary
+                      = t('comfy.admin.cms.tag_usage.used_in')
+                      = "(#{entry[:sources].size})"
+                    %ul
+                      - entry[:sources].each do |source|
+                        %li= render 'source', source: source
+
+- if @report[:warnings].any?
+  %section#tag-usage-warnings.mb-4
+    %h3= t('comfy.admin.cms.tag_usage.warnings')
+    %ul
+      - @report[:warnings].each do |warning|
+        %li
+          = render 'source', source: warning[:source]
+          %pre.text-wrap= warning[:message]
+
+%section.mb-4
+  %h3= t('comfy.admin.cms.tag_usage.config')
+  %p#tag-usage-config-warning.alert.alert-warning= t('comfy.admin.cms.tag_usage.review')
+  = label_tag 'tag-usage-config', t('comfy.admin.cms.tag_usage.config')
+  = text_area_tag 'candidate_config', @candidate_config, id: 'tag-usage-config', class: 'form-control text-monospace', rows: 12, readonly: true, spellcheck: false, aria: { describedby: 'tag-usage-config-warning' }

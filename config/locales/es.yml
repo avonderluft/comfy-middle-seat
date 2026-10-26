@@ -65,6 +65,26 @@ es:
           files: Archivos
 
 
+        tag_usage:
+          title: Uso de etiquetas
+          scope: Todo el contenido guardado de este sitio, incluido el no publicado. Sin renderizado en tiempo de ejecución.
+          multisite: Este informe de un solo sitio no es exhaustivo para las listas globales de permisos de múltiples sitios.
+          partial: Parciales
+          helper: Helpers
+          template: Plantillas
+          name: Nombre
+          status: Estado actual
+          sources: Fuentes
+          used_in: Utilizado en
+          no_results: No se encontraron etiquetas coincidentes.
+          incomplete: Informe incompleto. No se pudo analizar parte del contenido; revise las advertencias siguientes.
+          warnings: Advertencias del análisis
+          config: Configuración propuesta
+          review: Revise antes de usar. Esta propuesta no es un permiso automático ni una aprobación de seguridad. No se ha cambiado ninguna configuración.
+          explicitly_allowed: Permitido explícitamente
+          allowed_by_default: Permitido por defecto
+          blocked: Bloqueado
+
         search:
           submit: Buscar
           clear: Limpiar

@@ -65,6 +65,26 @@ fr:
           files: Fichiers
 
 
+        tag_usage:
+          title: Utilisation des balises
+          scope: Tout le contenu enregistré de ce site, y compris le contenu non publié. Aucun rendu à l’exécution.
+          multisite: Ce rapport limité au site n’est pas exhaustif pour les listes d’autorisation globales multisites.
+          partial: Partiels
+          helper: Helpers
+          template: Modèles
+          name: Nom
+          status: État actuel
+          sources: Sources
+          used_in: Utilisé dans
+          no_results: Aucune balise correspondante trouvée.
+          incomplete: Rapport incomplet. Certains contenus n’ont pas pu être analysés ; consultez les avertissements ci-dessous.
+          warnings: Avertissements d’analyse
+          config: Configuration proposée
+          review: À vérifier avant utilisation. Cette proposition ne constitue ni une autorisation automatique ni une validation de sécurité. Aucune configuration n’a été modifiée.
+          explicitly_allowed: Explicitement autorisé
+          allowed_by_default: Autorisé par défaut
+          blocked: Bloqué
+
         search:
           submit: Rechercher
           clear: Effacer

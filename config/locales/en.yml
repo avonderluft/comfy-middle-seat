@@ -65,6 +65,26 @@ en:
           files: Files
 
 
+        tag_usage:
+          title: Tag usage
+          scope: All saved content for this site, including unpublished content. No runtime rendering.
+          multisite: This site-only report is not exhaustive for global multi-site allowlists.
+          partial: Partials
+          helper: Helpers
+          template: Templates
+          name: Name
+          status: Current status
+          sources: Sources
+          used_in: Used in
+          no_results: No matching tags found.
+          incomplete: Report incomplete. Some content could not be scanned; review the warnings below.
+          warnings: Scanner warnings
+          config: Candidate configuration
+          review: Review before use. This candidate is not automatic permission or security approval. No configuration has been changed.
+          explicitly_allowed: Explicitly allowed
+          allowed_by_default: Allowed by default
+          blocked: Blocked
+
         search:
           submit: Search
           clear: Clear

@@ -65,6 +65,26 @@ zh-CN:
           files: 文件
 
 
+        tag_usage:
+          title: 标签使用情况
+          scope: 此站点的所有已保存内容，包括未发布的内容。不进行运行时渲染。
+          multisite: 此报告仅涵盖当前站点，不能完整反映多站点全局允许列表的需求。
+          partial: 局部模板
+          helper: 辅助方法
+          template: 模板
+          name: 名称
+          status: 当前状态
+          sources: 来源
+          used_in: 使用位置
+          no_results: 未找到匹配的标签。
+          incomplete: 报告不完整。部分内容无法扫描，请查看下面的警告。
+          warnings: 扫描警告
+          config: 候选配置
+          review: 使用前请审核。此候选配置不代表自动授权或安全批准。未更改任何配置。
+          explicitly_allowed: 明确允许
+          allowed_by_default: 默认允许
+          blocked: 已阻止
+
         search:
           submit: 搜索
           clear: 清除

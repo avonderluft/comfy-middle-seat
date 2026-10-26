@@ -12,6 +12,11 @@ This changelog follows the project's lineage: **Comfortable Mexican Sofa → Com
 
 ## [Unreleased]
 
+### Added
+
+- List partials, helpers, and templates in the admin, with usage links and permission status.
+- Audit tag usage from the command line and export candidate allowlists.
+
 ## [v4.5.0] - 2026-10-25
 
 ### Added

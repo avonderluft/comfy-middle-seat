@@ -65,6 +65,26 @@ zh-TW:
           files: 文件
 
 
+        tag_usage:
+          title: 標籤使用情況
+          scope: 此站點的所有已儲存內容，包括未發佈的內容。不進行執行時渲染。
+          multisite: 此報告僅涵蓋目前站點，無法完整反映多站點全域允許清單的需求。
+          partial: 局部範本
+          helper: 輔助方法
+          template: 範本
+          name: 名稱
+          status: 目前狀態
+          sources: 來源
+          used_in: 使用位置
+          no_results: 找不到符合的標籤。
+          incomplete: 報告不完整。部分內容無法掃描，請查看下方的警告。
+          warnings: 掃描警告
+          config: 候選設定
+          review: 使用前請審核。此候選設定不代表自動授權或安全核准。未變更任何設定。
+          explicitly_allowed: 明確允許
+          allowed_by_default: 預設允許
+          blocked: 已封鎖
+
         search:
           submit: 搜尋
           clear: 清除

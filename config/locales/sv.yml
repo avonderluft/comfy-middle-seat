@@ -65,6 +65,26 @@ sv:
           files: Filer
 
 
+        tag_usage:
+          title: Tagganvändning
+          scope: Allt sparat innehåll på denna webbplats, även opublicerat innehåll. Ingen rendering vid körning.
+          multisite: Denna rapport för en webbplats är inte uttömmande för globala tillåtelselistor för flera webbplatser.
+          partial: Delvyer
+          helper: Hjälpmetoder
+          template: Mallar
+          name: Namn
+          status: Aktuell status
+          sources: Källor
+          used_in: Används i
+          no_results: Inga matchande taggar hittades.
+          incomplete: Rapporten är ofullständig. En del innehåll kunde inte analyseras; granska varningarna nedan.
+          warnings: Analysvarningar
+          config: Föreslagen konfiguration
+          review: Granska före användning. Förslaget är inte ett automatiskt tillstånd eller säkerhetsgodkännande. Ingen konfiguration har ändrats.
+          explicitly_allowed: Uttryckligen tillåtet
+          allowed_by_default: Tillåtet som standard
+          blocked: Blockerat
+
         search:
           submit: Sök
           clear: Rensa

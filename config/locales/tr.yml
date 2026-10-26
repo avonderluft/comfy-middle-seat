@@ -65,6 +65,26 @@ tr:
           files: Dosyalar
 
 
+        tag_usage:
+          title: Etiket kullanımı
+          scope: Yayımlanmamış içerik dahil bu sitenin tüm kayıtlı içeriği. Çalışma zamanında işleme yapılmaz.
+          multisite: Bu tek site raporu, birden çok sitenin genel izin listeleri için kapsamlı değildir.
+          partial: Kısmi şablonlar
+          helper: Yardımcı metotlar
+          template: Şablonlar
+          name: Ad
+          status: Geçerli durum
+          sources: Kaynaklar
+          used_in: Kullanıldığı yerler
+          no_results: Eşleşen etiket bulunamadı.
+          incomplete: Rapor eksik. Bazı içerikler taranamadı; aşağıdaki uyarıları inceleyin.
+          warnings: Tarama uyarıları
+          config: Önerilen yapılandırma
+          review: Kullanmadan önce inceleyin. Bu öneri otomatik izin veya güvenlik onayı değildir. Hiçbir yapılandırma değiştirilmedi.
+          explicitly_allowed: Açıkça izin verilmiş
+          allowed_by_default: Varsayılan olarak izin verilmiş
+          blocked: Engellenmiş
+
         search:
           submit: Ara
           clear: Temizle

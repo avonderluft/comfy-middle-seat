@@ -47,6 +47,7 @@ module ComfyMiddleSeat::Routing
               end
 
               resources :files, concerns: [:with_reorder]
+              get :tag_usage, to: 'tag_usage#index'
 
               resources :layouts do
                 concerns :with_reorder

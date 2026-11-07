@@ -17,6 +17,15 @@ This changelog follows the project's lineage: **Comfortable Mexican Sofa → Com
 - List partials, helpers, and templates in the admin, with usage links and permission status.
 - Audit tag usage from the command line and export candidate allowlists.
 
+### Fixed
+
+- Escape labels and attributes in file links and images.
+- Clear cached page content when deleting layouts.
+- Check helper permissions without modifying configuration.
+- Run image-processing tests on Rails 7.2 and 8.0.
+
+**Upgrading:** Clear rendered page and translation caches to apply escaped file markup. File labels containing HTML now display as text. No database migration or permission-policy change.
+
 ## [v4.5.0] - 2026-10-25
 
 ### Added

@@ -18,7 +18,7 @@ class Comfy::Cms::Layout < ActiveRecord::Base
   after_commit  :clear_page_content_cache,
                 on: %i[create update],
                 if: :saved_changes?
-  after_destroy :clear_page_content_cache
+  before_destroy :clear_page_content_cache, prepend: true
 
   # -- Validations -------------------------------------------------------------
   validates :site_id,

@@ -54,6 +54,34 @@ class ContentTagsHelperTest < ActiveSupport::TestCase
     assert_nil tag.render
   end
 
+  def test_render_does_not_mutate_mutable_or_frozen_allowlists
+    [false, true].each do |frozen|
+      allowed = ['string_helper', :symbol_helper, :eval]
+      allowed.freeze if frozen
+      ComfyMiddleSeat.config.allowed_helpers = allowed
+
+      %w[string_helper symbol_helper eval not_allowed].each do |method|
+        tag = ComfyMiddleSeat::Content::Tags::Helper.new(context: @page, params: [method])
+        if method == 'not_allowed'
+          assert_nil tag.render
+        else
+          assert_equal "<%= #{method}() %>", tag.render
+        end
+        assert_same allowed, ComfyMiddleSeat.config.allowed_helpers
+        assert_equal ['string_helper', :symbol_helper, :eval], allowed
+      end
+      assert_equal frozen, allowed.frozen?
+    end
+  end
+
+  def test_render_with_empty_allowlist_blocks_helpers
+    ComfyMiddleSeat.config.allowed_helpers = [].freeze
+    tag = ComfyMiddleSeat::Content::Tags::Helper.new(context: @page, params: ['method_name'])
+
+    assert_nil tag.render
+    assert_empty ComfyMiddleSeat.config.allowed_helpers
+  end
+
   def test_render_with_blacklist
     ComfyMiddleSeat::Content::Tags::Helper::BLACKLIST.each do |method|
       tag = ComfyMiddleSeat::Content::Tags::Helper.new(context: @page, params: [method])

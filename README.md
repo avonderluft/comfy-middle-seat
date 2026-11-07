@@ -312,6 +312,19 @@ When adapting upstream examples, use the `comfy_middle_seat` gem, `config/initia
 
 ## Upgrading
 
+### File-link and image escaping (unreleased)
+
+File links and images now escape labels and HTML attributes. Labels containing HTML display as text; URLs, labels, image titles, CSS classes, and file separators otherwise retain their existing behavior. Links opening a new tab include `rel="noopener"`.
+
+Clear rendered page and translation caches once after deployment so existing pages use the escaped markup:
+
+```ruby
+Comfy::Cms::Page.update_all(content_cache: nil)
+Comfy::Cms::Translation.update_all(content_cache: nil)
+```
+
+Content regenerates on demand. No database migration is required. Helper, partial, and template permission defaults are unchanged; the new [Tag usage audit](#tag-usage-audit) is read-only.
+
 ### Ancestor-aware publishing (unreleased)
 
 Review branches with unpublished ancestors: their descendants will no longer be publicly accessible. No database migration is required. After deploying, clear existing rendered content once from the Rails console so cached navigation follows the new rule:
@@ -403,7 +416,7 @@ Bug reports and focused feature proposals can be opened through [GitHub Issues](
 
 ## Acknowledgements
 
-- [Oleg Khabarov](https://github.com/GBH) and the contributors to [Comfortable Mexican Sofa](https://github.com/comfy/comfortable-mexican-sofa), the original Comfy CMS.
+- [Oleg Khabarov](https://github.com/GBH) and the contributors to [Comfortable Mexican Sofa](https://github.com/comfy/comfortable-mexican-sofa), the original Comfy CMS. Recent improvements also draw on Oleg’s ongoing [Sofa 3.0 work](https://github.com/comfy/comfortable-mexican-sofa/pull/971), selectively adapted to preserve compatibility.
 - [Andrew vonderLuft](https://github.com/avonderluft) for reviving Sofa with the [oCcaMS](https://github.com/avonderluft/occams) project, and carrying it forward.
 - [ShakaCode](https://github.com/shakacode) for sponsoring the revived project as [Comfortable Media Surfer](https://github.com/shakacode/comfortable-media-surfer).
 - [Roman Almeida](https://github.com/nasmorn) for contributing the OEM license for [Redactor Text Editor](https://imperavi.com/redactor/).

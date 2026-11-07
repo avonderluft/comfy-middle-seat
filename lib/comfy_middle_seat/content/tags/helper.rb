@@ -41,7 +41,7 @@ class ComfyMiddleSeat::Content::Tags::Helper < ComfyMiddleSeat::Content::Tag
   def render
     whitelist = ComfyMiddleSeat.config.allowed_helpers
     if whitelist.is_a?(Array)
-      content if whitelist.map!(&:to_s).member?(method_name)
+      content if whitelist.map(&:to_s).member?(method_name)
     else
       content unless BLACKLIST.member?(method_name)
     end

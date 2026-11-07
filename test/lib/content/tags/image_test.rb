@@ -39,10 +39,29 @@ class ContentTagsImageTest < ActiveSupport::TestCase
       context: @page,
       params: [@file.label, { 'as' => 'image', 'class' => 'html-class' }]
     )
-    url = rails_blob_path(tag.file, only_path: true)
-    out = "<img src='#{url}' class='html-class' alt='default file' title='default file'/>"
-    assert_equal out, tag.content
-    assert_equal out, tag.render
+    [tag.content, tag.render].each do |output|
+      html = Nokogiri::HTML.fragment(output)
+      assert_equal 1, html.element_children.size
+      assert_equal ({
+        'src' => rails_blob_path(tag.file, only_path: true),
+        'class' => 'html-class', 'alt' => 'default file', 'title' => 'default file'
+      }), html.at_css('img').attributes.transform_values(&:value)
+    end
+  end
+
+  def test_content_escapes_file_record_label_and_class
+    label = %q('" onerror="alert(1)"><script>alert(2)</script> & image)
+    css_class = %q(image' onerror='alert(3)' " onload="alert(4))
+    @file.update!(label: label)
+    tag = ComfyMiddleSeat::Content::Tags::Image.new(
+      context: @page, params: [label, { 'class' => css_class }]
+    )
+    html = Nokogiri::HTML.fragment(tag.render)
+    assert_equal 1, html.css('*').size
+    assert_equal ({
+      'src' => rails_blob_path(tag.file, only_path: true),
+      'class' => css_class, 'alt' => label, 'title' => label
+    }), html.at_css('img').attributes.transform_values(&:value)
   end
 
   def test_content_when_not_found

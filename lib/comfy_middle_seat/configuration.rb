@@ -53,9 +53,9 @@ class ComfyMiddleSeat::Configuration
   # @return [Boolean]
   attr_accessor :allow_erb
 
-  # Whitelist of all helper methods that can be used via {{cms:helper}} tag. By default
-  # all helpers are allowed except `eval`, `send`, `call` and few others. Empty array
-  # will prevent rendering of all helpers.
+  # Allowlist of helper methods available via {{cms:helper}}. With no array configured,
+  # all helpers are allowed except `eval`, `class_eval`, `instance_eval`, and `render`.
+  # An explicit array allows only its listed names; an empty array blocks all helpers.
   attr_accessor :allowed_helpers
 
   # Whitelist of partials paths that can be used via {{cms:partial}} tag. All partials

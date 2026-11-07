@@ -24,22 +24,18 @@ module ComfyMiddleSeat::Content::Tags::Mixins
           url_helpers.rails_blob_path(file, only_path: true)
         end
 
+      helpers = ActionController::Base.helpers
+
+      # Blob and variant URLs are not pipeline assets; HTML builders keep them
+      # relative instead of applying image_tag's asset-host settings.
       case as
       when 'link'
-        "<a href='#{attachment_url}'#{html_class_attribute} target='_blank'>#{label}</a>"
+        helpers.content_tag(:a, label, href: attachment_url, class: @class.presence, target: '_blank', rel: 'noopener')
       when 'image'
-        "<img src='#{attachment_url}'#{html_class_attribute} alt='#{label}' title='#{label}'/>"
+        helpers.tag.img(src: attachment_url, class: @class.presence, alt: label, title: label)
       else
         attachment_url
       end
-    end
-
-  private
-
-    def html_class_attribute
-      return if @class.blank?
-
-      " class='#{@class}'"
     end
   end
 end

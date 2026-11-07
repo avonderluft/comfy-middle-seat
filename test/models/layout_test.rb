@@ -237,6 +237,75 @@ class CmsLayoutTest < ActiveSupport::TestCase
     assert_equal "Updated left_column_content\nleft_column_content", page_b.content_cache
   end
 
+  def test_destroy_clears_direct_page_caches_and_nullifies_layout
+    unrelated_page = @site.pages.create!(slug: 'unrelated', layout: comfy_cms_layouts(:nested))
+    pages = [@page, comfy_cms_pages(:child)]
+    Comfy::Cms::Page.update_all(content_cache: 'Cached Page')
+
+    assert_difference 'Comfy::Cms::Layout.count', -1 do
+      @layout.destroy!
+    end
+
+    pages.each do |page|
+      assert_nil page.reload[:content_cache]
+      assert_nil page.layout_id
+    end
+    assert_equal 'Cached Page', unrelated_page.reload[:content_cache]
+    assert_equal comfy_cms_layouts(:nested).id, unrelated_page.layout_id
+  end
+
+  def test_destroy_nested_layout_clears_child_and_grandchild_page_caches
+    layout = comfy_cms_layouts(:nested)
+    layout.update!(parent: @layout)
+    child = comfy_cms_layouts(:child)
+    grandchild = @site.layouts.create!(identifier: 'grandchild', parent: child)
+    pages = [layout, child, grandchild].map do |page_layout|
+      @site.pages.create!(slug: page_layout.identifier, layout: page_layout)
+    end
+    # Tree validation can cache children before the grandchild is created.
+    assert_equal @layout.id, layout.reload.parent_id
+    assert_equal layout.id, child.reload.parent_id
+    assert_equal child.id, grandchild.reload.parent_id
+    Comfy::Cms::Page.update_all(content_cache: 'Cached Page')
+
+    assert_difference 'Comfy::Cms::Layout.count', -3 do
+      layout.destroy!
+    end
+
+    pages.each do |page|
+      assert_nil page.reload[:content_cache]
+      assert_nil page.layout_id
+    end
+    [layout, child, grandchild].each do |destroyed_layout|
+      refute Comfy::Cms::Layout.exists?(destroyed_layout.id)
+    end
+    assert Comfy::Cms::Layout.exists?(@layout.id)
+    [@page, comfy_cms_pages(:child)].each do |page|
+      assert_equal 'Cached Page', page.reload[:content_cache]
+      assert_equal @layout.id, page.layout_id
+    end
+  end
+
+  def test_destroy_cache_invalidation_and_nullification_roll_back
+    pages = [@page, comfy_cms_pages(:child)]
+    Comfy::Cms::Page.update_all(content_cache: 'Cached Page')
+
+    Comfy::Cms::Layout.transaction(requires_new: true) do
+      @layout.destroy!
+      pages.each do |page|
+        assert_nil page.reload[:content_cache]
+        assert_nil page.layout_id
+      end
+      raise ActiveRecord::Rollback
+    end
+
+    assert Comfy::Cms::Layout.exists?(@layout.id)
+    pages.each do |page|
+      assert_equal 'Cached Page', page.reload[:content_cache]
+      assert_equal @layout.id, page.layout_id
+    end
+  end
+
   def test_cache_buster
     timestamp = Time.current
     layout = @site.layouts.create(updated_at: timestamp)

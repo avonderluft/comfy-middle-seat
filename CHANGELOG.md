@@ -12,6 +12,13 @@ This changelog follows the project's lineage: **Comfortable Mexican Sofa → Com
 
 ## [Unreleased]
 
+### Changed
+
+- Keep Rails 7.2 compatibility checks required, with dependency audit failures shown as warnings.
+- Keep dependency audits required on Rails 8.0 and 8.1.
+
+## [v4.6.0] - 2026-11-07
+
 ### Added
 
 - List partials, helpers, and templates in the admin, with usage links and permission status.
@@ -303,7 +310,8 @@ First release of `comfortable_media_surfer`. This new gem is a revival of [Comfo
 
 - Rebranded **ComfortableMexicanSofa** as **ComfortableMediaSurfer** in order to publish new gem (database table names and schema have not changed).
 
-[Unreleased]: https://github.com/avonderluft/comfy-middle-seat/compare/v4.5.0...master
+[Unreleased]: https://github.com/avonderluft/comfy-middle-seat/compare/v4.6.0...master
+[v4.6.0]: https://github.com/avonderluft/comfy-middle-seat/compare/v4.5.0...v4.6.0
 [v4.5.0]: https://github.com/avonderluft/comfy-middle-seat/compare/v4.4.0...v4.5.0
 [v4.4.0]: https://github.com/avonderluft/comfy-middle-seat/compare/v4.3.0...v4.4.0
 [v4.3.0]: https://github.com/avonderluft/comfy-middle-seat/compare/v4.2.0...v4.3.0

@@ -47,6 +47,10 @@ Comfy Middle Seat is best suited to Rails applications that render their own web
 - Stable `comfy_cms_*` database tables for upgrades from Sofa and Surfer.
 - CI coverage across current Ruby and Rails releases.
 
+### Rails compatibility and security
+
+Rails 7.2 remains compatibility-tested, with tests, lint, and Brakeman required in CI. Its dependency audit is temporarily advisory-only because current security findings have no patched 7.2 release; failures remain visible in CI logs, warnings, and job summaries. Dependency audits remain required on Rails 8.0 and 8.1. Use a Rails release patched for current advisories in production; passing compatibility tests is not a security guarantee.
+
 ## Quick Start
 
 Add the gem to your Rails application's `Gemfile`:

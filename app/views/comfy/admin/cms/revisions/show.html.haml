@@ -1,9 +1,12 @@
-- selected_timestamp = l(@revision.created_at, format: "%Y-%m-%d %H:%M:%S %Z")
+- timestamp_format = "%Y-%m-%d %H:%M:%S %Z"
+- selected_timestamp = l(@revision.created_at, format: timestamp_format)
+- selected_label = t('.revision_number', default: 'Revision #%{id}', id: @revision.id)
+- current_label = t('.current_saved_content', default: 'Current saved content')
 
 - content_for :right_column do
   .box.revisions
     - @record.revisions.order(created_at: :desc).each do |revision|
-      - timestamp = l(revision.created_at, format: "%Y-%m-%d %H:%M:%S %Z")
+      - timestamp = l(revision.created_at, format: timestamp_format)
       - label = t('.revision_link', default: 'Revision #%{id} — snapshot replaced at %{timestamp}', id: revision.id, timestamp: timestamp)
       = active_link_to label, {id: revision.id}, class: "btn btn-sm btn-light d-block text-primary text-left mb-1"
 
@@ -12,43 +15,49 @@
     = t('.title', default: 'Revisions for')
     = @record.class.to_s.demodulize
 
-.revision-summary
-  %h3.h5= t('.selected_revision', default: 'Selected revision #%{id}', id: @revision.id)
-  %p.mb-2
-    = t('.snapshot_explanation', default: 'This snapshot contains the content that was replaced at %{timestamp}. The comparison shows how the currently saved content differs from that snapshot.', timestamp: selected_timestamp)
-  .revision-legend{aria: {label: t('.legend', default: 'Change legend')}}
-    %span.revision-legend-item
-      %span.revision-legend-swatch.added{aria: {hidden: true}}
-      = t('.added', default: 'Added since snapshot')
-    %span.revision-legend-item
-      %span.revision-legend-swatch.removed{aria: {hidden: true}}
-      = t('.removed', default: 'Removed since snapshot')
+.revision-comparison{data: {change_position: t('.change_position', default: 'Change %{position} of %{total}', position: '%{position}', total: '%{total}'), no_changes: t('.no_changes', default: 'No changes'), unchanged_lines: t('.unchanged_lines', default: '%{lines} unchanged lines', lines: '%{lines}'), show_full_content: t('.show_full_content', default: 'Show full content'), collapse_unchanged: t('.collapse_unchanged', default: 'Collapse unchanged lines')}}
+  .revision-summary
+    .revision-selection
+      %strong= selected_label
+      %span{aria: {hidden: true}} →
+      %strong= current_label
+    %p.small.text-muted.mb-2.mt-2
+      = t('.snapshot_time', default: 'Snapshot before the save on %{timestamp}', timestamp: selected_timestamp)
 
-.row.d-none.d-lg-flex
-  .col-lg-10.ml-auto
-    .row
-      .col-lg-6
-        .label= t('.selected_snapshot', default: 'Selected snapshot')
-      .col-lg-6
-        .label= t('.current_content', default: 'Current saved content (changes highlighted)')
+  .revision-toolbar{hidden: true}
+    .revision-controls
+      %label.mb-0
+        = t('.view', default: 'View')
+        %select.form-control.form-control-sm.d-inline-block.w-auto{data: {revision_view: true}}
+          %option{value: 'split'}= t('.split', default: 'Split')
+          %option{value: 'unified'}= t('.unified', default: 'Unified')
+      %button.btn.btn-sm.btn-outline-secondary{type: 'button', data: {revision_context: true}}
+        = t('.show_full_content', default: 'Show full content')
+      .revision-navigation
+        %span{role: 'status', data: {revision_position: true}}
+        %button.btn.btn-sm.btn-outline-secondary{type: 'button', aria: {label: t('.previous_change', default: 'Previous change')}, data: {revision_previous: true}} ↑
+        %button.btn.btn-sm.btn-outline-secondary{type: 'button', aria: {label: t('.next_change', default: 'Next change')}, data: {revision_next: true}} ↓
+    .revision-headings
+      %span= selected_label
+      %span= current_label
 
-- @current_content.each do |label, content|
-  .row.revision
-    .col-lg-2.text-lg-right.bg-light
-      .label= label
-    .col-lg-10
-      .row
-        .col-lg-6
-          .content
-            = safe_join @versioned_content[label].to_s.split("\n"), raw("<br/>")
-        .col-lg-6.diff
-          .original.d-none= @versioned_content[label]
-          .current.d-none= content
-          .content
+  - @current_content.each do |label, content|
+    %section.revision
+      %h3.h6.label= label
+      .revision-source
+        %div
+          %strong= selected_label
+          %pre
+            %code{data: {revision_before: true}}= @versioned_content[label].to_s
+        %div
+          %strong= current_label
+          %pre
+            %code{data: {revision_after: true}}= content.to_s
+      .revision-lines{data: {revision_lines: true}}
 
 = comfy_form_with model: @revision, url: {action: :revert} do |form|
   = form.form_actions do
-    = submit_tag t('.update', default: 'Restore selected snapshot'), class: 'btn btn-primary'
+    = submit_tag t('.restore_revision', default: 'Restore revision #%{id}', id: @revision.id), class: 'btn btn-primary'
     - if preview_path
       = link_to t('.preview', default: 'Preview selected snapshot'), preview_path, class: 'btn btn-info', target: 'comfy-cms-revision-preview', rel: 'noopener'
-    = link_to t('.cancel', default: 'Cancel'), record_path, class: 'btn btn-link'
+    = link_to t('.back_to_record', default: 'Back to editor'), record_path, class: 'btn btn-link'

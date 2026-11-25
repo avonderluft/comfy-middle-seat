@@ -38,16 +38,23 @@ class Comfy::Admin::Cms::Revisions::PageControllerTest < ActionDispatch::Integra
     r :get, comfy_admin_cms_site_page_revision_path(@site, @page, @revision)
 
     assert_response :success
-    assert_select '.revision-summary h3', "Selected revision ##{@revision.id}"
-    assert_select '.revision-summary', text: %r{snapshot contains the content that was replaced at 2024-05-06 07:08:09 UTC}
-    assert_select '.revision-legend-item', count: 2
-    assert_select '.revision-legend-item', text: 'Added since snapshot'
-    assert_select '.revision-legend-item', text: 'Removed since snapshot'
-    assert_select '.label', text: 'Selected snapshot'
-    assert_select '.label', text: 'Current saved content (changes highlighted)'
-    assert_select '.box.revisions a', text: "Revision ##{@revision.id} — snapshot replaced at 2024-05-06 07:08:09 UTC"
+    assert_select '#cms-right .box.revisions a.active',
+                  "Revision ##{@revision.id} — snapshot replaced at 2024-05-06 07:08:09 UTC"
+    assert_select '.revision-summary', text: %r{Snapshot before the save on}
+    assert_select '.revision-headings span', text: 'Current saved content'
+    assert_select 'input[type="submit"][value=?]', "Restore revision ##{@revision.id}"
     assert_select "a[target='comfy-cms-revision-preview'][href$='/revisions/#{@revision.id}/preview']",
                   text: 'Preview selected snapshot'
+  end
+
+  def test_get_show_formats_snapshot_timestamp_in_gr_admin_locale
+    ComfyMiddleSeat.config.admin_locale = :gr
+    @revision.update_column(:created_at, Time.zone.parse('2024-05-06 07:08:09 UTC'))
+
+    r :get, comfy_admin_cms_site_page_revision_path(@site, @page, @revision)
+
+    assert_response :success
+    assert_select '.revision-summary p', text: %r{2024-05-06 07:08:09 UTC}
   end
 
   def test_get_show_includes_historical_only_fragments

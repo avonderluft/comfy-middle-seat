@@ -252,6 +252,94 @@ body#comfy
         del
           background-color: #ffc6c6
 
+  .revision-comparison
+    .revision-summary
+      padding: 0
+      border: 0
+    .revision-selection, .revision-controls, .revision-navigation
+      display: flex
+      flex-wrap: wrap
+      align-items: center
+      gap: 0.5rem
+    .revision-toolbar
+      position: sticky
+      top: 0
+      z-index: 10
+      background: $white
+      border-bottom: 1px solid $gray-300
+      @media (max-width: map-get($grid-breakpoints, lg))
+        top: 3rem
+    .revision-controls
+      padding: 0.5rem 0
+    .revision-navigation
+      margin-left: auto
+    .revision-headings, .revision-row, .revision-source
+      display: grid
+      grid-template-columns: repeat(2, minmax(0, 1fr))
+    .revision-source[hidden]
+      display: none
+    .revision-headings span
+      padding: 0.4rem 0.65rem
+      background: $gray-100
+      font-weight: bold
+    .revision .label
+      padding: 0.65rem
+      margin: 0
+      background: $gray-100
+      overflow-wrap: anywhere
+    .revision-lines
+      border: 1px solid $gray-300
+      margin-bottom: 1rem
+    .revision-cell
+      display: grid
+      grid-template-columns: minmax(3ch, auto) 1ch minmax(0, 1fr)
+      align-content: start
+      gap: 0.5rem
+      min-width: 0
+      padding: 0.15rem 0.5rem
+      font-family: $font-family-monospace
+      font-size: 0.875rem
+      & + .revision-cell
+        border-left: 1px solid $gray-300
+    .revision-line-number, .revision-marker
+      color: $gray-700
+      text-align: right
+      user-select: none
+    .revision-code
+      color: inherit
+      font-size: inherit
+      white-space: pre-wrap
+      overflow-wrap: anywhere
+      tab-size: 2
+    .revision-added
+      background: #e6f7e9
+      ins
+        background: #b5ebc1
+        text-decoration: none
+    .revision-removed
+      background: #fce8e7
+      del
+        background: #ffc7c2
+        text-decoration: none
+    .revision-empty
+      background: $gray-100
+    .revision-change-active
+      outline: 2px solid $primary
+      outline-offset: -2px
+      position: relative
+    .revision-gap > summary
+      padding: 0.35rem 0.65rem
+      color: $primary
+      background: $gray-100
+      cursor: pointer
+    &[data-view="unified"]
+      .revision-row
+        display: block
+      .revision-cell + .revision-cell
+        border-left: 0
+      .revision-empty, .revision-context-row .revision-cell:first-child
+        display: none
+
 #cms-uploader
   ul.list
     .file-path
